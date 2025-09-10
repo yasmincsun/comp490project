@@ -5,7 +5,7 @@ Steps to add the git repository to VSCode
 3. At the bottom of the window look for the 'Terminal' tab and type the following:
     git clone https://github.com/yasmincsun/comp490project
 
-Hello, I used VSCode to open a new spring boot project and created it without altering any of the data,
+(MA) Hello, I used VSCode to open a new spring boot project and created it without altering any of the data,
 however I was prompted to choose the versions of the SDKs:
 
 Java Version: 24.0
