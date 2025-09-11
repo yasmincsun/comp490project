@@ -19,3 +19,9 @@ Under music/main/java/com/moodymusic/music is where .java and .sql files belong
 Under .../main/resource is where files that the .java/ .sql files will call from
 
 (YZ) The port used to access the Frontend is 5173.
+    After configuring React, if it is not accessible: 
+        press r + enter to restart the server
+        press u + enter to show server url
+        press o + enter to open in browser
+        press c + enter to clear console
+        press q + enter to quit
