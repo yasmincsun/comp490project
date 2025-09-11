@@ -17,3 +17,5 @@ Feel free to change these dependencies or add more, just let everyone know when 
 Under music/main/java/com/moodymusic/music is where .java and .sql files belong
 
 Under .../main/resource is where files that the .java/ .sql files will call from
+
+(YZ) The port used to access the Frontend is 5173.
