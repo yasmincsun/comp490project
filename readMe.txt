@@ -14,7 +14,7 @@ Spring Boot version: 5.5.0
 
 Feel free to change these dependencies or add more, just let everyone know when you do
 
-Under music/main/java/com/moodymusic/music is where .java and .sql files belong
+Under music/app/main/java/com/moodymusic/music is where .java and .sql files belong
 
 Under .../main/resource is where files that the .java/ .sql files will call from
 
