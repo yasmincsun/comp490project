@@ -1,31 +1,23 @@
-import { useState } from 'react'
-// import musicNotes from 'public/musical-notes.svg'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-
+import React from "react";
+import { QuizProvider } from "./context/quiz-context";
+import Quiz from "./components/quiz";
+import Login from "./components/loginPage/login"
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        Access the Music
-      </div>
-      <h1>Music App</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+
+    
+        <Login />
+
+
+
+
+    // <QuizProvider>
+      // <div className="app-container">
+       // <h1>Quiz App</h1>
+        // <Quiz />
+     // </div>
+    //</QuizProvider>
+  );
 }
 
-export default App
+export default App;
