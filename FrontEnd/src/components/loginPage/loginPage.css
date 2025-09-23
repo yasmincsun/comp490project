@@ -151,6 +151,20 @@
     cursor: pointer;
 }
 
+.submitLogin{ 
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    width: 220px; 
+    height: 59px; 
+    color: #ffff; 
+    background: #4c00b4;
+    border-radius: 50px;
+    font-size: 19px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
 .gray{ 
     background: #eaeaea; 
     color: #676767; 
