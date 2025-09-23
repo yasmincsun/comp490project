@@ -3,7 +3,8 @@ import './loginPage.css'
 import { useState } from "react";
 import userIcon from '../assets/person.png'
 import emailIcon from '../assets/email.png'
-import passwordIcon from '../assets/password.png'
+import passwordIcon from '../assets/password.png'; 
+
 
 
 const loginPage = () => {
@@ -12,7 +13,6 @@ const loginPage = () => {
     const [emailSignIn, setEmailSignIn] = useState("");
     const [passwordSignIn, setpasswordSignIn] = useState("");
 
-
     return (
         <div className="container">
 
@@ -20,7 +20,6 @@ const loginPage = () => {
                 <div className="text">{action}</div>
                 <div className="underline"></div>
             </div>
-
 
             <div className="inputs">
 
@@ -52,7 +51,7 @@ const loginPage = () => {
             <div className="submitContainer">
                 <button className={action === "Login" ? "submit gray" : "submit"} onClick={() => { setAction("Sign Up") }}>Sign Up</button>
                 <button className={action === "Sign Up" ? "submit gray" : "submit"} onClick={() => { setAction("Login") }}>Login</button>
-                <button type="submit">Submit</button>
+                <button type="submit" onClick={e => {console.log("Email: ", e.target.value), setEmailSignIn(e.target.value)}}>Submit</button>
             </div>
 
         </div >
