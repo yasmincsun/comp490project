@@ -7,14 +7,9 @@ import passwordIcon from '../assets/password.png'
 
 
 const loginPage = () => {
-<<<<<<< HEAD
     const [action, setAction] = useState("Login"); // Changes login screen
-
-=======
-    const [action, setAction] = useState("Login");
     const [emailSignIn, setEmailSignIn] = useState("");
     const [passwordSignIn, setpasswordSignIn] = useState("");
->>>>>>> 38294029d5a04fc2572c530ed5e7593efbe5c012
 
 
     return (
@@ -43,8 +38,7 @@ const loginPage = () => {
                 <form className = "passwordInput">
                     <img src={passwordIcon} width={40} height={40} alt="" />
                     <label htmlFor="password"></label>
-                    <input type="password" id="password" name="password" placeholder ='Password' />
-                    <button type="submit">Submit</button>
+                    <input type="password" id="password" name="password" placeholder ='Password' value = {passwordSignIn} onChange={e => {console.log("Password: ", e.target.value), setpasswordSignIn(e.target.value)}} />
                     </form>
 
             </div>
@@ -57,7 +51,7 @@ const loginPage = () => {
             <div className="submitContainer">
                 <button className={action === "Login" ? "submit gray" : "submit"} onClick={() => { setAction("Sign Up") }}>Sign Up</button>
                 <button className={action === "Sign Up" ? "submit gray" : "submit"} onClick={() => { setAction("Login") }}>Login</button>
-                <button>Quiz</button>
+                <button type="submit">Submit</button>
             </div>
 
         </div >
