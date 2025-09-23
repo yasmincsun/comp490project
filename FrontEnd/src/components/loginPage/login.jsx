@@ -1,5 +1,4 @@
 // import React from 'react'
-
 import './loginPage.css'
 import { useState } from "react";
 import userIcon from '../assets/person.png'
@@ -8,6 +7,7 @@ import passwordIcon from '../assets/password.png'
 
 const loginPage = () => {
     const [action, setAction] = useState("Login");
+
 
 
     return (
@@ -49,6 +49,7 @@ const loginPage = () => {
             <div className="submitContainer">
                 <button className={action === "Login" ? "submit gray" : "submit"} onClick={() => { setAction("Sign Up") }}>Sign Up</button>
                 <button className={action === "Sign Up" ? "submit gray" : "submit"} onClick={() => { setAction("Login") }}>Login</button>
+                <button>Quiz</button>
             </div>
 
         </div >
