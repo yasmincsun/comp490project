@@ -8,6 +8,8 @@ import passwordIcon from '../assets/password.png'
 
 const loginPage = () => {
     const [action, setAction] = useState("Login");
+    const [emailSignIn, setEmailSignIn] = useState("");
+    const [passwordSignIn, setpasswordSignIn] = useState("");
 
 
     return (
@@ -30,7 +32,8 @@ const loginPage = () => {
 
                 <div className="emailInput">
                     <img src={emailIcon} width={40} height={40} alt="" />
-                    <input type="text" id="userEmail" placeholder='Email' />
+                    <input type="text" id="userEmail" placeholder='Email' value = {emailSignIn} onChange={e => {console.log("Email: ", e.target.value), setEmailSignIn(e.target.value)}}
+                     />
                 </div>
 
                 <div className="passwordInput">
