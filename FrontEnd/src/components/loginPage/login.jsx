@@ -5,8 +5,9 @@ import userIcon from '../assets/person.png'
 import emailIcon from '../assets/email.png'
 import passwordIcon from '../assets/password.png'
 
+
 const loginPage = () => {
-    const [action, setAction] = useState("Login");
+    const [action, setAction] = useState("Login"); // Changes login screen
 
 
 
@@ -25,19 +26,19 @@ const loginPage = () => {
 
                     <div className="nameInput">
                         <img src={userIcon} width={40} height={40} alt="" />
-                        <input type="text" id="signUpName" placeholder='Name' />
+                        <input type="text" id="signUpName" placeholder='Name'/>
                     </div>}
 
                 <div className="emailInput">
                     <img src={emailIcon} width={40} height={40} alt="" />
                     <input type="text" id="userEmail" placeholder='Email' />
                 </div>
-
-                <div className="passwordInput">
+                <form className = "passwordInput">
                     <img src={passwordIcon} width={40} height={40} alt="" />
-                    <input type="password" id="userPassword" placeholder='Password' />
-                </div>
-
+                    <label htmlFor="password"></label>
+                    <input type="password" id="password" name="password" placeholder ='Password' />
+                    <button type="submit">Submit</button>
+                    </form>
 
             </div>
 
