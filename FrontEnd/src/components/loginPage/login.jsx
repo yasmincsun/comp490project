@@ -3,15 +3,18 @@ import './loginPage.css'
 import { useState } from "react";
 import userIcon from '../assets/person.png'
 import emailIcon from '../assets/email.png'
-import passwordIcon from '../assets/password.png'; 
-
-
+import passwordIcon from '../assets/password.png';
 
 const loginPage = () => {
     const [action, setAction] = useState("Login"); // Changes login screen
     const [nameSignUp, setNameSignUp] = useState("");
     const [emailSignIn, setEmailSignIn] = useState("");
-    const [passwordSignIn, setpasswordSignIn] = useState("");
+    const [passwordSignIn, setPasswordSignIn] = useState("");
+    const [buttonColor, setButtonColor] = useState('blue'); 
+
+    const handleClick = () => { 
+        setButtonColor(prevColor => (prevColor === 'blue' ? 'red' : 'blue')); 
+    }; 
 
     return (
         <div className="container">
@@ -21,41 +24,56 @@ const loginPage = () => {
                 <div className="underline"></div>
             </div>
 
+            <div className="submitContainer">
+                <button className={action === "Login" ? "submit gray" : "submit"} onClick={() => { setAction("Sign Up") }}>Sign Up</button>
+                <button className={action === "Sign Up" ? "submit gray" : "submit"} onClick={() => { setAction("Login") }}>Login</button>
+            </div>
+
             <div className="inputs">
 
                 {action === "Login" ? <div></div> :
 
                     <div className="nameInput">
                         <img src={userIcon} width={40} height={40} alt="" />
-                        <input type="text" id="signUpName" placeholder='Name' value = {nameSignUp} onChange={e => {console.log("Name: ", e.target.value), setNameSignUp(e.target.value)}} />
+                        <input type="text" id="signUpName" placeholder='Name' value={nameSignUp} onChange={e => { console.log("Name: ", e.target.value), setNameSignUp(e.target.value) }} />
                     </div>}
 
                 <div className="emailInput">
                     <img src={emailIcon} width={40} height={40} alt="" />
-                    <input type="text" id="userEmail" placeholder='Email' value = {emailSignIn} onChange={e => {console.log("Email: ", e.target.value), setEmailSignIn(e.target.value)}}
-                     />
+                    <input type="text" id="userEmail" placeholder='Email' value={emailSignIn} onChange={e => { console.log("Email:", e.target.value), setEmailSignIn(e.target.value) }}
+                    />
                 </div>
-                <form className = "passwordInput">
+                <form className="passwordInput">
                     <img src={passwordIcon} width={40} height={40} alt="" />
                     <label htmlFor="password"></label>
-                    <input type="password" id="password" name="password" placeholder ='Password' value = {passwordSignIn} onChange={e => {console.log("Password: ", e.target.value), setpasswordSignIn(e.target.value)}} />
-                    </form>
+                    <input type="password" id="password" name="password" placeholder='Password' value={passwordSignIn} onChange={e => { console.log("Password:", e.target.value), setPasswordSignIn(e.target.value) }} />
+                </form>
 
             </div>
-
 
             {action === "Sign Up" ? <div></div> : <div className="forgotPassword">Forgot Password? <span>Click Here!</span></div>}
             {action === "Sign Up" ? <div></div> : <div className="noAccount">Don't have an Account? <span>Sign Up!</span> </div>}
 
+            <div className='text'>{emailSignIn}</div>
+            <div className="text">{passwordSignIn}</div>
 
-            <div className="submitContainer">
-                <button className={action === "Login" ? "submit gray" : "submit"} onClick={() => { setAction("Sign Up") }}>Sign Up</button>
-                <button className={action === "Sign Up" ? "submit gray" : "submit"} onClick={() => { setAction("Login") }}>Login</button>
-                <button type="submit" onClick={e => {console.log("Email: ", e.target.value), setEmailSignIn(e.target.value)}}>Submit</button>
+            <div className="changePageContainer">
+                <button type="submitLogin"style={{ backgroundColor: buttonColor, color: 'white', padding: '10px 20px', border: 'none', cursor: 'pointer' }}
+ onClick={handleClick}>Submit</button>
             </div>
 
         </div >
     )
+
+
+    function loginVerification (emailSignIn, passwordSignIn){ 
+        if (emailSignIn === "test@gmail.com" && passwordSignIn === "1234") {
+            <div className="text">FIXED</div>
+        }
+        else{ 
+            <div className="text">BAD</div>
+        }
+    }
 }
 
 export default loginPage; 
