@@ -10,13 +10,27 @@ const loginPage = () => {
     const [nameSignUp, setNameSignUp] = useState("");
     const [emailSignIn, setEmailSignIn] = useState("");
     const [passwordSignIn, setPasswordSignIn] = useState("");
-    const [buttonColor, setButtonColor] = useState('blue'); 
+    const [buttonColor, setButtonColor] = useState('blue');
 
-    const handleClick = () => { 
-        setButtonColor(prevColor => (prevColor === 'blue' ? 'red' : 'blue')); 
-    }; 
+    const handleClick = () => {
+        setButtonColor(prevColor => (prevColor === 'blue' ? 'red' : 'blue'));
+    };
+
+    const loginCheck = (emailSignIn, passwordSignIn) => { 
+        loginVerification(emailSignIn, passwordSignIn); 
+    }
+
+    function loginVerification (emailSignIn, passwordSignIn){ 
+            if (passwordSignIn = "1") {
+                // no
+            }
+            else{
+               handleClick();
+            }
+        }
 
     return (
+        
         <div className="container">
 
             <div className="header">
@@ -55,25 +69,19 @@ const loginPage = () => {
             {action === "Sign Up" ? <div></div> : <div className="noAccount">Don't have an Account? <span>Sign Up!</span> </div>}
 
             <div className='text'>{emailSignIn}</div>
-            <div className="text">{passwordSignIn}</div>
+            <div className='text'>{passwordSignIn}</div>
 
             <div className="changePageContainer">
-                <button type="submitLogin"style={{ backgroundColor: buttonColor, color: 'white', padding: '10px 20px', border: 'none', cursor: 'pointer' }}
- onClick={handleClick}>Submit</button>
+                <button type="submitLogin" style={{ backgroundColor: buttonColor, color: 'white', padding: '10px 20px', border: 'none', cursor: 'pointer' }}
+                    onClick={loginCheck}>Submit</button>
             </div>
 
         </div >
+
+
+
     )
 
-
-    function loginVerification (emailSignIn, passwordSignIn){ 
-        if (emailSignIn === "test@gmail.com" && passwordSignIn === "1234") {
-            <div className="text">FIXED</div>
-        }
-        else{ 
-            <div className="text">BAD</div>
-        }
-    }
 }
 
 export default loginPage; 
