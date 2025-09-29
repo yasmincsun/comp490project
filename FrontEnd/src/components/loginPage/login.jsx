@@ -16,19 +16,6 @@ const loginPage = () => {
         setButtonColor(prevColor => (prevColor === 'blue' ? 'red' : 'blue'));
     };
 
-    const loginCheck = (emailSignIn, passwordSignIn) => { 
-        loginVerification(emailSignIn, passwordSignIn); 
-    }
-
-    function loginVerification (emailSignIn, passwordSignIn){ 
-            if (passwordSignIn = "1") {
-                // no
-            }
-            else{
-               handleClick();
-            }
-        }
-
     return (
         
         <div className="container">
@@ -73,7 +60,7 @@ const loginPage = () => {
 
             <div className="changePageContainer">
                 <button type="submitLogin" style={{ backgroundColor: buttonColor, color: 'white', padding: '10px 20px', border: 'none', cursor: 'pointer' }}
-                    onClick={loginCheck}>Submit</button>
+                    onClick={handleClick}>Submit</button>
             </div>
 
         </div >
