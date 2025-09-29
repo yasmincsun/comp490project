@@ -1,45 +1,135 @@
-import './homePage.css'
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import "./homePage.css"
+import userIcon from '../assets/person.png'
+import emailIcon from '../assets/email.png'
+import passwordIcon from '../assets/password.png';
 
-function MyForm() {
-    const [inputValue, setInputValue] = useState('');
-    const [error, setError] = useState('');
+const FormWithValidation = () => {
+    const [formData, setFormData] = useState({
+        firstName: "",
+        lastName: "",
+        email: "",
+    });
 
-    const validateInput = (value) => {
-        if (value.trim() === '') {
-            return 'Input cannot be empty.';
+    const [formErrors, setFormErrors] = useState({
+        firstName: "",
+        lastName: "",
+        email: "",
+    });
+
+    const handleInputChange = (event) => {
+        const { name, value } = event.target;
+
+        // Update form data
+        setFormData({
+            ...formData,
+            [name]: value,
+        });
+
+        // Perform validation
+        if (name === "firstName" && value !== "test") {
+            setFormErrors({
+                ...formErrors,
+                firstName: "First name is required.",
+            });
+        } else if (name === "lastName" && value === "") {
+            setFormErrors({
+                ...formErrors,
+                lastName: "Last name is required.",
+            });
+        } else if (name === "email" && !/^\S+@\S+\.\S+$/.test(value)) {
+            setFormErrors({
+                ...formErrors,
+                email: "Invalid email address.",
+            });
+        } else {
+            // Clear validation errors if input is valid
+            setFormErrors({
+                ...formErrors,
+                [name]: "",
+            });
         }
-        if (!/^\d+$/.test(value)) { // Example: only numbers allowed
-            return 'Input must be a number.';
-        }
-        return ''; // No error
-    };
-
-    const handleChange = (event) => {
-        const newValue = event.target.value;
-        setInputValue(newValue);
-        setError(validateInput(newValue)); // Validate on change
     };
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        const finalError = validateInput(inputValue);
-        if (finalError) {
-            setError(finalError);
-            // Prevent form submission
+
+        // Perform validation before submitting the form
+        const validationErrors = Object.keys(formData).reduce((errors, name) => {
+            if (formData[name] === "") {
+                errors[name] = `${name.charAt(0).toUpperCase() + name.slice(1)
+                    } is required.`;
+            } else if (name === "email" && !/^\S+@\S+\.\S+$/.test(formData[name])) {
+                errors[name] = "Invalid email address.";
+            }
+            return errors;
+        }, {});
+
+        // Update form errors
+        setFormErrors(validationErrors);
+
+        // Check if there are any validation errors
+        if (Object.values(validationErrors).every((error) => error === "")) {
+            // Perform custom business logic or submit the form
+            console.log("Form submitted successfully!");
+            console.log("Form Data:", formData);
         } else {
-            // Form is valid, proceed with submission
-            console.log('Form submitted with value:', inputValue);
+            console.log("Form validation failed. Please check the errors.");
         }
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <input type="text" value={inputValue} onChange={handleChange} />
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            <button type="submit">Submit</button>
-        </form>
-    );
-}
+        <div className="container">
 
-export default MyForm;
+            <div className="header">
+                <div className="text">Login</div>
+                <div className="underline"></div>
+            </div>
+
+            <div className="inputs">
+                <form>
+                    <label className="nameInput">
+                        <img src={userIcon} width={40} height={40} alt="" />
+                        Name:
+                        <input
+                            type="text"
+                            name="firstName"
+                            value={formData.firstName}
+                            onChange={handleInputChange}
+                        />
+                        <span className="error">{formErrors.firstName}</span>
+                    </label>
+
+                    <label className = "emailInput">
+                        <img src={emailIcon} width={40} height={40} alt="" />
+                        Email:
+                        <input
+                            type="text"
+                            name="lastName"
+                            value={formData.lastName}
+                            onChange={handleInputChange}
+                        />
+                        <span className="error">{formErrors.lastName}</span>
+                    </label>
+
+                    <label className="passwordInput">
+                        <img src={passwordIcon} width={40} height={40} alt="" />
+
+                        Password:
+                        <input
+                            type="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleInputChange}
+                        />
+                        <span className="error">{formErrors.email}</span>
+                    </label>
+
+                    <button type="submitLogin" onClick={handleSubmit}>Submit</button>
+                </form>
+            </div>
+        </div>
+    );
+};
+
+export default FormWithValidation;
