@@ -1,3 +1,45 @@
+
+.login-home-btn-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 2;
+}
+.login-home-btn {
+    padding: 10px 20px;
+    font-family: 'Times New Roman', Times, serif;
+    background: #d995bdff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.login-mode-btns {
+    text-align: center;
+    margin-bottom: 10px;
+}
+.login-mode-btn {
+    padding: 8px 16px;
+    margin: 0 5px;
+    font-family: 'Times New Roman', Times, serif;
+    background: #bad5ce;
+    color: #111;
+    border: 1px solid #d995bdff;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+.login-mode-btn:disabled {
+    background: #d995bdff;
+    color: white;
+    cursor: not-allowed;
+}
+.login-error-msg {
+    color: red;
+    margin-top: 10px;
+    font-size: 16px;
+    text-align: center;
+}
 /* 
     gap: 30px; 
     margin: 60px auto; 

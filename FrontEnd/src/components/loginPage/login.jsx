@@ -1,121 +1,106 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./loginPage.css"
 import userIcon from '../assets/person.png'
 import emailIcon from '../assets/email.png'
 import passwordIcon from '../assets/password.png';
 
 const FormWithValidation = () => {
+    const [mode, setMode] = useState("login"); // 'login' or 'signup'
     const [formData, setFormData] = useState({
-        firstName: "",
-        lastName: "",
+        name: "",
         email: "",
+        password: "",
     });
-
     const [formErrors, setFormErrors] = useState({
-        firstName: "",
-        lastName: "",
+        name: "",
         email: "",
+        password: "",
     });
+    const [errorMsg, setErrorMsg] = useState("");
+    const navigate = useNavigate();
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
-
-        // Update form data
         setFormData({
             ...formData,
             [name]: value,
         });
-
-        // Perform validation
-        if (name === "firstName" && value !== "test") {
-            setFormErrors({
-                ...formErrors,
-                firstName: "First name is required.",
-            });
-        } else if (name === "lastName" && value === "") {
-            setFormErrors({
-                ...formErrors,
-                lastName: "Last name is required.",
-            });
+        // Validation
+        if (name === "name" && mode === "signup" && value.trim() === "") {
+            setFormErrors({ ...formErrors, name: "Name is required." });
         } else if (name === "email" && !/^\S+@\S+\.\S+$/.test(value)) {
-            setFormErrors({
-                ...formErrors,
-                email: "Invalid email address.",
-            });
+            setFormErrors({ ...formErrors, email: "Invalid email address." });
+        } else if (name === "password" && value.trim() === "") {
+            setFormErrors({ ...formErrors, password: "Password is required." });
         } else {
-            // Clear validation errors if input is valid
-            setFormErrors({
-                ...formErrors,
-                [name]: "",
-            });
+            setFormErrors({ ...formErrors, [name]: "" });
         }
     };
 
     const handleSubmit = (event) => {
         event.preventDefault();
-
-        // Perform validation before submitting the form
-        const validationErrors = Object.keys(formData).reduce((errors, name) => {
-            if (formData[name] === "") {
-                errors[name] = `${name.charAt(0).toUpperCase() + name.slice(1)
-                    } is required.`;
-            } else if (name === "email" && !/^\S+@\S+\.\S+$/.test(formData[name])) {
-                errors[name] = "Invalid email address.";
-            }
-            return errors;
-        }, {});
-
-        // Update form errors
-        setFormErrors(validationErrors);
-
-        // Check if there are any validation errors
-        if (Object.values(validationErrors).every((error) => error === "")) {
-            // Perform custom business logic or submit the form
-            console.log("Form submitted successfully!");
-            console.log("Form Data:", formData);
+        let validationErrors = {};
+        if (mode === "signup") {
+            if (formData.name.trim() === "") validationErrors.name = "Name is required.";
+            if (!/^\S+@\S+\.\S+$/.test(formData.email)) validationErrors.email = "Invalid email address.";
+            if (formData.password.trim() === "") validationErrors.password = "Password is required.";
         } else {
-            console.log("Form validation failed. Please check the errors.");
+            if (!/^\S+@\S+\.\S+$/.test(formData.email)) validationErrors.email = "Invalid email address.";
+            if (formData.password.trim() === "") validationErrors.password = "Password is required.";
+        }
+        setFormErrors(validationErrors);
+        if (Object.values(validationErrors).length === 0 || Object.values(validationErrors).every((e) => e === "")) {
+            // Save variables
+            const { name, email, password } = formData;
+            // Test case: check if email and password match
+            if (email === "test@gmail.com" && password === "1234") {
+                setErrorMsg("");
+                navigate("/home");
+            } else {
+                setErrorMsg("Incorrect email or password. Please try again.");
+            }
+        } else {
+            setErrorMsg("");
         }
     };
 
     return (
         <div className="container">
-
+            <div className="login-home-btn-container">
+                <button
+                    className="login-home-btn"
+                    onClick={() => navigate("/home")}
+                >
+                    Home
+                </button>
+            </div>
             <div className="header">
-                <div className="text">Login</div>
+                <div className="text">{mode === "login" ? "Login" : "Sign Up"}</div>
                 <div className="underline"></div>
             </div>
-
+            <div className="login-mode-btns">
+                <button className="login-mode-btn" onClick={() => setMode("login")} disabled={mode === "login"}>Login</button>
+                <button className="login-mode-btn" onClick={() => setMode("signup")} disabled={mode === "signup"}>Sign Up</button>
+            </div>
             <div className="inputs">
-                <form>
-                    <label className="nameInput">
-                        <img src={userIcon} width={40} height={40} alt="" />
-                        Name:
-                        <input
-                            type="text"
-                            name="firstName"
-                            value={formData.firstName}
-                            onChange={handleInputChange}
-                        />
-                        <span className="error">{formErrors.firstName}</span>
-                    </label>
-
-                    <label className = "emailInput">
+                <form onSubmit={handleSubmit}>
+                    {mode === "signup" && (
+                        <label className="nameInput">
+                            <img src={userIcon} width={40} height={40} alt="" />
+                            Name:
+                            <input
+                                type="text"
+                                name="name"
+                                value={formData.name}
+                                onChange={handleInputChange}
+                            />
+                            <span className="error">{formErrors.name}</span>
+                        </label>
+                    )}
+                    <label className="emailInput">
                         <img src={emailIcon} width={40} height={40} alt="" />
                         Email:
-                        <input
-                            type="text"
-                            name="lastName"
-                            value={formData.lastName}
-                            onChange={handleInputChange}
-                        />
-                        <span className="error">{formErrors.lastName}</span>
-                    </label>
-
-                    <label className="passwordInput">
-                        <img src={passwordIcon} width={40} height={40} alt="" />
-
-                        Password:
                         <input
                             type="email"
                             name="email"
@@ -124,9 +109,20 @@ const FormWithValidation = () => {
                         />
                         <span className="error">{formErrors.email}</span>
                     </label>
-
-                    <button type="submitLogin" onClick={handleSubmit}>Submit</button>
+                    <label className="passwordInput">
+                        <img src={passwordIcon} width={40} height={40} alt="" />
+                        Password:
+                        <input
+                            type="password"
+                            name="password"
+                            value={formData.password}
+                            onChange={handleInputChange}
+                        />
+                        <span className="error">{formErrors.password}</span>
+                    </label>
+                    <button type="submit">Submit</button>
                 </form>
+                {errorMsg && <div className="error login-error-msg">{errorMsg}</div>}
             </div>
         </div>
     );
