@@ -8,7 +8,7 @@
 .homepage-login-btn {
     padding: 10px 20px;
     font-family: 'Times New Roman', Times, serif;
-    background: #808000;
+    background: #008055;
     color: white;
     border: none;
     border-radius: 5px;
@@ -50,7 +50,7 @@
 }
 .homepage-sidebar-custom {
     position: fixed;
-    width: 50vw;
+    width: 70vw;
     height: 66vh;
     bottom: 0;
     display: flex;
