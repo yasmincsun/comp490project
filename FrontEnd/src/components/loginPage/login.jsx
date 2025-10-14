@@ -37,33 +37,54 @@ const FormWithValidation = () => {
             setFormErrors({ ...formErrors, [name]: "" });
         }
     };
+//change this here for backend
+const handleSubmit = async (event) => {
+  event.preventDefault();
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        let validationErrors = {};
-        if (mode === "signup") {
-            if (formData.name.trim() === "") validationErrors.name = "Name is required.";
-            if (!/^\S+@\S+\.\S+$/.test(formData.email)) validationErrors.email = "Invalid email address.";
-            if (formData.password.trim() === "") validationErrors.password = "Password is required.";
-        } else {
-            if (!/^\S+@\S+\.\S+$/.test(formData.email)) validationErrors.email = "Invalid email address.";
-            if (formData.password.trim() === "") validationErrors.password = "Password is required.";
-        }
-        setFormErrors(validationErrors);
-        if (Object.values(validationErrors).length === 0 || Object.values(validationErrors).every((e) => e === "")) {
-            // Save variables
-            const { name, email, password } = formData;
-            // Test case: check if email and password match
-            if (email === "test@gmail.com" && password === "1234") {
-                setErrorMsg("");
-                navigate("/home");
-            } else {
-                setErrorMsg("Incorrect email or password. Please try again.");
-            }
-        } else {
-            setErrorMsg("");
-        }
-    };
+  // Validation
+  let validationErrors = {};
+  if (mode === "signup") {
+    if (formData.name.trim() === "") validationErrors.name = "Name is required.";
+    if (!/^\S+@\S+\.\S+$/.test(formData.email)) validationErrors.email = "Invalid email address.";
+    if (formData.password.trim() === "") validationErrors.password = "Password is required.";
+  } else {
+    if (!/^\S+@\S+\.\S+$/.test(formData.email)) validationErrors.email = "Invalid email address.";
+    if (formData.password.trim() === "") validationErrors.password = "Password is required.";
+  }
+
+  setFormErrors(validationErrors);
+  if (Object.keys(validationErrors).length > 0) return;
+
+  const { name, email, password } = formData;
+
+  try {
+    const endpoint =
+      mode === "signup"
+        ? "http://localhost:8080/api/v1/authentication/register"
+        : "http://localhost:8080/api/v1/authentication/login";
+
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password }),
+    });
+
+    const data = await response.json();
+    console.log("Server response:", data);
+
+    if (response.ok) {
+      alert("Success! You are registered.");
+      navigate("/home");
+    } else {
+      setErrorMsg(data.message || "Something went wrong.");
+    }
+  } catch (error) {
+    console.error("Fetch error:", error);
+    setErrorMsg("Could not connect to backend.");
+  }
+};
+
+
 
     return (
         <div className="container">
