@@ -73,7 +73,13 @@ const handleSubmit = async (event) => {
     console.log("Server response:", data);
 
     if (response.ok) {
-      alert("Success! You are registered.");
+      if (mode === "signup") {
+        alert("Registration successful! Please check your email.");
+      } else {
+        alert("Login successful!");
+        // optional: store the JWT token from backend
+        localStorage.setItem("authToken", data.token);
+      }
       navigate("/home");
     } else {
       setErrorMsg(data.message || "Something went wrong.");
