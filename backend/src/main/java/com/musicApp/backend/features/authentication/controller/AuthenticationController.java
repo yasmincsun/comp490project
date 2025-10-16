@@ -37,10 +37,10 @@ public class AuthenticationController {
     // }
 
     @PostMapping("/register")
-public AuthenticationResponseBody registerPage(@Valid @RequestBody AuthenticationRequestBody registerRequestBody)
+    public AuthenticationResponseBody registerPage(@Valid @RequestBody AuthenticationRequestBody registerRequestBody)
         throws MessagingException, UnsupportedEncodingException {
-    System.out.println("🟢 Received register request for: " + registerRequestBody.getEmail());
-    return authenticationService.register(registerRequestBody);
+            System.out.println("🟢 Received register request for: " + registerRequestBody.getEmail());
+        return authenticationService.register(registerRequestBody);
 }
 
 
