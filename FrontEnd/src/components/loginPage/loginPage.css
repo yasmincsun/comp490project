@@ -50,7 +50,8 @@
     flex-direction: column;
     margin: auto; 
     margin-top: 200px; 
-    width: 800px; 
+    width: 500px; 
+    height: 500px;
     background: #bad5ce;
     padding-bottom: 30px; 
 }
@@ -75,6 +76,8 @@
     height: 6px; 
     background: #111; 
     border-radius: 9px;
+    margin-bottom: 15px;
+
 }
 
 .inputs{ 
