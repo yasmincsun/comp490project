@@ -7,7 +7,9 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
-@Entity(name="users")
+// @Entity(name="users")
+@Entity
+@Table(name = "users")
 public class AuthenticationUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
