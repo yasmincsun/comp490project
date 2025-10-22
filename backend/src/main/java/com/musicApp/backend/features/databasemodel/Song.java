@@ -1,4 +1,4 @@
-package main.java.com.musicApp.backend.features.databasemodel;
+package com.musicApp.backend.features.databasemodel;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;

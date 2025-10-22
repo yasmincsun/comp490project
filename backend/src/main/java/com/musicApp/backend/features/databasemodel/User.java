@@ -1,4 +1,4 @@
-package main.java.com.musicApp.backend.features.databasemodel;
+package com.musicApp.backend.features.databasemodel;
 
 import jakarta.persistence.*;
 import java.util.List;
@@ -54,6 +54,29 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Review> reviews;
 
+    
+
+
     // Getters and setters
-    // ...
+        public void setUsername(String username) {
+        this.username = username;
+    }
+        public String getUsername() {
+        return username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;   
+    }
+
+    public String getPassword() {
+        return password;
+    }   
+
+    public void setCurrentMood(Mood currentMood) {
+        this.currentMood = currentMood;  
+    }
+    public Mood getCurrentMood() {
+        return currentMood;
+    }
 }

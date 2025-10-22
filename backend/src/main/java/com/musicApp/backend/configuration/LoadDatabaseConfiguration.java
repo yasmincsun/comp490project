@@ -1,7 +1,7 @@
 package com.musicApp.backend.configuration;
 
-import main.java.com.musicApp.backend.features.databasemodel.*;
-import main.java.com.musicApp.backend.features.authentication.utils.Encoder;
+import com.musicApp.backend.features.databasemodel.*;
+import com.musicApp.backend.features.authentication.utils.Encoder;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,5 @@
-//ADD Package HERE
+/* 
+import com.musicApp.backend;
 import java.util.Properties;
 
 import jakarta.mail.Authenticator;
@@ -84,4 +85,4 @@ public class EmailSender {
         }
     }
 }
-
+*/

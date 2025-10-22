@@ -1,7 +1,7 @@
-package main.java.com.musicApp.backend.features.databasemodel;
+package com.musicApp.backend.features.databasemodel;
 
-import com.musicApp.backend.features.user.model.User;
-import com.musicApp.backend.features.song.model.Song;
+import com.musicApp.backend.features.databasemodel.User;
+import com.musicApp.backend.features.databasemodel.Song;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
@@ -14,8 +14,9 @@ public class Review {
     private Integer reviewID;
 
     @ManyToOne
-    @JoinColumn(name = "username", referencedColumnName = "username", nullable = true)
+    @JoinColumn(name = "userID", nullable = true)
     private User user;
+
 
     @ManyToOne
     @JoinColumn(name = "songID", nullable = true)

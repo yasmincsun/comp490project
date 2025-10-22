@@ -1,4 +1,4 @@
-package main.java.com.musicApp.backend.features.databasemodel;
+package com.musicApp.backend.features.databasemodel;
 
 
 import jakarta.persistence.*;
@@ -27,6 +27,13 @@ public class Mood {
     @OneToMany(mappedBy = "mood")
     private List<Song> songs;
 
+
+
     // Getters and setters
-    // ...
+    public void setMajorMood(String majorMood) {
+        this.majorMood = majorMood;
+    }
+    public String getMajorMood() {
+        return majorMood;
+    }   
 }

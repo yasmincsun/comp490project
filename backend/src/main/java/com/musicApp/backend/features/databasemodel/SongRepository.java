@@ -1,10 +1,10 @@
-package main.java.com.musicApp.backend.features.databasemodel;
+package com.musicApp.backend.features.databasemodel;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface SongRepository extends JpaRepository<Songs, Integer> {
+public interface SongRepository extends JpaRepository<Song, Integer> {
    
 }
 
