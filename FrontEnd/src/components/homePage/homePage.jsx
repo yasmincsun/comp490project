@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./homePage.css"
 
@@ -6,7 +6,18 @@ import "./homePage.css"
 const HomePage = () => {
     const [mood, setMood] = useState("");
     const [genre, setGenre] = useState("");
+    const [bgColor, setBgColor] = useState("");
     const navigate = useNavigate();
+
+    // apply background color from profile (localStorage)
+    useEffect(() => {
+        try {
+            const data = JSON.parse(localStorage.getItem('profileData') || 'null');
+            if (data && data.bgColor) setBgColor(data.bgColor);
+        } catch (e) {
+            // ignore parse errors
+        }
+    }, []);
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -15,14 +26,21 @@ const HomePage = () => {
     };
 
     return (
-        <div className="homepage-container">
+    <div className="homepage-container" style={bgColor ? { backgroundColor: bgColor } : {}}>
             {/* Login Button Top Right */}
             <div className="homepage-login-btn-topright">
                 <button
                     className="homepage-login-btn"
                     onClick={() => navigate("/login")}
                 >
-                    Login
+                    LOGIN
+                </button>
+                <button
+                    className="homepage-login-btn"
+                    style={{ marginLeft: 12 }}
+                    onClick={() => navigate("/profile")}
+                >
+                    PROFILE
                 </button>
             </div>
             {/* Search Bar at Very Top */}
@@ -69,7 +87,7 @@ const HomePage = () => {
                     className="homepage-login-btn-over-chat"
                     onClick={() => navigate("/login")}
                 >
-                    Login
+                    LOGIN
                 </button>
             </div>
 
