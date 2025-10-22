@@ -28,4 +28,20 @@ public class EmailService {
 
         mailSender.send(message);
     }
+
+    // // New helper to resend verification emails
+    // public void sendVerificationEmail(String email, String verificationToken, long durationInMinutes) {
+    //     String subject = "Email Verification";
+    //     String body = String.format(
+    //         "Only one step to take full advantage of Moody.\n\n" +
+    //         "Enter this code to verify your email: %s. The code will expire in %s minutes.",
+    //         verificationToken, durationInMinutes
+    //     );
+    //     try {
+    //         sendEmail(email, subject, body);
+    //     } catch (Exception e) {
+    //         // Log error, don’t throw to avoid breaking flow
+    //         System.err.println("Error sending verification email: " + e.getMessage());
+    //     }
+    // }
 }

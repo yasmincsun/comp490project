@@ -3,31 +3,70 @@ import React, { useState } from "react";
 export default function EmailVerification() {
   const [code, setCode] = useState("");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [resendMessage, setResendMessage] = useState("");
 
+  // Handle code verification
   const handleVerify = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem("authToken"); // saved during login/register
+    setLoading(true);
+    setMessage("");
+
+  try {
+    // ✅ Add this
+    const token = localStorage.getItem("authToken");
+
+    const response = await fetch(
+      `http://localhost:8080/api/v1/authentication/validate-email-verification-token?token=${code}`,
+      {
+        method: "PUT",
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}` // add JWT here
+        },
+      }
+    );
+
+      const text = await response.text();
+      if (response.ok) {
+        setMessage("✅ Email verified successfully!");
+      } else {
+        setMessage("❌ Invalid or expired code. Please try again.");
+      }
+    } catch (err) {
+      console.error(err);
+      setMessage("⚠️ Error connecting to server.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle resend email verification code
+  const handleResend = async () => {
+    setResendMessage("Sending new code...");
+    const token = localStorage.getItem("authToken"); // only if you store JWT
 
     try {
       const response = await fetch(
-        `http://localhost:8080/api/v1/authentication/validate-email-verification-token?token=${code}`,
+        "http://localhost:8080/api/v1/authentication/resend-email-verification",
         {
-          method: "PUT",
+          method: "POST",
           headers: {
-            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
         }
       );
 
       const text = await response.text();
       if (response.ok) {
-        setMessage("✅ " + text);
+        setResendMessage("✅ Verification email resent! Check your inbox.");
       } else {
-        setMessage("❌ " + text);
+        setResendMessage("❌ Failed to resend email. Please try again.");
       }
     } catch (err) {
-      setMessage("⚠️ Error connecting to server.");
       console.error(err);
+      setResendMessage("⚠️ Error connecting to server.");
     }
   };
 
@@ -44,12 +83,23 @@ export default function EmailVerification() {
         />
         <button
           type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
+          disabled={loading}
         >
-          Verify
+          {loading ? "Verifying..." : "Verify"}
         </button>
       </form>
-      {message && <p className="mt-4">{message}</p>}
+
+      <button
+        onClick={handleResend}
+        className="mt-4 bg-gray-200 px-4 py-2 rounded hover:bg-gray-300"
+      >
+        Resend Code
+      </button>
+
+      {message && <p className="mt-4 text-lg">{message}</p>}
+      {resendMessage && <p className="mt-2 text-sm text-gray-600">{resendMessage}</p>}
     </div>
   );
 }
+
