@@ -176,6 +176,8 @@ public AuthenticationResponseBody register(AuthenticationRequestBody registerReq
     AuthenticationUser user = authenticationUserRepository.save(
             new AuthenticationUser(
                     registerRequestBody.getName(), // 👈 added name
+                    registerRequestBody.getLastName(),
+                    registerRequestBody.getUsername(),
                     registerRequestBody.getEmail(),
                     encoder.encode(registerRequestBody.getPassword())
             )
