@@ -17,6 +17,7 @@ public class AuthenticationUser {
     @NotNull
     @Email
     @Column(unique = true)
+    private String userName;
     private String email;
     private Boolean emailVerified = false;
     private String emailVerificationToken = null;
@@ -25,10 +26,14 @@ public class AuthenticationUser {
     private String password;
     private String passwordResetToken = null;
     private LocalDateTime passwordResetTokenExpiryDate = null;
-    private String name;
+    private String fname;
+    private String lname;
+    
 
-    public AuthenticationUser(String name, String email, String password) {
-        this.name = name;
+    public AuthenticationUser(String fname, String lname, String userName, String email, String password) {
+        this.fname = fname;
+        this.lname = lname;
+        this.userName = userName;
         this.email = email;
         this.password = password;
     }
@@ -102,9 +107,24 @@ public class AuthenticationUser {
     }
 
     public String getName() {
-        return name;
+        return fname;
     }
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String fname) {
+        this.fname = fname;
+    }
+
+    public String getLastName() {
+        return lname;
+    }
+    public void setLastName(String lname) {
+        this.lname = lname;
+    }
+
+    public String getUsername(){
+        return userName;
+    }
+
+    public void setUsername(String userName){
+        this.userName = userName;
     }
 }

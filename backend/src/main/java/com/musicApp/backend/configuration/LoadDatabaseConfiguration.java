@@ -19,7 +19,7 @@ public class LoadDatabaseConfiguration {
     public CommandLineRunner initDatabase(AuthenticationUserRepository authenticationUserRepository){
         return args -> {
             if (authenticationUserRepository.findByEmail("jose@example.com").isEmpty()) {
-            AuthenticationUser authenticationUser = new AuthenticationUser("Jose", "jose@example.com", encoder.encode("jose"));
+            AuthenticationUser authenticationUser = new AuthenticationUser("Jose","Last Name", "jcb123", "jose@example.com", encoder.encode("jose"));
             authenticationUserRepository.save(authenticationUser);
         }
         };
