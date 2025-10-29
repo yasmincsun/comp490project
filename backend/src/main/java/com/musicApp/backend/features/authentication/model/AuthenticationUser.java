@@ -1,13 +1,15 @@
 package com.musicApp.backend.features.authentication.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.musicApp.backend.features.databasemodel.Mood;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
+import com.musicApp.backend.features.databasemodel.*;;
 
 // @Entity(name="users")
 @Entity
@@ -41,6 +43,14 @@ public class AuthenticationUser {
     @ManyToOne
     @JoinColumn(name = "mood_id")
     private Mood currentMood;
+
+    // Playlists owned by this user (mapped by username)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Playlist> playlists;
+
+     // Reviews written by this user
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Review> reviews;
     
     
     
@@ -154,5 +164,13 @@ public class AuthenticationUser {
     public boolean getStatus(){
         return login_status;
     }
-    
+
+    public void setCurrentMood(Mood currentMood) {
+        this.currentMood = currentMood;  
+    }
+
+    public Mood getCurrentMood() {
+         return currentMood;
+    }
+
 }
