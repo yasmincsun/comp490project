@@ -7,7 +7,14 @@ const HomePage = () => {
     const [mood, setMood] = useState("");
     const [genre, setGenre] = useState("");
     const [bgColor, setBgColor] = useState("");
+    const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
     const navigate = useNavigate();
+
+    // Check if user is logged in
+    useEffect(() => {
+        const token = localStorage.getItem("authToken"); // Make sure this matches how you store your JWT
+        setIsLoggedIn(!!token);
+    }, []);
 
     // apply background color from profile (localStorage)
     useEffect(() => {
@@ -15,7 +22,7 @@ const HomePage = () => {
             const data = JSON.parse(localStorage.getItem('profileData') || 'null');
             if (data && data.bgColor) setBgColor(data.bgColor);
         } catch (e) {
-            // ignore parse errors
+            console.error("Error parsing profile data:", e);
         }
     }, []);
 
@@ -25,24 +32,56 @@ const HomePage = () => {
         alert(`Mood: ${mood}, Genre: ${genre}`);
     };
 
+        // 🔹 Handle logout
+    const handleLogout = async () => {
+        try {
+            const token = localStorage.getItem("authToken");
+            await fetch("http://localhost:8080/api/v1/authentication/logout", {
+                method: "PUT",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            });
+            localStorage.removeItem("authToken");; // clear JWT
+            setIsLoggedIn(false);
+            navigate("/login");
+        } catch (error) {
+            console.error("Logout failed:", error);
+        }
+    };
+
     return (
-    <div className="homepage-container" style={bgColor ? { backgroundColor: bgColor } : {}}>
-            {/* Login Button Top Right */}
+        <div className="homepage-container" style={bgColor ? { backgroundColor: bgColor } : {}}>
+            {/* 🔹 Top-right Buttons */}
             <div className="homepage-login-btn-topright">
                 <button
                     className="homepage-login-btn"
-                    onClick={() => navigate("/login")}
+                    onClick={async () => {
+                        if (isLoggedIn) {
+                            await handleLogout(); // logout and redirect
+                        } else {
+                            navigate("/login"); // go to login page
+                        }
+                    }}
                 >
-                    LOGIN
+                    {isLoggedIn ? "LOGOUT" : "LOGIN"}
                 </button>
-                <button
-                    className="homepage-login-btn"
-                    style={{ marginLeft: 12 }}
-                    onClick={() => navigate("/profile")}
-                >
-                    PROFILE
-                </button>
+
+                {isLoggedIn && (
+                    <button
+                        className="homepage-login-btn"
+                        style={{ marginLeft: 12 }}
+                        onClick={() => navigate("/profile")}
+                    >
+                        PROFILE
+                    </button>
+                )}
             </div>
+
+
+
+
             {/* Search Bar at Very Top */}
             <div className="homepage-searchbar-top">
                 <form className="homepage-form-top" onSubmit={handleSearch}>
@@ -83,12 +122,12 @@ const HomePage = () => {
                 <h2>Chat</h2>
                 {/* Chat content here */}
                 {/* Login button overlays the chat sidebar */}
-                <button
+                {/* <button
                     className="homepage-login-btn-over-chat"
                     onClick={() => navigate("/login")}
                 >
                     LOGIN
-                </button>
+                </button> */}
             </div>
 
             {/* Main Content */}
