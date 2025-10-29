@@ -111,12 +111,12 @@ public class AuthenticationController {
             // Validate the verification code
             authenticationService.validateEmailVerificationToken(token, email);
 
-        // ✅ Update the user's login status after successful verification
-        AuthenticationUser user = authenticationUserRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+            // Update the user's login status after successful verification
+            AuthenticationUser user = authenticationUserRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
 
-        user.setLoginStatus(true); // mark as "active" now
-        authenticationUserRepository.save(user);
+            user.setLoginStatus(true); // mark as "active" now
+            authenticationUserRepository.save(user);
 
             return ResponseEntity.ok("Email verified successfully.");
         } catch (IllegalArgumentException e) {
