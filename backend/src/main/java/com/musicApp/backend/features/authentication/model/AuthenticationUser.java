@@ -34,6 +34,9 @@ public class AuthenticationUser {
     private LocalDateTime emailVerificationTokenExpiryDate = null;
     private String passwordResetToken = null;
     private LocalDateTime passwordResetTokenExpiryDate = null;
+    private Boolean login_status = false; //find a way to change when someone is online
+    private int playlist_count;
+    private int friends_count;
 
     @ManyToOne
     @JoinColumn(name = "mood_id")
@@ -139,4 +142,17 @@ public class AuthenticationUser {
     public void setUsername(String username){
         this.username = username;
     }
+
+    public int getFriendCount(){
+        return friends_count;
+    }
+
+    public int getPlaylistCount(){
+        return playlist_count;
+    }
+
+    public boolean getStatus(){
+        return login_status;
+    }
+    
 }
