@@ -161,8 +161,12 @@ public class AuthenticationUser {
         return playlist_count;
     }
 
-    public boolean getStatus(){
+    public boolean getLoginStatus(){
         return login_status;
+    }
+
+    public void setLoginStatus(Boolean login_status){
+        this.login_status = login_status;
     }
 
     public void setCurrentMood(Mood currentMood) {

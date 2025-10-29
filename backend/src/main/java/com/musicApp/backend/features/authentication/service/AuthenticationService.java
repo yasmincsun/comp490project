@@ -263,8 +263,16 @@ public AuthenticationResponseBody register(AuthenticationRequestBody registerReq
         if (!encoder.matches(loginRequestBody.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("Password is incorrect.");
         }
+
+        // Marks user online
+        user.setLoginStatus(true);
+        authenticationUserRepository.save(user);
+
         String token = jsonWebToken.generateToken(loginRequestBody.getEmail());
-        return new AuthenticationResponseBody(token, "Authentication succeeded. ");
+        return new AuthenticationResponseBody(token, "Authentication succeeded. ", 
+        user.getUsername(), 
+        user.getEmail(), 
+        user.getLoginStatus());
     }
 
     
