@@ -17,7 +17,7 @@ public class Playlist {
 
     // Reference user by username (foreign key)
     @ManyToOne
-    @JoinColumn(name = "userID", nullable = true)
+    @JoinColumn(name = "userID", referencedColumnName = "id", nullable = true)
     private AuthenticationUser user;
 
     @Column(nullable = false, length = 100)
