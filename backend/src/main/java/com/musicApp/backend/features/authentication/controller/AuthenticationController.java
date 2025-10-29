@@ -6,9 +6,12 @@ import com.musicApp.backend.features.authentication.model.AuthenticationUser;
 import com.musicApp.backend.features.authentication.service.AuthenticationService;
 import com.musicApp.backend.features.authentication.utils.EmailService;
 import com.musicApp.backend.features.authentication.utils.JsonWebToken;
+import com.musicApp.backend.features.authentication.repository.AuthenticationUserRepository;
 
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.io.UnsupportedEncodingException;
@@ -22,10 +25,14 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
     private final JsonWebToken jsonWebToken;
     private final EmailService emailService;
+    private final AuthenticationUserRepository authenticationUserRepository;
 
-    public AuthenticationController(AuthenticationService authenticationService,
+    @Autowired
+    public AuthenticationController(AuthenticationUserRepository authenticationUserRepository,    
+                                    AuthenticationService authenticationService,
                                     JsonWebToken jsonWebToken,
                                     EmailService emailService) {
+        this.authenticationUserRepository = authenticationUserRepository;
         this.authenticationService = authenticationService;
         this.jsonWebToken = jsonWebToken;
         this.emailService = emailService;
@@ -103,6 +110,13 @@ public class AuthenticationController {
 
             // Validate the verification code
             authenticationService.validateEmailVerificationToken(token, email);
+
+        // ✅ Update the user's login status after successful verification
+        AuthenticationUser user = authenticationUserRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setLoginStatus(true); // mark as "active" now
+        authenticationUserRepository.save(user);
 
             return ResponseEntity.ok("Email verified successfully.");
         } catch (IllegalArgumentException e) {
