@@ -35,7 +35,7 @@ const FormWithValidation = () => {
       setFormErrors({ ...formErrors, name: "Name is required." });
     } 
     else if (name === "lastname" && mode === "signup" && value.trim() === "") {
-      setFormErrors({ ...formErrors, username: "Lastname is required." });
+      setFormErrors({ ...formErrors, lastname: "Lastname is required." });
     } 
     else if (name === "username" && mode === "signup" && value.trim() === "") {
       setFormErrors({ ...formErrors, username: "Username is required." });
@@ -51,79 +51,126 @@ const FormWithValidation = () => {
     }
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+const handleSubmit = async (event) => {
+  event.preventDefault();
 
-    let validationErrors = {};
-    if (mode === "signup") {
-      if (formData.name.trim() === "") validationErrors.name = "Name is required.";
-      if (formData.lastname.trim() === "") validationErrors.lastname = "Lastname is required.";
-      if (formData.username.trim() === "") validationErrors.username = "Username is required.";
-      if (!/^\S+@\S+\.\S+$/.test(formData.email)) validationErrors.email = "Invalid email address.";
-      if (formData.password.trim() === "") validationErrors.password = "Password is required.";
-    } else {
-      if (!/^\S+@\S+\.\S+$/.test(formData.email)) validationErrors.email = "Invalid email address.";
-      if (formData.password.trim() === "") validationErrors.password = "Password is required.";
-    }
+  // 1.) Validate fields
+  const validationErrors = {};
+  if (mode === "signup") {
+    if (!formData.name.trim()) validationErrors.name = "Name is required.";
+    if (!formData.lastname.trim()) validationErrors.lastname = "Last name is required.";
+    if (!formData.username.trim()) validationErrors.username = "Username is required.";
+  }
+  if (!/^\S+@\S+\.\S+$/.test(formData.email)) validationErrors.email = "Invalid email address.";
+  if (!formData.password.trim()) validationErrors.password = "Password is required.";
 
-    setFormErrors(validationErrors);
-    if (Object.keys(validationErrors).length > 0) return;
+  setFormErrors(validationErrors);
+  if (Object.keys(validationErrors).length > 0) return; // Stop if errors
 
-    const { name, username, email, password } = formData;
+  try {
+    const endpoint =
+      mode === "signup"
+        ? "http://localhost:8080/api/v1/authentication/register"
+        : "http://localhost:8080/api/v1/authentication/login";
 
-    try {
-      const endpoint =
-        mode === "signup"
-          ? "http://localhost:8080/api/v1/authentication/register"
-          : "http://localhost:8080/api/v1/authentication/login";
-
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, lastname, username, email, password }),
-      });
-
-      const data = await response.json();
-      console.log("Server response:", data);
-
-      if (response.ok) {
-        if (mode === "signup") {
-          localStorage.setItem("authToken", data.token);
-          alert("Registration successful! Please check your email for the code.");
-          setVerificationMode(true);
-        } else {
-          alert("Login successful!");
-          localStorage.setItem("authToken", data.token);
-          navigate("/home");
+    // 2.) Map frontend field to backend field
+    const payload = mode === "signup"
+      ? {
+          name: formData.name,
+          lastName: formData.lastname, // <-- backend expects camelCase
+          username: formData.username,
+          email: formData.email,
+          password: formData.password
         }
+      : {
+          email: formData.email,
+          password: formData.password
+        };
+
+    // 3.) Send POST request
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+    console.log("Server response:", data);
+
+    if (response.ok) {
+      localStorage.setItem("authToken", data.token);
+
+      if (mode === "signup") {
+        alert("Registration successful! Please check your email for the verification code.");
+        setVerificationMode(true);
       } else {
-        setErrorMsg(data.message || "Something went wrong.");
+        alert("Login successful!");
+        navigate("/home");
       }
-    } catch (error) {
-      console.error("Fetch error:", error);
-      setErrorMsg("Could not connect to backend.");
+    } else {
+      setErrorMsg(data.message || "Something went wrong.");
     }
-  };
+  } catch (error) {
+    console.error("Fetch error:", error);
+    setErrorMsg("Could not connect to backend.");
+  }
+};
+
+
+console.log("Sending verification code:", verificationCode);
 
   const handleVerification = async () => {
-    try {
-      const res = await fetch(
-        `http://localhost:8080/api/v1/authentication/validate-email-verification-token?token=${verificationCode}`,
-        { method: "PUT" }
-      );
+  if (!verificationCode.trim()) {
+    alert("Please enter the verification code.");
+    return;
+  }
 
-      if (res.ok) {
-        alert("Email verified successfully!");
-        setVerificationMode(false);
-        navigate("/home");
-      } else {
-        alert("Invalid or expired code. Please try again.");
+  try {
+    // Attempt query string method
+    let res = await fetch(
+      `http://localhost:8080/api/v1/authentication/validate-email-verification-token?token=${verificationCode}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("authToken") || ""}` // optional
+        }
       }
-    } catch (err) {
-      console.error(err);
-      alert("Error verifying email.");
+    );
+
+    // If 401, try sending token in body instead
+    if (res.status === 401) {
+      res = await fetch(
+        "http://localhost:8080/api/v1/authentication/validate-email-verification-token",
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("authToken") || ""}` // optional
+          },
+          body: JSON.stringify({ token: verificationCode })
+        }
+      );
     }
-  };
+
+    // Parse response
+    const data = await res.json().catch(() => ({}));
+    console.log("Verification response:", res.status, data);
+
+    if (res.ok) {
+      alert("Email verified successfully!");
+      setVerificationMode(false);
+      navigate("/home");
+    } else {
+      // Show backend error message if any
+      alert(data.message || `Verification failed. Status code: ${res.status}`);
+    }
+  } catch (err) {
+    console.error("Error verifying email:", err);
+    alert("Network error or backend not reachable.");
+  }
+};
+
 
   return (
     <div className="container">

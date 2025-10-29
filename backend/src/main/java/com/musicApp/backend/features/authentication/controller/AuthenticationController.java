@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:5173") // adjust if frontend uses a different port
 @RestController
@@ -47,6 +48,40 @@ public class AuthenticationController {
         return authenticationService.register(registerRequestBody);
     }
 
+
+    @PutMapping("/logout")
+    public ResponseEntity<String> logout(@RequestHeader("Authorization") String authHeader) {
+        try {
+            String token = authHeader.replace("Bearer ", "");
+            authenticationService.logout(token);
+            return ResponseEntity.ok("User logged out successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Logout failed: " + e.getMessage());
+        }
+    }
+
+
+    // @PostMapping("/logout")
+    // public ResponseEntity<String> logout(@RequestHeader("Authorization") String authHeader) {
+    //     try {
+    //         String token = authHeader.replace("Bearer ", "");
+    //         String email = jsonWebToken.getEmailFromToken(token);
+
+    //         authenticationService.logout(email);
+    //         return ResponseEntity.ok("Logged out successfully.");
+    //     } catch (Exception e) {
+    //         return ResponseEntity.badRequest().body("Logout failed: " + e.getMessage());
+    //     }
+    // }
+
+    @GetMapping("/online-users")
+    public List<AuthenticationUser> getOnlineUsers() {
+        return authenticationService.getOnlineUsers();
+    }
+
+
+
+
     // @PutMapping("/validate-email-verification-token")
     // public String verifyEmail(@RequestParam String token,
     //                           @RequestAttribute("authenticatedUser") AuthenticationUser user) {
@@ -55,27 +90,27 @@ public class AuthenticationController {
     // }
 
     @PutMapping("/validate-email-verification-token")
-public ResponseEntity<String> verifyEmail(
-        @RequestParam String token,
-        @RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<String> verifyEmail(
+            @RequestParam String token,
+            @RequestHeader("Authorization") String authHeader) {
 
-    try {
-        // Extract the JWT from the header
-        String jwt = authHeader.replace("Bearer ", "");
+        try {
+            // Extract the JWT from the header
+            String jwt = authHeader.replace("Bearer ", "");
 
-        // Get the email from the JWT
-        String email = jsonWebToken.getEmailFromToken(jwt);
+            // Get the email from the JWT
+            String email = jsonWebToken.getEmailFromToken(jwt);
 
-        // Validate the verification code
-        authenticationService.validateEmailVerificationToken(token, email);
+            // Validate the verification code
+            authenticationService.validateEmailVerificationToken(token, email);
 
-        return ResponseEntity.ok("Email verified successfully.");
-    } catch (IllegalArgumentException e) {
-        return ResponseEntity.badRequest().body(e.getMessage());
-    } catch (Exception e) {
-        return ResponseEntity.internalServerError().body("Server error: " + e.getMessage());
+            return ResponseEntity.ok("Email verified successfully.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Server error: " + e.getMessage());
+        }
     }
-}
 
 
     @GetMapping("/send-email-verification-token")

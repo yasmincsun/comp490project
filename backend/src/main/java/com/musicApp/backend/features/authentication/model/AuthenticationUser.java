@@ -36,7 +36,7 @@ public class AuthenticationUser {
     private LocalDateTime emailVerificationTokenExpiryDate = null;
     private String passwordResetToken = null;
     private LocalDateTime passwordResetTokenExpiryDate = null;
-    private Boolean login_status = false; //find a way to change when someone is online
+    private Boolean loginStatus = false; //find a way to change when someone is online
     private int playlist_count;
     private int friends_count;
 
@@ -161,12 +161,12 @@ public class AuthenticationUser {
         return playlist_count;
     }
 
-    public boolean getLoginStatus(){
-        return login_status;
+    public boolean isLoginStatus(){
+        return loginStatus;
     }
 
-    public void setLoginStatus(Boolean login_status){
-        this.login_status = login_status;
+    public void setLoginStatus(Boolean loginStatus){
+        this.loginStatus = loginStatus;
     }
 
     public void setCurrentMood(Mood currentMood) {

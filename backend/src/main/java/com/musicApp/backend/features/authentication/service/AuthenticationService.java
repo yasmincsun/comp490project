@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -272,10 +273,33 @@ public AuthenticationResponseBody register(AuthenticationRequestBody registerReq
         return new AuthenticationResponseBody(token, "Authentication succeeded. ", 
         user.getUsername(), 
         user.getEmail(), 
-        user.getLoginStatus());
+        user.isLoginStatus());
     }
 
-    
+//     public void logout(String email) {
+//     Optional<AuthenticationUser> optionalUser = authenticationUserRepository.findByEmail(email);
+
+//     if (optionalUser.isPresent()) {
+//         AuthenticationUser user = optionalUser.get();
+//         user.setLoginStatus(false);
+//         authenticationUserRepository.save(user);
+//     }
+// }
+
+public void logout(String token) {
+    String email = jsonWebToken.getEmailFromToken(token);
+    AuthenticationUser user = authenticationUserRepository.findByEmail(email)
+            .orElseThrow(() -> new IllegalArgumentException("User not found."));
+
+    user.setLoginStatus(false);
+    authenticationUserRepository.save(user);
+}
+
+public List<AuthenticationUser> getOnlineUsers() {
+    return authenticationUserRepository.findByLoginStatusTrue();
+}
+
+
 
 
 }
