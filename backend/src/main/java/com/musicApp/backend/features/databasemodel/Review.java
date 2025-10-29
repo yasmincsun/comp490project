@@ -1,6 +1,7 @@
 package com.musicApp.backend.features.databasemodel;
 
-import com.musicApp.backend.features.databasemodel.User;
+import com.musicApp.backend.features.authentication.model.AuthenticationUser;
+// import com.musicApp.backend.features.databasemodel.User;
 import com.musicApp.backend.features.databasemodel.Song;
 import jakarta.persistence.*;
 import java.time.LocalDate;
@@ -15,7 +16,7 @@ public class Review {
 
     @ManyToOne
     @JoinColumn(name = "userID", nullable = true)
-    private User user;
+    private AuthenticationUser user;
 
 
     @ManyToOne

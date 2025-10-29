@@ -3,6 +3,8 @@ package com.musicApp.backend.features.databasemodel;
 
 import jakarta.persistence.*;
 import java.util.List;
+import com.musicApp.backend.features.authentication.model.AuthenticationUser;
+
 //Entity class for Mood
 //Uses JPA  to define the entity and its relationships
 @Entity
@@ -21,7 +23,7 @@ public class Mood {
 
     // Bidirectional mapping to Users
     @OneToMany(mappedBy = "currentMood")
-    private List<User> users;
+    private List<AuthenticationUser> users;
 
     // Bidirectional mapping to Songs
     @OneToMany(mappedBy = "mood")

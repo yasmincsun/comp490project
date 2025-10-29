@@ -1,6 +1,8 @@
 package com.musicApp.backend.features.authentication.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.musicApp.backend.features.databasemodel.Mood;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -11,29 +13,39 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "users")
 public class AuthenticationUser {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String fname;
+    private String lname;
+
     @NotNull
-    @Email
     @Column(unique = true)
-    private String userName;
+    private String username;
+
+    @Email
     private String email;
+    
+    @JsonIgnore
+    private String password;
     private Boolean emailVerified = false;
     private String emailVerificationToken = null;
     private LocalDateTime emailVerificationTokenExpiryDate = null;
-    @JsonIgnore
-    private String password;
     private String passwordResetToken = null;
     private LocalDateTime passwordResetTokenExpiryDate = null;
-    private String fname;
-    private String lname;
+
+    @ManyToOne
+    @JoinColumn(name = "mood_id")
+    private Mood currentMood;
+    
+    
     
 
-    public AuthenticationUser(String fname, String lname, String userName, String email, String password) {
+    public AuthenticationUser(String fname, String lname, String username, String email, String password) {
         this.fname = fname;
         this.lname = lname;
-        this.userName = userName;
+        this.username = username;
         this.email = email;
         this.password = password;
     }
@@ -121,10 +133,10 @@ public class AuthenticationUser {
     }
 
     public String getUsername(){
-        return userName;
+        return username;
     }
 
-    public void setUsername(String userName){
-        this.userName = userName;
+    public void setUsername(String username){
+        this.username = username;
     }
 }

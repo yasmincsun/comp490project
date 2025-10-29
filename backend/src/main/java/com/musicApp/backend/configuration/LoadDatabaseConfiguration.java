@@ -1,6 +1,7 @@
 package com.musicApp.backend.configuration;
 
-import com.musicApp.backend.features.databasemodel.*;
+import com.musicApp.backend.features.authentication.model.AuthenticationUser;
+import com.musicApp.backend.features.authentication.repository.AuthenticationUserRepository;
 import com.musicApp.backend.features.authentication.utils.Encoder;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -8,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class LoadDatabaseConfiguration {
-
     private final Encoder encoder;
 
     public LoadDatabaseConfiguration(Encoder encoder) {
@@ -16,32 +16,12 @@ public class LoadDatabaseConfiguration {
     }
 
     @Bean
-    // This method initializes the database with some default data at application startup
-    public CommandLineRunner initDatabase(
-            UserRepository userRepository,
-            MoodRepository moodRepository,
-            PlaylistRepository playlistRepository,
-            SongRepository songRepository,
-            ReviewRepository reviewRepository
-            //add other repositories here if needed
-    ) {
+    public CommandLineRunner initDatabase(AuthenticationUserRepository authenticationUserRepository){
         return args -> {
-        //     if (authenticationUserRepository.findByEmail("jose@example.com").isEmpty()) {
-        //     AuthenticationUser authenticationUser = new AuthenticationUser("Jose","Last Name", "jcb123", "jose@example.com", encoder.encode("jose"));
-        //     authenticationUserRepository.save(authenticationUser);
-        // }
-            // Initialize some moods and users for testing
-            Mood happy = new Mood();
-            happy.setMajorMood("Happy");
-            moodRepository.save(happy);
-            //Test user
-            User user = new User();
-            user.setUsername("exampleUser");
-            user.setPassword(encoder.encode("test"));
-            user.setCurrentMood(happy);
-            userRepository.save(user);
-            //Returns a message to the console when the database is initialized
-            System.out.println("Database initialized.");
+            if (authenticationUserRepository.findByEmail("jose@example.com").isEmpty()) {
+            AuthenticationUser authenticationUser = new AuthenticationUser("Jose", "Test", "test1", "jose@example.com", encoder.encode("jose"));
+            authenticationUserRepository.save(authenticationUser);
+        }
         };
     }
 }

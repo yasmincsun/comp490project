@@ -1,6 +1,7 @@
 package com.musicApp.backend.features.databasemodel;
 
-import com.musicApp.backend.features.databasemodel.User;
+// import com.musicApp.backend.features.databasemodel.User;
+import com.musicApp.backend.features.authentication.model.AuthenticationUser;
 import com.musicApp.backend.features.databasemodel.Song;
 import jakarta.persistence.*;
 import java.time.LocalTime;
@@ -17,7 +18,7 @@ public class Playlist {
     // Reference user by username (foreign key)
     @ManyToOne
     @JoinColumn(name = "userID", nullable = true)
-    private User user;
+    private AuthenticationUser user;
 
     @Column(nullable = false, length = 100)
     private String title;

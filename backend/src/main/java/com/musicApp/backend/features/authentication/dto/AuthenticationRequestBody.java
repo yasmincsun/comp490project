@@ -7,17 +7,17 @@ public class AuthenticationRequestBody {
     private String fname;
     private String lname;
 
-    private String userName;
+    private String username;
 
     @NotBlank(message = "Email is mandatory.")
     private String email;
     @NotBlank(message = "Password is mandatory.")
     private String password;
 
-    public AuthenticationRequestBody(String fname, String lname, String userName, String email, String password) {
+    public AuthenticationRequestBody(String fname, String lname, String username, String email, String password) {
         this.fname = fname;
         this.lname = lname;
-        this.userName = userName;
+        this.username = username;
         this.email = email;
         this.password = password;
     }
@@ -38,10 +38,10 @@ public class AuthenticationRequestBody {
     }
 
     public String getUsername(){
-        return userName;
+        return username;
     }
-    public void setUsername(String userName){
-        this.userName = userName;
+    public void setUsername(String username){
+        this.username = username;
     }
 
         public String getEmail() {
