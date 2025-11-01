@@ -1,0 +1,15 @@
+com\example\spotifymoodlogin\AuthStore.class
+com\example\spotifymoodlogin\HomeController.class
+com\example\spotifymoodlogin\AuthStore$Tokens.class
+com\example\spotifymoodlogin\PlaylistController.class
+com\example\spotifymoodlogin\SpotifyAuthService.class
+com\example\spotifymoodlogin\MoodController.class
+com\example\spotifymoodlogin\AuthController.class
+com\example\spotifymoodlogin\MoodService$MoodResult.class
+com\example\spotifymoodlogin\TopController.class
+com\example\spotifymoodlogin\MoodService$MoodVector.class
+com\example\spotifymoodlogin\SpotifyAuthService$LoginResult.class
+com\example\spotifymoodlogin\MoodMatchers.class
+com\example\spotifymoodlogin\MoodService.class
+com\example\spotifymoodlogin\MoodService$1Scored.class
+com\example\spotifymoodlogin\App.class
