@@ -1,0 +1,72 @@
+.developerpage-container {
+  min-height: 100vh;
+  background-color: #dde2ef;
+  font-family: 'Times New Roman', Times, serif;
+  position: relative;
+}
+
+.developerpage-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  z-index: 100;
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-btn {
+  padding: 10px 20px;
+  font-family: 'Times New Roman', Times, serif;
+  background: transparent;
+  color: #556B2F;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.nav-btn:hover {
+  background: rgba(85, 107, 47, 0.1);
+}
+
+.nav-btn.active {
+  background: rgba(85, 107, 47, 0.1);
+  color: #808000;
+}
+
+.login-btn {
+  padding: 10px 20px;
+  font-family: 'Times New Roman', Times, serif;
+  background: #808000;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  text-transform: uppercase;
+  transition: background-color 0.2s;
+}
+
+.login-btn:hover {
+  background: #6a6b00;
+}
+
+.developerpage-content {
+  padding-top: 100px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 120px 40px 40px;
+}
