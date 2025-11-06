@@ -3,18 +3,22 @@
     position: fixed;
     top: 20px;
     right: 30px;
-    z-index: 100;
+    z-index: 200; /* higher so it appears above other panels */
+    display: flex;
+    gap: 8px;
+    align-items: center;
 }
 .homepage-login-btn {
     padding: 10px 20px;
     font-family: 'Times New Roman', Times, serif;
-    background: #008055;
+    background: #808000;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
-    box-shadow: 0 2px 8px rgba(188, 110, 110, 0.08);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    text-transform: uppercase; /* ensure label is uppercase */
 }
 .homepage-searchbar-top {
     position: fixed;
@@ -50,7 +54,7 @@
 }
 .homepage-sidebar-custom {
     position: fixed;
-    width: 70vw;
+    width: 50vw;
     height: 66vh;
     bottom: 0;
     display: flex;
@@ -181,16 +185,16 @@
 }
 
 .homepage-login-btn {
-    position: absolute;
-    top: 20px;
-    right: 20px;
     padding: 10px 20px;
     font-family: 'Times New Roman', Times, serif;
-    background: #fff;
-    border: 1px solid #556B2F;
+    background: #556B2F; /* dark green */
+    color: #fff;
+    border: none;
     border-radius: 5px;
     cursor: pointer;
-    z-index: 2;
+    font-size: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    text-transform: uppercase;
 }
 
 .homepage-form {
