@@ -44,6 +44,8 @@ dependencies {
 	compile "org.projectlombok:lombok:1.18.34"
 	compile "se.michaelthelin.spotify:spotify-web-api-java:9.2.0"
 	compile "org.slf4j:slf4j-simple:2.0.12"
+
+//
 }
 
 tasks.withType<Test> {
