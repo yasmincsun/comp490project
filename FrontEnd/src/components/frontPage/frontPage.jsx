@@ -15,7 +15,7 @@ const FrontPage = () => {
         <button onClick={() => navigate('/login')} className="login-btn">Log In</button>
       </nav>
       <div className="frontpage-content">
-        <h1>Welcome to MoodMusic</h1>
+        <h1>Welcome to Moody</h1>
         <p>Get personalized music recommendations based on your mood</p>
         <button onClick={() => navigate('/home')} className="start-btn">Get Started</button>
       </div>
