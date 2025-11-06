@@ -1,0 +1,40 @@
+package com.musicApp.backend.features.databasemodel;
+
+import com.musicApp.backend.features.authentication.model.AuthenticationUser;
+// import com.musicApp.backend.features.databasemodel.User;
+import com.musicApp.backend.features.databasemodel.Song;
+import jakarta.persistence.*;
+import java.time.LocalDate;
+
+@Entity
+@Table(name = "reviews")
+public class Review {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer reviewID;
+
+    @ManyToOne
+    @JoinColumn(name = "userID", referencedColumnName = "id", nullable = true)
+    private AuthenticationUser user;
+
+
+    @ManyToOne
+    @JoinColumn(name = "songID", nullable = true)
+    private Song song;
+
+    @Column(length = 100)
+    private String album;
+
+    @Column
+    private Integer rating;
+
+    @Column
+    private LocalDate datePosted;
+
+    @Column(columnDefinition = "TEXT")
+    private String comment;
+
+    // Getters and setters
+    // ...
+}
