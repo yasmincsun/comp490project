@@ -9,14 +9,14 @@ const FrontPage = () => {
     <div className="frontpage-container">
       <nav className="frontpage-nav">
         <div className="nav-buttons">
-          <button onClick={() => navigate('/about')} className="nav-btn">ABOUT</button>
-          <button onClick={() => navigate('/developers')} className="nav-btn">DEVELOPERS</button>
+          <button onClick={() => navigate('/about')} className="nav-btn">About</button>
+          <button onClick={() => navigate('/developers')} className="nav-btn">Developers</button>
         </div>
-        <button onClick={() => navigate('/login')} className="login-btn">Log In</button>
+        <button onClick={() => navigate('/login')} className="login-btn">Login</button>
       </nav>
       <div className="frontpage-content">
         <h1>Welcome to Moody</h1>
-        <p>Get personalized music recommendations based on your mood</p>
+        <p>STUFF WILL BE ADDED HERE WHEN WE HAVE THINGS I CAN ATTACH</p>
       </div>
     </div>
   );

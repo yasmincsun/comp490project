@@ -9,9 +9,9 @@ const DeveloperPage = () => {
     <div className="developerpage-container">
       <nav className="developerpage-nav">
         <div className="nav-buttons">
-          <button onClick={() => navigate('/')} className="nav-btn">HOME</button>
-          <button onClick={() => navigate('/about')} className="nav-btn">ABOUT</button>
-          <button onClick={() => navigate('/developers')} className="nav-btn active">DEVELOPERS</button>
+          <button onClick={() => navigate('/')} className="nav-btn">Front Page</button>
+          <button onClick={() => navigate('/about')} className="nav-btn">About</button>
+          <button onClick={() => navigate('/developers')} className="nav-btn active">Developers</button>
         </div>
         <button onClick={() => navigate('/login')} className="login-btn">Log In</button>
       </nav>
