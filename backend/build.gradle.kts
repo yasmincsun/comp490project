@@ -36,6 +36,14 @@ dependencies {
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+// Maven to Gradle
+
+	compile "org.springframework.boot:spring-boot-dependencies:${spring-boot.version}"
+	compile "org.springframework.boot:spring-boot-starter-web:*"
+	compile "org.projectlombok:lombok:1.18.34"
+	compile "se.michaelthelin.spotify:spotify-web-api-java:9.2.0"
+	compile "org.slf4j:slf4j-simple:2.0.12"
 }
 
 tasks.withType<Test> {
