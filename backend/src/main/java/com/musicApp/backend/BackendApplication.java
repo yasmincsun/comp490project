@@ -18,6 +18,8 @@ public class BackendApplication {
         System.setProperty("DB_PASSWORD", dotenv.get("DB_PASSWORD"));
         System.setProperty("TRUSTSTORE_PASSWORD", dotenv.get("TRUSTSTORE_PASSWORD"));
         System.setProperty("JWT_SECRET", dotenv.get("JWT_SECRET"));
+				System.setProperty("SPOTIFY_CLIENT_ID", dotenv.get("SPOTIFY_CLIENT_ID"));
+				System.setProperty("SPOTIFY_CLIENT_SECRET", dotenv.get("SPOTIFY_CLIENT_SECRET"));
 
 		SpringApplication.run(BackendApplication.class, args);
 	}

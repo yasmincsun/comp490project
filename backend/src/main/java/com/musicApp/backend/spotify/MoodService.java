@@ -1,4 +1,4 @@
-package com.example.spotifymoodlogin;
+package com.musicApp.backend.spotify;
 
 import org.springframework.stereotype.Service;
 import se.michaelthelin.spotify.SpotifyApi;
