@@ -1,4 +1,4 @@
-package com.example.spotifymoodlogin;
+package com.musicApp.backend.spotify;
 
 import java.util.concurrent.ConcurrentHashMap;
 

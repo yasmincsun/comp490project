@@ -1,8 +1,10 @@
-package com.example.spotifymoodlogin;
+package com.musicApp.backend.spotify;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.musicApp.backend.spotify.SpotifyAuthService;
 
 @RestController
 public class HomeController {

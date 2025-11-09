@@ -1,7 +1,11 @@
-package com.example.spotifymoodlogin;
+package com.musicApp.backend.spotify;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import com.musicApp.backend.spotify.MoodService;
+import com.musicApp.backend.spotify.MoodService.MoodResult;
+
 import jakarta.servlet.http.HttpSession;
 
 import java.util.Map;
