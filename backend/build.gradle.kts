@@ -1,3 +1,5 @@
+import org.gradle.external.javadoc.StandardJavadocDocletOptions
+
 plugins {
     java
     id("org.springframework.boot") version "3.5.6"
@@ -51,4 +53,13 @@ dependencies {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.withType<Javadoc> {
+    options.encoding = "UTF-8"
+    (options as StandardJavadocDocletOptions).charSet = "UTF-8"
+}
+
+tasks.javadoc {
+    destinationDir = file("C:/Users/16617/Desktop/JavaDoc490/JavadocOutput")
 }
