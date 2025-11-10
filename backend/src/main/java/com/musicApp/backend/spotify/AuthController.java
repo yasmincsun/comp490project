@@ -49,40 +49,106 @@ public ResponseEntity<?> login(HttpSession session) {
 }
 
 
-  @GetMapping("/callback")
+//   @GetMapping("/callback")
+// public ResponseEntity<?> callback(
+//     @RequestParam(name = "code", required = false) String code,
+//     @RequestParam(name = "state", required = false) String state,
+//     @RequestParam(name = "error", required = false) String errorParam,
+//     HttpSession session,
+//     HttpServletResponse resp
+// ) {
+//     try {
+//       if (errorParam != null) {
+//         log.warn("Spotify returned error param: {}", errorParam);
+//         return ResponseEntity.status(400).body(Map.of("error", errorParam));
+//       }
+//       if (code == null || code.isBlank()) {
+//         log.error("Missing 'code' on /callback");
+//         return ResponseEntity.status(400).body(Map.of("error", "Missing authorization code"));
+//       }
+
+//       String expected = (String) session.getAttribute("oauth_state");
+//       session.removeAttribute("oauth_state");
+//       if (expected != null && state != null && !expected.equals(state)) {
+//         log.error("Invalid state. expected={}, got={}", expected, state);
+//         return ResponseEntity.badRequest().body(Map.of("error", "Invalid state"));
+//       }
+
+//       SpotifyAuthService.LoginResult result = auth.exchangeCode(code);
+//       session.setAttribute("userId", result.userId());
+//       return ResponseEntity.status(302).location(URI.create("/me/top")).build();
+//     } catch (Exception e) {
+//       log.error("Callback error", e);
+//       return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
+//     }
+//   }
+
+
+
+// Callback method modified for testing
+
+@GetMapping("/callback")
 public ResponseEntity<?> callback(
-    @RequestParam(name = "code", required = false) String code,
-    @RequestParam(name = "state", required = false) String state,
-    @RequestParam(name = "error", required = false) String errorParam,
-    HttpSession session,
-    HttpServletResponse resp
+        @RequestParam(name = "code", required = false) String code,
+        @RequestParam(name = "state", required = false) String state,
+        @RequestParam(name = "error", required = false) String errorParam,
+        HttpSession session
 ) {
     try {
-      if (errorParam != null) {
-        log.warn("Spotify returned error param: {}", errorParam);
-        return ResponseEntity.status(400).body(Map.of("error", errorParam));
-      }
-      if (code == null || code.isBlank()) {
-        log.error("Missing 'code' on /callback");
-        return ResponseEntity.status(400).body(Map.of("error", "Missing authorization code"));
-      }
+        log.info("Received /callback request with code: {}, state: {}, error: {}", code, state, errorParam);
 
-      String expected = (String) session.getAttribute("oauth_state");
-      session.removeAttribute("oauth_state");
-      if (expected != null && state != null && !expected.equals(state)) {
-        log.error("Invalid state. expected={}, got={}", expected, state);
-        return ResponseEntity.badRequest().body(Map.of("error", "Invalid state"));
-      }
+        // Check if Spotify returned an error
+        if (errorParam != null) {
+            log.warn("Spotify returned error: {}", errorParam);
+            return ResponseEntity.status(400).body(Map.of("error", errorParam));
+        }
 
-      SpotifyAuthService.LoginResult result = auth.exchangeCode(code);
-      session.setAttribute("userId", result.userId());
-      return ResponseEntity.status(302).location(URI.create("/me/top")).build();
+        // Ensure code is present
+        if (code == null || code.isBlank()) {
+            log.error("Missing 'code' parameter in /callback");
+            return ResponseEntity.status(400).body(Map.of("error", "Missing authorization code"));
+        }
+
+        // Validate state
+        String expectedState = (String) session.getAttribute("oauth_state");
+        session.removeAttribute("oauth_state");
+        if (expectedState != null && state != null && !expectedState.equals(state)) {
+            log.error("Invalid state parameter. Expected: {}, Got: {}", expectedState, state);
+            return ResponseEntity.status(400).body(Map.of("error", "Invalid state"));
+        }
+
+        // Attempt to exchange the code for an access token
+        SpotifyAuthService.LoginResult result;
+        try {
+            log.info("Exchanging authorization code with Spotify...");
+            result = auth.exchangeCode(code);
+            log.info("Exchange successful. User ID: {}", result.userId());
+        } catch (Exception e) {
+            log.error("Spotify code exchange failed", e);
+            return ResponseEntity.status(500).body(Map.of(
+                    "error", "Spotify code exchange failed",
+                    "detail", e.getMessage()
+            ));
+        }
+
+        // Store user info in session
+        session.setAttribute("userId", result.userId());
+        log.info("User session updated with userId: {}", result.userId());
+
+        // Redirect to /me/top
+        return ResponseEntity.status(302).location(URI.create("/me/top")).build();
+
     } catch (Exception e) {
-      log.error("Callback error", e);
-      return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
+        log.error("Unexpected callback error", e);
+        return ResponseEntity.status(500).body(Map.of(
+                "error", "Unexpected server error",
+                "detail", e.getMessage()
+        ));
     }
-  }
+}
 
+///////////////////////////////////////////
+  
   @PostMapping("/logout")
   public ResponseEntity<?> logout(HttpSession session) {
     String userId = (String) session.getAttribute("userId");

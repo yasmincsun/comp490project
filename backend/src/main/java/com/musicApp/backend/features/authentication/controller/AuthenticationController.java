@@ -51,7 +51,7 @@ public class AuthenticationController {
     @PostMapping("/register")
     public AuthenticationResponseBody registerPage(@Valid @RequestBody AuthenticationRequestBody registerRequestBody)
             throws MessagingException, UnsupportedEncodingException {
-        System.out.println("🟢 Received register request for: " + registerRequestBody.getEmail());
+        System.out.println("Received register request for: " + registerRequestBody.getEmail());
         return authenticationService.register(registerRequestBody);
     }
 
@@ -68,33 +68,11 @@ public class AuthenticationController {
     }
 
 
-    // @PostMapping("/logout")
-    // public ResponseEntity<String> logout(@RequestHeader("Authorization") String authHeader) {
-    //     try {
-    //         String token = authHeader.replace("Bearer ", "");
-    //         String email = jsonWebToken.getEmailFromToken(token);
-
-    //         authenticationService.logout(email);
-    //         return ResponseEntity.ok("Logged out successfully.");
-    //     } catch (Exception e) {
-    //         return ResponseEntity.badRequest().body("Logout failed: " + e.getMessage());
-    //     }
-    // }
-
     @GetMapping("/online-users")
     public List<AuthenticationUser> getOnlineUsers() {
         return authenticationService.getOnlineUsers();
     }
 
-
-
-
-    // @PutMapping("/validate-email-verification-token")
-    // public String verifyEmail(@RequestParam String token,
-    //                           @RequestAttribute("authenticatedUser") AuthenticationUser user) {
-    //     authenticationService.validateEmailVerificationToken(token, user.getEmail());
-    //     return "Email verified successfully.";
-    // }
 
     @PutMapping("/validate-email-verification-token")
     public ResponseEntity<String> verifyEmail(
@@ -162,4 +140,8 @@ public class AuthenticationController {
                     .body("Failed to resend verification email: " + e.getMessage());
         }
     }
+
+
+
+
 }

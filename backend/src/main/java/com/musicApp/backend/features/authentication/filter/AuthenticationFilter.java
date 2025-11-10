@@ -22,8 +22,10 @@ public class AuthenticationFilter extends HttpFilter {
             "/api/v1/authentication/register",
             "/api/v1/authentication/send-password-reset-token",
             "/api/v1/authentication/reset-password",
-            "/login",        // Spotify login
-            "/callback"
+            // Spotify login
+            "/login",        
+            "/callback",
+            "/me/top"
     );
 
     private final JsonWebToken jsonWebTokenService;
@@ -37,6 +39,16 @@ public class AuthenticationFilter extends HttpFilter {
 
     @Override
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+       
+        // Using for testing
+        System.out.println("Request URI: " + request.getRequestURI());
+        System.out.println("Authorization header: " + request.getHeader("Authorization"));
+        System.out.println("Unsecured endpoints: " + unsecuredEndpoints);
+        /////////////////////
+       
+       
+       
+       
         response.addHeader("Access-Control-Allow-Origin", "*");
         response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         response.addHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
@@ -48,12 +60,29 @@ public class AuthenticationFilter extends HttpFilter {
 
         String path = request.getRequestURI();
 
-        if(unsecuredEndpoints.contains(path)){
-            chain.doFilter(request, response);
-            return;
-        }
+        // if(unsecuredEndpoints.contains(path)){
+        //     chain.doFilter(request, response);
+        //     return;
+        // }
+
+//         boolean isUnsecured = unsecuredEndpoints.stream().anyMatch(path::startsWith);
+//         if (isUnsecured) {
+//             chain.doFilter(request, response);
+//             return;
+// }
+
+        if (unsecuredEndpoints.contains(path) 
+        || path.startsWith("/static/")  // Optional: skip all static resources
+        || path.endsWith(".ico")        // Favicon
+        || path.endsWith(".js")         // JS files
+        || path.endsWith(".css")) {     // CSS files
+        chain.doFilter(request, response);
+        return;
+    }
+
 
         try{
+            System.out.println("Request URI: " + path);
             String authorization = request.getHeader("Authorization");
 
             if(authorization == null || !authorization.startsWith("Bearer ")){
