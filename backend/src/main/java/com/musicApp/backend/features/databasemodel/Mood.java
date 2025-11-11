@@ -6,7 +6,9 @@ import java.util.List;
 import com.musicApp.backend.features.authentication.model.AuthenticationUser;
 
 //Entity class for Mood
-//Uses JPA  to define the entity and its relationships
+//Uses JPA  to define the entity and its relationships. It creates a table named "moods" with fields 
+//for moodID, majorMood, and subCategory.
+//Author: M. Alfaro
 @Entity
 @Table(name = "moods")
 public class Mood {
