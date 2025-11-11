@@ -1,3 +1,37 @@
+/**
+ * Class Name: AuthenticationUser
+ * Package: com.musicApp.backend.features.authentication.model
+ * Date: November 10, 2025
+ * @author Jose Bastidas
+ *
+ *
+ * Important Functions:
+ * - Standard getters and setters for all fields.
+ * - getEmail(), getUsername(), getPassword(), getLoginStatus(), etc.
+ * - JPA-managed relationships:
+ *     - playlists: List<Playlist> owned by user
+ *     - reviews: List<Review> created by user
+ *     - currentMood: Mood entity associated with the user
+ *
+ * Data Structures:
+ * - Basic fields: Strings for username, email, password, first/last name
+ * - Boolean flags: emailVerified, loginStatus
+ * - Tokens and expiry dates: String emailVerificationToken, passwordResetToken; LocalDateTime expiry dates
+ * - Counters: int friends_count, playlist_count
+ * - Relationships: List<Playlist>, List<Review>, Mood
+ *
+ * Algorithms / Design Decisions:
+ * - Immutability is not strictly enforced due to JPA requirement for proxy objects.
+ * - Token and expiry fields allow time-based verification for email confirmation
+ *   and password reset workflows.
+ * - CascadeType.ALL and orphanRemoval = true ensure that related playlists and
+ *   reviews are automatically deleted when a user is deleted, maintaining referential integrity.
+ * - Email validation (@Email) and NotNull constraints for username enforce data integrity
+ *   at the database level.
+ * - loginStatus boolean tracks online presence of a user in real time (updated via service layer).
+
+ */
+
 package com.musicApp.backend.features.authentication.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -11,6 +45,18 @@ import java.util.List;
 
 import com.musicApp.backend.features.databasemodel.*;;
 
+/**
+ * This class represents the user entity for the MusicApp backend and maps to the
+ * "users" table in the database. It stores all relevant user information, including
+ * authentication credentials, account status, social data (friends, playlists), and
+ * mood tracking. <br>
+ * 
+ * It is annotated as a JPA Entity and integrates with Hibernate for ORM.<br>
+ * Relationships:<br>
+ * - Many-to-one relationship with Mood (current mood of user)<br>
+ * - One-to-many relationship with Playlist (user-owned playlists)<br>
+ * - One-to-many relationship with Review (reviews written by user)
+ */
 // @Entity(name="users")
 @Entity
 @Table(name = "users")

@@ -1,3 +1,20 @@
+/**
+ * Class Name: EmailService
+ * Package: com.musicApp.backend.features.authentication.utils
+ * Date: November 10, 2025
+ * Programmer: Jose Bastidas
+ *
+ * Data Structures:
+ * - Uses MimeMessage and MimeMessageHelper (from Jakarta Mail) to structure the email.
+ *
+ * Algorithms / Design Decisions:
+ * - Uses JavaMailSender for email delivery.
+ * - The helper ensures proper encoding and allows HTML content in emails.
+ * - Designed as a service bean to be injected into other classes (like AuthenticationService)
+ *   for separation of concerns and testability.
+ * - No complex algorithms; focuses on reliable email delivery.
+ */
+
 package com.musicApp.backend.features.authentication.utils;
 
 import jakarta.mail.MessagingException;
@@ -8,6 +25,11 @@ import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
 
+/**
+ * Service class responsible for sending emails through the JavaMailSender.
+ * It is used for sending email verification tokens, password reset codes,
+ * and any other email notifications to users of the MusicApp backend.
+ */
 @Service
 public class EmailService {
     private final JavaMailSender mailSender;
@@ -16,6 +38,20 @@ public class EmailService {
         this.mailSender = mailSender;
     }
 
+    /**
+    *     Sends an email to the specified recipient with the provided subject and HTML content.
+    *     Inputs:
+    *       - email: Recipient's email address
+    *       - subject: Subject line of the email
+    *       - content: Email body (can contain HTML)
+    *     Outputs: None
+    *     Throws: MessagingException, UnsupportedEncodingException if the email cannot be sent.
+     * @param email
+     * @param subject
+     * @param content
+     * @throws MessagingException
+     * @throws UnsupportedEncodingException
+     */
     public void sendEmail(String email, String subject, String content) throws MessagingException, UnsupportedEncodingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
@@ -29,19 +65,4 @@ public class EmailService {
         mailSender.send(message);
     }
 
-    // // New helper to resend verification emails
-    // public void sendVerificationEmail(String email, String verificationToken, long durationInMinutes) {
-    //     String subject = "Email Verification";
-    //     String body = String.format(
-    //         "Only one step to take full advantage of Moody.\n\n" +
-    //         "Enter this code to verify your email: %s. The code will expire in %s minutes.",
-    //         verificationToken, durationInMinutes
-    //     );
-    //     try {
-    //         sendEmail(email, subject, body);
-    //     } catch (Exception e) {
-    //         // Log error, don’t throw to avoid breaking flow
-    //         System.err.println("Error sending verification email: " + e.getMessage());
-    //     }
-    // }
 }
