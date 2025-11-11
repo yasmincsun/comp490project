@@ -1,3 +1,40 @@
+/**
+ * Class Name: AuthenticationService
+ * Package: com.musicApp.backend.features.authentication.service
+ * Date: November 10, 2025
+ * Programmer: Jose Bastidas
+ *
+ 
+ * Important Functions:
+ *
+ *
+ * Data Structures:
+ * - Optional<AuthenticationUser> for safe retrieval of users
+ * - List<AuthenticationUser> for online users
+ * - LocalDateTime for token expiry tracking
+ * - String for hashed tokens and passwords
+ *
+ * Algorithms / Design Decisions:
+ * - Email verification & password reset token generation:
+ *     Uses SecureRandom to generate a 5-digit numeric token.
+ *     Tokens are hashed using Encoder for secure storage.
+ *     Expiry is handled via LocalDateTime, providing time-based validation.
+ *
+ * - JWT-based authentication:
+ *     JsonWebToken utility generates stateless tokens for session management.
+ *     Chosen over session-based methods for scalability in REST API.
+ *
+ * - Login status management:
+ *     login() and logout() update a boolean field in the database to track online users.
+ *
+ * - Registration flow:
+ *     Password is securely hashed.
+ *     Email verification token is sent immediately to prevent unauthorized login.
+ *
+ * - Password reset flow:
+ *     Token expiration is enforced, and old tokens are cleared after use.
+ */
+
 package com.musicApp.backend.features.authentication.service;
 
 import com.musicApp.backend.features.authentication.dto.AuthenticationRequestBody;
@@ -16,6 +53,17 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * This service class provides the core authentication and user management logic
+ * for the MusicApp backend. It handles registration, login, logout, email verification,
+ * password resets, and retrieval of online users. <br>
+ *
+ * It integrates with:<br>
+ * - AuthenticationUserRepository for database operations<br>
+ * - Encoder for password/token hashing<br>
+ * - JsonWebToken for JWT generation and verification<br>
+ * - EmailService for sending emails to users<br>
+ */
 @Service
 public class AuthenticationService {
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
@@ -34,6 +82,23 @@ public class AuthenticationService {
         this.emailService = emailService;
     }
 
+
+/**
+    * Generates a random numeric email verification token consisting of 5 digits.
+    * <p>
+    * This method uses a cryptographically secure random number generator
+    * ({@link java.security.SecureRandom}) to ensure that each token is unpredictable
+    * and suitable for use in verification processes such as email confirmation codes.
+    * </p>
+    *
+    * @return A {@link String} containing a randomly generated 5-digit numeric token.
+    * 
+    * <p><b>Example Output:</b> "38429"</p>
+    *
+    * <p><b>Inputs:</b> None</p>
+    * <p><b>Outputs:</b> String — a 5-digit random numeric token</p>
+     * @return
+    */
     public static String generateEmailVerificationToken() {
         SecureRandom random = new SecureRandom();
         StringBuilder token = new StringBuilder(5);
@@ -43,30 +108,14 @@ public class AuthenticationService {
         return token.toString();
     }
 
-    // public void sendEmailVerificationToken(String email) {
-    //     Optional<AuthenticationUser> user = authenticationUserRepository.findByEmail(email);
-    //     if (user.isPresent() && !user.get().getEmailVerified()) {
-    //         String emailVerificationToken = generateEmailVerificationToken();
-    //         String hashedToken = encoder.encode(emailVerificationToken);
-    //         user.get().setEmailVerificationToken(hashedToken);
-    //         user.get().setEmailVerificationTokenExpiryDate(LocalDateTime.now().plusMinutes(durationInMinutes));
-    //         authenticationUserRepository.save(user.get());
-    //         String subject = "Email Verification";
-    //         String body = String.format("Only one step to take full advantage of the Moody APP.\n\n"
-    //                         + "Enter this code to verify your email: " + "%s\n\n" + "The code will expire in " + "%s"
-    //                         + " minutes.",
-    //                 emailVerificationToken, durationInMinutes);
-    //         try {
-    //             emailService.sendEmail(email, subject, body);
-    //         } catch (Exception e) {
-    //             logger.info("Error while sending email: {}", e.getMessage());
-    //         }
-    //     } else {
-    //         throw new IllegalArgumentException("Email verification token failed, or email is already verified.");
-    //     }
-    // }
 
-
+/**
+ *     Generates a random 5-digit numeric token, hashes it, stores it with expiry,
+ *     and sends an email to the user for verification.
+ *     Inputs: User email
+ *     Outputs: None
+ * @param email
+ */
 public void sendEmailVerificationToken(String email) {
     Optional<AuthenticationUser> userOpt = authenticationUserRepository.findByEmail(email);
 
@@ -105,30 +154,14 @@ public void sendEmailVerificationToken(String email) {
 
 
 
-
-
-
-
-    // public void validateEmailVerificationToken(String token, String email) {
-    //     Optional<AuthenticationUser> user = authenticationUserRepository.findByEmail(email);
-    //     if (user.isPresent() && encoder.matches(token, user.get().getEmailVerificationToken())
-    //             && !user.get().getEmailVerificationTokenExpiryDate().isBefore(LocalDateTime.now())) {
-    //         user.get().setEmailVerified(true);
-    //         user.get().setEmailVerificationToken(null);
-    //         user.get().setEmailVerificationTokenExpiryDate(null);
-    //         authenticationUserRepository.save(user.get());
-    //     } else if (user.isPresent() && encoder.matches(token, user.get().getEmailVerificationToken())
-    //             && user.get().getEmailVerificationTokenExpiryDate().isBefore(LocalDateTime.now())) {
-    //         throw new IllegalArgumentException("Email verification token expired.");
-    //     } else {
-    //         throw new IllegalArgumentException("Email verification token failed.");
-    //     }
-    // }
-
-
-
-
-
+/**
+ *     Validates the email verification token, checks expiry, and marks email as verified.
+ *     Inputs: Token, email
+ *     Outputs: None
+ *
+ * @param token
+ * @param email
+ */
 public void validateEmailVerificationToken(String token, String email) {
     Optional<AuthenticationUser> userOpt = authenticationUserRepository.findByEmail(email);
 
@@ -160,18 +193,25 @@ public void validateEmailVerificationToken(String token, String email) {
 
 
 
-
+/**
+ *     Retrieves the AuthenticationUser from the repository.
+ * @param email
+ * @return
+ */
     public AuthenticationUser getUser(String email){
         return authenticationUserRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
 
-//    public AuthenticationResponseBody register(AuthenticationRequestBody registerRequestBody) throws MessagingException, UnsupportedEncodingException {
-//        authenticationUserRepository.save(new AuthenticationUser(registerRequestBody.getEmail(), encoder.encode(registerRequestBody.getPassword())));
-//        String token = jsonWebToken.generateToken(registerRequestBody.getEmail());
-//        emailService.sendEmail(registerRequestBody.getEmail(), "Some subject", "Somebody");
-//        return new AuthenticationResponseBody(token, "User registered successfully");
-//    }
 
+
+/**
+ *     Registers a new user, encodes their password, generates an email verification token,
+ *     sends the verification email, and returns a JWT in the AuthenticationResponseBody.
+ *     Inputs: AuthenticationRequestBody containing user details
+ *     Outputs: AuthenticationResponseBody containing JWT and status message
+ * @param registerRequestBody
+ * @return
+ */
 public AuthenticationResponseBody register(AuthenticationRequestBody registerRequestBody) {
     // Save new user with name, email, and encoded password
     AuthenticationUser user = authenticationUserRepository.save(
@@ -214,7 +254,10 @@ public AuthenticationResponseBody register(AuthenticationRequestBody registerReq
 
 
 
-
+/**
+ * Generates a password reset token and sends it to the user's email.
+ * @param email
+ */
     public void sendPasswordResetToken(String email) {
         Optional<AuthenticationUser> user = authenticationUserRepository.findByEmail(email);
         if (user.isPresent()) {
@@ -239,6 +282,13 @@ public AuthenticationResponseBody register(AuthenticationRequestBody registerReq
         }
     }
 
+
+    /**
+     * Validates the reset token, updates the user's password, and clears token fields.
+     * @param email
+     * @param newPassword
+     * @param token
+     */
     public void resetPassword(String email, String newPassword, String token) {
         Optional<AuthenticationUser> user = authenticationUserRepository.findByEmail(email);
         if (user.isPresent() && encoder.matches(token, user.get().getPasswordResetToken())
@@ -258,7 +308,14 @@ public AuthenticationResponseBody register(AuthenticationRequestBody registerReq
 
 
 
-
+    /**
+    *     Authenticates a user by verifying email and password, marks them as online,
+    *     and returns a JWT in the AuthenticationResponseBody.
+    *     Inputs: AuthenticationRequestBody
+    *     Outputs: AuthenticationResponseBody
+    * @param loginRequestBody
+    * @return
+    */
     public AuthenticationResponseBody login(AuthenticationRequestBody loginRequestBody) {
         AuthenticationUser user = authenticationUserRepository.findByEmail(loginRequestBody.getEmail()).orElseThrow(() -> new IllegalArgumentException("User not found."));
         if (!encoder.matches(loginRequestBody.getPassword(), user.getPassword())) {
@@ -276,16 +333,15 @@ public AuthenticationResponseBody register(AuthenticationRequestBody registerReq
         user.isLoginStatus());
     }
 
-//     public void logout(String email) {
-//     Optional<AuthenticationUser> optionalUser = authenticationUserRepository.findByEmail(email);
 
-//     if (optionalUser.isPresent()) {
-//         AuthenticationUser user = optionalUser.get();
-//         user.setLoginStatus(false);
-//         authenticationUserRepository.save(user);
-//     }
-// }
 
+/**
+ *   logout(String token):
+ *     Marks the user associated with the JWT as offline.
+ *     Inputs: JWT string
+ *     Outputs: None
+ * @param token
+ */
 public void logout(String token) {
     String email = jsonWebToken.getEmailFromToken(token);
     AuthenticationUser user = authenticationUserRepository.findByEmail(email)
@@ -295,6 +351,10 @@ public void logout(String token) {
     authenticationUserRepository.save(user);
 }
 
+/**
+ *  Returns a list of all currently logged-in users.
+ * @return
+ */
 public List<AuthenticationUser> getOnlineUsers() {
     return authenticationUserRepository.findByLoginStatusTrue();
 }

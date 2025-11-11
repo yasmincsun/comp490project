@@ -1,3 +1,27 @@
+/**
+ * Class Name: JsonWebToken
+ * Package: com.musicApp.backend.features.authentication.utils
+ * Date: November 10, 2025
+ * @author Jose Bastidas
+ *
+
+
+ *
+ * Data Structures:
+ * - Uses Claims (from io.jsonwebtoken) for JWT payload
+ * - Uses SecretKey for HMAC signing
+ * - Uses RestTemplate to fetch JSON Web Keys from Google
+ *
+ * Algorithms / Design Decisions:
+ * - JWT tokens are generated using HMAC-SHA256 for integrity and authenticity
+ * - Token expiration is set to 10 hours (configurable)
+ * - Google OAuth ID tokens are validated against Google's public keys (JWKs)
+ *   using RSA key reconstruction from modulus/exponent
+ * - Designed for stateless authentication and secure token verification
+ * - Chosen because JWT is standard for secure stateless authentication and
+ *   works well with web/mobile applications
+ */
+
 package com.musicApp.backend.features.authentication.utils;
 
 import io.jsonwebtoken.Claims;
@@ -22,6 +46,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * Utility class for generating, validating, and extracting claims from JSON Web Tokens (JWTs).
+ * Handles authentication tokens for users in the MusicApp backend, as well as validation of
+ * Google OAuth ID tokens using public keys fetched from Google's JWK endpoint.
+ */
 @Component
 public class JsonWebToken {
     private final RestTemplate restTemplate;
@@ -32,10 +61,21 @@ public class JsonWebToken {
         this.restTemplate = restTemplate;
     }
 
+    /**
+     * Generates a SecretKey from the configured secret for HMAC-SHA signing.
+     * @return
+     */
     public SecretKey getKey() {
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
+    /**
+     * Generates a JWT token with the user's email as the subject.
+     *     Inputs: email - the user's email
+     *     Outputs: JWT string, signed with HMAC-SHA256, valid for 10 hours
+     * @param email
+     * @return
+     */
     public String generateToken(String email) {
         return Jwts.builder()
                 .subject(email)
@@ -45,6 +85,13 @@ public class JsonWebToken {
                 .compact();
     }
 
+    /**
+     *     Extracts all claims from a JWT.
+     *     Inputs: JWT token string
+     *     Outputs: Claims object containing all claims
+     * @param token
+     * @return
+     */
     private Claims extractAllClaims(String token) {
         return Jwts.parser()
                 .verifyWith(getKey())
@@ -53,6 +100,15 @@ public class JsonWebToken {
                 .getPayload();
     }
 
+
+
+    /**
+     *     Retrieves the email (subject) from a JWT token.
+     *     Inputs: JWT token string
+     *     Outputs: Email as String
+     * @param token
+     * @return
+     */
     public String getEmailFromToken(String token) {
         return extractClaim(token, Claims::getSubject);
     }
@@ -63,7 +119,13 @@ public class JsonWebToken {
     }
 
 
-
+    /**
+     *     Checks whether a JWT token has expired.
+     *     Inputs: JWT token string
+     *     Outputs: boolean
+     * @param token
+     * @return
+     */
     public boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
@@ -73,6 +135,13 @@ public class JsonWebToken {
     }
 
 
+    /**
+     *     Validates a Google OAuth ID token using JWKs from Google and returns the claims.
+     *     Inputs: Google ID token string
+     *     Outputs: Claims extracted from the token
+     * @param idToken
+     * @return
+     */
     public Claims getClaimsFromGoogleOauthIdToken(String idToken) {
         try {
             ResponseEntity<Map<String, Object>> response = restTemplate.exchange("https://www.googleapis.com/oauth2/v3/certs", HttpMethod.GET, null, new ParameterizedTypeReference<>() {

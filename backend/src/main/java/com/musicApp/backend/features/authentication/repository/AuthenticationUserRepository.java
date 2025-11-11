@@ -1,3 +1,21 @@
+/**
+ * Interface Name: AuthenticationUserRepository
+ * Package: com.musicApp.backend.features.authentication.repository
+ * Date: November 10, 2025
+ * @author Jose Bastidas
+ *
+
+ * Data Structures:
+ * - Returns Optional<AuthenticationUser> for safe handling of null results.
+ * - Returns List<AuthenticationUser> for multiple users matching a query.
+ *
+ * Algorithms / Design Decisions:
+ * - This repository leverages Spring Data JPA’s query derivation mechanism, meaning
+ *   method names are automatically converted into SQL queries based on naming conventions.
+ * - Optional return types reduce the risk of NullPointerException in service layers.
+ * - The login status query is designed for real-time user tracking.
+ */
+
 package com.musicApp.backend.features.authentication.repository;
 
 import com.musicApp.backend.features.authentication.model.AuthenticationUser;
@@ -6,11 +24,34 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * This interface is a Spring Data JPA repository for managing AuthenticationUser entities.
+ * It provides CRUD operations, as well as custom query methods for retrieving users
+ * based on email, username, and login status.
+ */
 public interface AuthenticationUserRepository extends JpaRepository<AuthenticationUser, Long> {
+    /**
+     * Finds a user by their email address. Returns Optional
+     * to safely handle the case where no user exists with the given email.
+     * @param email
+     * @return
+     */
     Optional<AuthenticationUser> findByEmail(String email);
 
+    /**
+     * Finds a user by their unique username. Also
+     * returns an Optional for safe null handling.
+     * @param username
+     * @return
+     */
     Optional<AuthenticationUser> findByUsername(String username);
 
+
+    /**
+     * Retrieves a list of all users who are currently marked
+     * as logged in (loginStatus == true). Useful for displaying online users.
+     * @return
+     */
     // Find all currently logged-in users
     List<AuthenticationUser> findByLoginStatusTrue();
 }

@@ -1,3 +1,32 @@
+/**
+ * Class Name: AuthenticationFilter
+ * Package: com.musicApp.backend.features.authentication.filter
+ * Date: November 10, 2025
+ * Programmer: Jose Bastidas
+ *
+
+ * Data Structures:
+ * - List<String> unsecuredEndpoints:
+ *     Stores endpoint paths that do not require authentication.
+ *     Implemented as a fixed-size List created from Arrays.asList() for efficient lookup.
+ * - AuthenticationUser:
+ *     Domain model representing the authenticated user. Attached to the request
+ *     attributes after successful verification.
+ *
+ * Algorithms:
+ * - Token Validation Algorithm:
+ *     Steps:
+ *       1. Extract the "Authorization" header.
+ *       2. Verify the presence of a Bearer token.
+ *       3. Use JsonWebToken utility to check token expiration.
+ *       4. Decode the email embedded in the token.
+ *       5. Retrieve the corresponding user record via AuthenticationService.
+ *     - The algorithm is linear in time (O(1) per request) because it involves
+ *       only direct lookups and decoding operations.
+ *     - Chosen over alternatives like session-based authentication for scalability,
+ *       since JWT-based validation is stateless and ideal for distributed REST APIs.
+ */
+
 package com.musicApp.backend.features.authentication.filter;
 
 
@@ -15,6 +44,17 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * The AuthenticationFilter is a servlet filter that intercepts all incoming HTTP
+ * requests to validate authentication tokens (JWTs) before allowing access to
+ * protected endpoints. It ensures that only authorized users can access secured
+ * parts of the API. <br>
+ *
+ * The filter integrates with the AuthenticationService and JsonWebToken utility
+ * classes to validate tokens and retrieve authenticated user details.
+ * Certain endpoints are explicitly excluded from authentication checks, such as
+ * login, registration, and password reset routes.
+ */
 @Component
 public class AuthenticationFilter extends HttpFilter {
     private final List<String> unsecuredEndpoints = Arrays.asList(
@@ -23,9 +63,15 @@ public class AuthenticationFilter extends HttpFilter {
             "/api/v1/authentication/send-password-reset-token",
             "/api/v1/authentication/reset-password",
             // Spotify login
-            "/login",        
+            "/login",
+            "/logout",        
             "/callback",
-            "/me/top"
+            "/me/top",
+            "/mood/by",
+            "/playlist",
+            "/playlist/add",
+            "/playlist/from-mood"
+
     );
 
     private final JsonWebToken jsonWebTokenService;
@@ -37,6 +83,20 @@ public class AuthenticationFilter extends HttpFilter {
 
     }
 
+    /**
+     *doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain):
+    *     The core filtering method. It checks whether the request targets a secured
+    *     endpoint. If so, it verifies the Authorization header and validates the
+    *     JWT. Upon success, it attaches the authenticated user to the request
+    *     context for downstream access by controllers.<br>
+    *     Inputs:<br>
+    *         - HttpServletRequest: the incoming request<br>
+    *         - HttpServletResponse: the outgoing response<br>
+    *         - FilterChain: allows continuation of the request-processing chain<br>
+    *     Outputs:<br>
+    *         - Calls chain.doFilter() to continue request flow if authenticated<br>
+    *         - Returns 401 Unauthorized with JSON message if authentication fails<br>
+     */
     @Override
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
        
