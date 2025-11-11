@@ -7,6 +7,11 @@ import jakarta.persistence.*;
 import java.time.LocalTime;
 import java.util.List;
 
+//Entity class for Playlist
+//Uses JPA  to define the entity and its relationships. It creates a table named "playlists" with fields 
+//for playlistID, userID, title, comment, privacy, runtime, and songs.
+//Author: M. Alfaro
+
 @Entity
 @Table(name = "playlists")
 public class Playlist {
