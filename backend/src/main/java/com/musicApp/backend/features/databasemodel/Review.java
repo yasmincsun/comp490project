@@ -6,10 +6,13 @@ import com.musicApp.backend.features.databasemodel.Song;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
-//Entity class for Review
-//Uses JPA  to define the entity and its relationships. It creates a table named "reviews" with fields 
-//for reviewID, userID, songID, album, rating, datePosted, and comment.
-//Author: M. Alfaro
+/**
+ * Entity class for Review
+ * Uses JPA  to define the entity and its relationships. It creates a table named "reviews" with fields 
+ * for reviewID, userID, songID, album, rating, datePosted, and comment.
+ * @author M. Alfaro
+
+ */
 
 @Entity
 @Table(name = "reviews")

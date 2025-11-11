@@ -5,12 +5,12 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.LocalDateTime;
 import java.util.List;
-
-
+    
+/** */
 //Entity class for Song
 //Uses JPA  to define the entity and its relationships. It creates a table named "songs" with fields 
 //for songID, title, artist, album, length, releaseDate, genre, mood, playCount, views, lastPlayed, playlists, and reviews.
-//Author: M. Alfaro
+//@author M. Alfaro
 
 @Entity
 @Table(name = "songs")
