@@ -63,7 +63,7 @@ public class JsonWebToken {
 
     /**
      * Generates a SecretKey from the configured secret for HMAC-SHA signing.
-     * @return
+     * @return {@link SecretKey} used for signing JWT tokens
      */
     public SecretKey getKey() {
         return Keys.hmacShaKeyFor(secret.getBytes());
@@ -73,8 +73,8 @@ public class JsonWebToken {
      * Generates a JWT token with the user's email as the subject.
      *     Inputs: email - the user's email
      *     Outputs: JWT string, signed with HMAC-SHA256, valid for 10 hours
-     * @param email
-     * @return
+     * @param email the user's email to embed as the token subject
+     * @return {@link String} representing the signed JWT token, valid for 10 hours
      */
     public String generateToken(String email) {
         return Jwts.builder()
@@ -89,8 +89,8 @@ public class JsonWebToken {
      *     Extracts all claims from a JWT.
      *     Inputs: JWT token string
      *     Outputs: Claims object containing all claims
-     * @param token
-     * @return
+     * @param token the JWT token string
+     * @return {@link Claims} object containing all claims in the token
      */
     private Claims extractAllClaims(String token) {
         return Jwts.parser()
@@ -106,13 +106,21 @@ public class JsonWebToken {
      *     Retrieves the email (subject) from a JWT token.
      *     Inputs: JWT token string
      *     Outputs: Email as String
-     * @param token
-     * @return
+     * @param token the JWT token string
+     * @return {@link String} representing the email embedded in the token
      */
     public String getEmailFromToken(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
+    /**
+     * Extracts a specific claim from a JWT token using a claim resolver function.
+     *
+     * @param token          the JWT token string
+     * @param claimResolver  function to extract a specific claim from {@link Claims}
+     * @param <T>            type of the extracted claim
+     * @return the claim extracted using the claimResolver
+     */
     private <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
         final Claims claims = extractAllClaims(token);
         return claimResolver.apply(claims);
@@ -123,24 +131,30 @@ public class JsonWebToken {
      *     Checks whether a JWT token has expired.
      *     Inputs: JWT token string
      *     Outputs: boolean
-     * @param token
-     * @return
+     * @param token the JWT token string
+     * @return {@code true} if the token is expired, {@code false} otherwise
      */
     public boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
+    /**
+     * Extracts the expiration date from a JWT token.
+     *
+     * @param token the JWT token string
+     * @return {@link Date} representing the token's expiration time
+     */
     private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 
 
     /**
-     *     Validates a Google OAuth ID token using JWKs from Google and returns the claims.
-     *     Inputs: Google ID token string
-     *     Outputs: Claims extracted from the token
-     * @param idToken
-     * @return
+     * Validates a Google OAuth ID token using JWKs from Google and returns the claims.
+     *
+     * @param idToken the Google ID token string
+     * @return {@link Claims} extracted from the validated Google ID token
+     * @throws IllegalArgumentException if token validation fails or JWK cannot be fetched
      */
     public Claims getClaimsFromGoogleOauthIdToken(String idToken) {
         try {

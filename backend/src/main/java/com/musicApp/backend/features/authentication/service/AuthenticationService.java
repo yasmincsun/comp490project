@@ -91,14 +91,8 @@ public class AuthenticationService {
     * and suitable for use in verification processes such as email confirmation codes.
     * </p>
     *
-    * @return A {@link String} containing a randomly generated 5-digit numeric token.
-    * 
-    * <p><b>Example Output:</b> "38429"</p>
-    *
-    * <p><b>Inputs:</b> None</p>
-    * <p><b>Outputs:</b> String — a 5-digit random numeric token</p>
-     * @return
-    */
+     * @return a randomly generated 5-digit numeric verification code as a {@link String}
+     */
     public static String generateEmailVerificationToken() {
         SecureRandom random = new SecureRandom();
         StringBuilder token = new StringBuilder(5);
@@ -109,13 +103,14 @@ public class AuthenticationService {
     }
 
 
-/**
- *     Generates a random 5-digit numeric token, hashes it, stores it with expiry,
- *     and sends an email to the user for verification.
- *     Inputs: User email
- *     Outputs: None
- * @param email
- */
+    /**
+     *     Generates a random 5-digit numeric token, hashes it, stores it with expiry,
+     *     and sends an email to the user for verification.
+     *     Inputs: User email
+     *     Outputs: None
+     * @param email the email address of the user to send the verification token to
+     * @throws IllegalArgumentException if the user is not found or already verified
+     */
 public void sendEmailVerificationToken(String email) {
     Optional<AuthenticationUser> userOpt = authenticationUserRepository.findByEmail(email);
 
@@ -154,14 +149,15 @@ public void sendEmailVerificationToken(String email) {
 
 
 
-/**
- *     Validates the email verification token, checks expiry, and marks email as verified.
- *     Inputs: Token, email
- *     Outputs: None
- *
- * @param token
- * @param email
- */
+    /**
+     *     Validates the email verification token, checks expiry, and marks email as verified.
+     *     Inputs: Token, email
+     *     Outputs: None
+     *
+     * @param token the plain-text verification token entered by the user
+     * @param email the email address associated with the verification attempt
+     * @throws IllegalArgumentException if the user does not exist, token is invalid, or expired
+     */
 public void validateEmailVerificationToken(String token, String email) {
     Optional<AuthenticationUser> userOpt = authenticationUserRepository.findByEmail(email);
 
@@ -193,25 +189,26 @@ public void validateEmailVerificationToken(String token, String email) {
 
 
 
-/**
- *     Retrieves the AuthenticationUser from the repository.
- * @param email
- * @return
- */
+    /**
+     *     Retrieves the AuthenticationUser from the repository.
+     * @param email the email address of the user to retrieve
+     * @return the {@link AuthenticationUser} matching the provided email
+     * @throws IllegalArgumentException if no user is found with the given email
+     */
     public AuthenticationUser getUser(String email){
         return authenticationUserRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
 
 
 
-/**
- *     Registers a new user, encodes their password, generates an email verification token,
- *     sends the verification email, and returns a JWT in the AuthenticationResponseBody.
- *     Inputs: AuthenticationRequestBody containing user details
- *     Outputs: AuthenticationResponseBody containing JWT and status message
- * @param registerRequestBody
- * @return
- */
+    /**
+     *     Registers a new user, encodes their password, generates an email verification token,
+     *     sends the verification email, and returns a JWT in the AuthenticationResponseBody.
+     *     Inputs: AuthenticationRequestBody containing user details
+     *     Outputs: AuthenticationResponseBody containing JWT and status message
+     * @param registerRequestBody a DTO containing user registration details
+     * @return an {@link AuthenticationResponseBody} containing the JWT and a confirmation message
+     */
 public AuthenticationResponseBody register(AuthenticationRequestBody registerRequestBody) {
     // Save new user with name, email, and encoded password
     AuthenticationUser user = authenticationUserRepository.save(
@@ -254,10 +251,11 @@ public AuthenticationResponseBody register(AuthenticationRequestBody registerReq
 
 
 
-/**
- * Generates a password reset token and sends it to the user's email.
- * @param email
- */
+    /**
+     * Generates a password reset token and sends it to the user's email.
+     * @param email the email address of the user requesting a password reset
+     * @throws IllegalArgumentException if the user does not exist
+     */
     public void sendPasswordResetToken(String email) {
         Optional<AuthenticationUser> user = authenticationUserRepository.findByEmail(email);
         if (user.isPresent()) {
@@ -285,9 +283,10 @@ public AuthenticationResponseBody register(AuthenticationRequestBody registerReq
 
     /**
      * Validates the reset token, updates the user's password, and clears token fields.
-     * @param email
-     * @param newPassword
-     * @param token
+     * @param email       the user's email address
+     * @param newPassword the new password to be set
+     * @param token       the plain-text reset token provided by the user
+     * @throws IllegalArgumentException if token validation fails or is expired
      */
     public void resetPassword(String email, String newPassword, String token) {
         Optional<AuthenticationUser> user = authenticationUserRepository.findByEmail(email);
@@ -313,9 +312,10 @@ public AuthenticationResponseBody register(AuthenticationRequestBody registerReq
     *     and returns a JWT in the AuthenticationResponseBody.
     *     Inputs: AuthenticationRequestBody
     *     Outputs: AuthenticationResponseBody
-    * @param loginRequestBody
-    * @return
-    */
+     * @param loginRequestBody a DTO containing the user’s login credentials
+     * @return an {@link AuthenticationResponseBody} containing JWT, username, email, and login status
+     * @throws IllegalArgumentException if credentials are invalid
+     */
     public AuthenticationResponseBody login(AuthenticationRequestBody loginRequestBody) {
         AuthenticationUser user = authenticationUserRepository.findByEmail(loginRequestBody.getEmail()).orElseThrow(() -> new IllegalArgumentException("User not found."));
         if (!encoder.matches(loginRequestBody.getPassword(), user.getPassword())) {
@@ -340,8 +340,9 @@ public AuthenticationResponseBody register(AuthenticationRequestBody registerReq
  *     Marks the user associated with the JWT as offline.
  *     Inputs: JWT string
  *     Outputs: None
- * @param token
- */
+     * @param token the JWT token of the user to log out
+     * @throws IllegalArgumentException if no user corresponds to the provided token
+     */
 public void logout(String token) {
     String email = jsonWebToken.getEmailFromToken(token);
     AuthenticationUser user = authenticationUserRepository.findByEmail(email)
@@ -353,8 +354,8 @@ public void logout(String token) {
 
 /**
  *  Returns a list of all currently logged-in users.
- * @return
- */
+     * @return a {@link List} of {@link AuthenticationUser} objects representing online users
+     */
 public List<AuthenticationUser> getOnlineUsers() {
     return authenticationUserRepository.findByLoginStatusTrue();
 }

@@ -33,16 +33,19 @@ public interface AuthenticationUserRepository extends JpaRepository<Authenticati
     /**
      * Finds a user by their email address. Returns Optional
      * to safely handle the case where no user exists with the given email.
-     * @param email
-     * @return
+     *
+     * @param email the email address of the user to search for
+     * @return an {@link Optional} containing the {@link AuthenticationUser} if found,
+     *         or an empty {@link Optional} if no user exists with the given email
      */
     Optional<AuthenticationUser> findByEmail(String email);
 
     /**
      * Finds a user by their unique username. Also
      * returns an Optional for safe null handling.
-     * @param username
-     * @return
+     * @param username the username of the user to search for
+     * @return an {@link Optional} containing the {@link AuthenticationUser} if found,
+     *         or an empty {@link Optional} if no user exists with the given username
      */
     Optional<AuthenticationUser> findByUsername(String username);
 
@@ -50,7 +53,8 @@ public interface AuthenticationUserRepository extends JpaRepository<Authenticati
     /**
      * Retrieves a list of all users who are currently marked
      * as logged in (loginStatus == true). Useful for displaying online users.
-     * @return
+     * @return a {@link List} of {@link AuthenticationUser} objects representing
+     *         all users currently logged in
      */
     // Find all currently logged-in users
     List<AuthenticationUser> findByLoginStatusTrue();

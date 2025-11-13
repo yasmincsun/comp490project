@@ -40,6 +40,11 @@ import org.springframework.context.annotation.Configuration;
 public class LoadDatabaseConfiguration {
     private final Encoder encoder;
 
+    /**
+     * Constructs the {@code LoadDatabaseConfiguration} with a password encoder dependency.
+     *
+     * @param encoder the {@link Encoder} utility used for encrypting user passwords before saving them
+     */
     public LoadDatabaseConfiguration(Encoder encoder) {
         this.encoder = encoder;
     }
@@ -51,8 +56,8 @@ public class LoadDatabaseConfiguration {
      *  Input: AuthenticationUserRepository (repository for user entities)
      * <p>
      *  Output: CommandLineRunner (executed automatically at startup)
-     * @param authenticationUserRepository
-     * @return
+     * @param authenticationUserRepository the repository used to query and persist {@link AuthenticationUser} entities
+     * @return a {@link CommandLineRunner} instance that initializes the database with a default user
      */
     @Bean
     public CommandLineRunner initDatabase(AuthenticationUserRepository authenticationUserRepository){

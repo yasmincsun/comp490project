@@ -74,8 +74,8 @@ public class AuthenticationController {
      *     Input: AuthenticationUser (from request attribute)
      * <p>
      *     Output: AuthenticationUser (user data)
-     * @param authenticationUser
-     * @return
+     * @param authenticationUser the authenticated user object retrieved from the request attribute
+     * @return the full {@link AuthenticationUser} information corresponding to the user's email
      */
     @GetMapping("/user")
     public AuthenticationUser getUser(@RequestAttribute("authenticatedUser") AuthenticationUser authenticationUser) {
@@ -86,8 +86,8 @@ public class AuthenticationController {
      *  Handles user login and JWT token generation.
      *     Input: AuthenticationRequestBody (email, password)
      *     Output: AuthenticationResponseBody (JWT token and user info)
-     * @param loginRequestBody
-     * @return
+     * @param loginRequestBody the {@link AuthenticationRequestBody} containing user email and password
+     * @return an {@link AuthenticationResponseBody} with the JWT token and basic user details
      */
     @PostMapping("/login")
     public AuthenticationResponseBody loginPage(@Valid @RequestBody AuthenticationRequestBody loginRequestBody) {
@@ -99,10 +99,10 @@ public class AuthenticationController {
      *     Input: AuthenticationRequestBody (registration data)
      *     Output: AuthenticationResponseBody
      *     Throws: MessagingException, UnsupportedEncodingException
-     * @param registerRequestBody
-     * @return
-     * @throws MessagingException
-     * @throws UnsupportedEncodingException
+     * @param registerRequestBody the {@link AuthenticationRequestBody} containing registration data
+     * @return an {@link AuthenticationResponseBody} with user info and confirmation message
+     * @throws MessagingException if there is an issue while sending the verification email
+     * @throws UnsupportedEncodingException if the email encoding is unsupported
      */
     @PostMapping("/register")
     public AuthenticationResponseBody registerPage(@Valid @RequestBody AuthenticationRequestBody registerRequestBody)
@@ -115,8 +115,8 @@ public class AuthenticationController {
      *  Logs out a user by invalidating their JWT token.
      *     Input: Authorization header with Bearer token
      *     Output: HTTP response message
-     * @param authHeader
-     * @return
+     * @param authHeader the "Authorization" HTTP header containing the Bearer token
+     * @return a {@link ResponseEntity} containing a success or failure message
      */
     @PutMapping("/logout")
     public ResponseEntity<String> logout(@RequestHeader("Authorization") String authHeader) {
@@ -134,8 +134,8 @@ public class AuthenticationController {
     *       Input: None
     *      Output: {@code List<AuthenticationUser>}
 
-    * @return
-    */
+     * @return a list of {@link AuthenticationUser} objects representing active users
+     */
     @GetMapping("/online-users")
     public List<AuthenticationUser> getOnlineUsers() {
         return authenticationService.getOnlineUsers();
@@ -146,9 +146,9 @@ public class AuthenticationController {
      *   Validates an email verification token, marks the user as verified, and activates login status.
      *     Input: token (verification token), Authorization header (JWT)
      *     Output: HTTP response message
-     * @param token
-     * @param authHeader
-     * @return
+     * @param token the email verification token submitted by the user
+     * @param authHeader the "Authorization" header containing the JWT token
+     * @return a {@link ResponseEntity} indicating success or failure of verification
      */
     @PutMapping("/validate-email-verification-token")
     public ResponseEntity<String> verifyEmail(
@@ -185,8 +185,8 @@ public class AuthenticationController {
      *   Sends a new email verification token to the authenticated user.
      *     Input: authenticated user (from request attribute)
      *     Output: success message string
-     * @param user
-     * @return
+     * @param user the currently authenticated {@link AuthenticationUser}
+     * @return a confirmation message indicating that the token was sent
      */
     @GetMapping("/send-email-verification-token")
     public String sendEmailVerificationToken(@RequestAttribute("authenticatedUser") AuthenticationUser user) {
@@ -198,8 +198,8 @@ public class AuthenticationController {
      * Sends a password reset token to the given email address.
      *     Input: email
      *     Output: success message string
-     * @param email
-     * @return
+     * @param email the email address to which the password reset token will be sent
+     * @return a confirmation message indicating that the token was sent
      */
     @PutMapping("/send-password-reset-token")
     public String sendPasswordResetToken(@RequestParam String email) {
@@ -211,10 +211,10 @@ public class AuthenticationController {
      *     Resets the user’s password if a valid reset token is provided.
      *     Input: new password, reset token, email
      *     Output: success message string
-     * @param newPassword
-     * @param token
-     * @param email
-     * @return
+     * @param newPassword the new password to be set
+     * @param token the password reset token provided to the user
+     * @param email the email address associated with the account
+     * @return a confirmation message indicating the password was successfully reset
      */
     @PutMapping("/reset-password")
     public String resetPassword(@RequestParam String newPassword,
@@ -226,12 +226,12 @@ public class AuthenticationController {
 
 
     /**
-    *     Resends the email verification token using JWT-derived email.
-    *     Input: Authorization header (JWT)
-    *     Output: HTTP response message
-    * @param authHeader
-    * @return
-    */
+     *     Resends the email verification token using JWT-derived email.
+     *     Input: Authorization header (JWT)
+     *     Output: HTTP response message
+     * @param authHeader the "Authorization" header containing the user's JWT
+     * @return a {@link ResponseEntity} indicating whether the resend was successful or not
+     */
 
     // FIXED resend verification endpoint
     @PostMapping("/resend-email-verification")
