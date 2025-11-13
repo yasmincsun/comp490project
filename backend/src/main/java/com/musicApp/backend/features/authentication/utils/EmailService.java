@@ -34,6 +34,11 @@ import java.io.UnsupportedEncodingException;
 public class EmailService {
     private final JavaMailSender mailSender;
 
+    /**
+     * Constructs the EmailService with a JavaMailSender dependency.
+     *
+     * @param mailSender the {@link JavaMailSender} instance used to create and send email messages
+     */
     public EmailService(JavaMailSender mailSender) {
         this.mailSender = mailSender;
     }
@@ -46,11 +51,11 @@ public class EmailService {
     *       - content: Email body (can contain HTML)
     *     Outputs: None
     *     Throws: MessagingException, UnsupportedEncodingException if the email cannot be sent.
-     * @param email
-     * @param subject
-     * @param content
-     * @throws MessagingException
-     * @throws UnsupportedEncodingException
+     * @param email   the recipient's email address (e.g., "user@example.com")
+     * @param subject the subject line of the email
+     * @param content the body of the email message; may include HTML markup
+     * @throws MessagingException             if an error occurs while creating or sending the message
+     * @throws UnsupportedEncodingException   if the email encoding format is not supported
      */
     public void sendEmail(String email, String subject, String content) throws MessagingException, UnsupportedEncodingException {
         MimeMessage message = mailSender.createMimeMessage();
