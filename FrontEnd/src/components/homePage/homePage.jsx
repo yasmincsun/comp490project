@@ -2,7 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./homePage.css"
 
-
+/**
+ * Declares a constant variable named HomePage
+ * <p>
+ * This function displays and runs the entirety of the Home Page. This page contains information about generating playlists and collecting information from the user’s Spotify account. The user’s Spotify playlists are displayed on the home page. Personalized features, like the user-chosen background	color, are also displayed here. 
+ */
 const HomePage = () => {
     const [mood, setMood] = useState("");
     const [genre, setGenre] = useState("");
@@ -10,7 +14,11 @@ const HomePage = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
     const navigate = useNavigate();
 
-    // Check if user is logged in
+/**
+ * Sets up the Home Page environment
+ * <p>
+ * This function checks whether or not the user is logged into their account, and stores their Spotify API token to their local account. This function also receives the user’s inputted mood and genre choice to generate a playlist. The received values are then displayed back to the user in a dialogue box.  
+ */
     useEffect(() => {
         const token = localStorage.getItem("authToken"); // Make sure this matches how you store your JWT
         setIsLoggedIn(!!token);
@@ -51,6 +59,13 @@ const HomePage = () => {
         }
     };
 
+/**
+ * Displays the Home Page and runs all of the components 
+ * <p>
+ * This function displays and runs the entirety of the Home Page. This method checks the user’s login status and provides the user with the Playlist generation function.
+* @return Home Page display to the Web Page
+ */
+
     return (
         <div className="homepage-container" style={bgColor ? { backgroundColor: bgColor } : {}}>
             {/* 🔹 Top-right Buttons */}
@@ -79,9 +94,8 @@ const HomePage = () => {
                 )}
             </div>
 
-
-
-
+                
+    
             {/* Search Bar at Very Top */}
             <div className="homepage-searchbar-top">
                 <form className="homepage-form-top" onSubmit={handleSearch}>
