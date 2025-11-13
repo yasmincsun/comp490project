@@ -4,6 +4,13 @@
 // import java.util.List;
 // //Entity class for the creation of the users table
 
+/** 
+ * Entity class for User
+ * Uses JPA  to define the entity and its relationships. It creates a table named "users" with fields 
+ * for userID, fname, lname, username, password, email, phoneNumber, loginStatus, currentMood, playlistCount, and friendsCount.
+ * @author: M. Alfaro
+ */
+
 // @Entity
 // @Table(name = "users", uniqueConstraints = {
 //     @UniqueConstraint(columnNames = {"username"}),
