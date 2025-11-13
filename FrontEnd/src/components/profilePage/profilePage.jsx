@@ -2,6 +2,11 @@ import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "./profilePage.css";
 
+/**
+ * Declares a constant variable named MOCK_ARTISTS
+ * <p>
+ * This method sets the value of MOCK_ARTISTS to be a constant array. This list provides the user with a list of options to include as their favorite on their profile page.
+ */
 const MOCK_ARTISTS = [
   "Taylor Swift",
   "Drake",
@@ -18,6 +23,11 @@ const MOCK_ARTISTS = [
   "Dua Lipa",
 ];
 
+/**
+ * Declares a constant variable named ProfilePage
+ * <p>
+ * This method sets the value of ProfilePage to be constant. This function is used to navigate between pages in Javascript, to display all of the components of the ProfilePage, and adds useStates for all profile variables.
+ */
 const ProfilePage = () => {
   const navigate = useNavigate();
   const [view, setView] = useState("profile"); // 'profile' or 'account'
@@ -106,6 +116,12 @@ const ProfilePage = () => {
     localStorage.removeItem("profileData");
   };
 
+/**
+ * Displays the profile information to the user
+ * <p>
+ * This statement displays the profile information to the user, including all of the necessary styling and API information. 
+* @return ProfilePage interface to the Webpage
+ */
   return (
     <div className="profilepage-container" style={{ background: bgColor }}>
       <div className="profilepage-login-btn-topright">
