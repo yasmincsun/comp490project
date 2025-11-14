@@ -1,11 +1,7 @@
 /**
- * Date: November 10, 2025
- * Programmer: Jose Bastidas
- *
- * Data Structures:
- * - Uses MimeMessage and MimeMessageHelper (from Jakarta Mail) to structure the email.
- *
- */
+ * Date: September 25, 2025
+ * @author Jose Bastidas
+ */ 
 
 package com.musicApp.backend.features.authentication.utils;
 

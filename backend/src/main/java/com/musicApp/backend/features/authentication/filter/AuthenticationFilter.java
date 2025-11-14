@@ -1,25 +1,6 @@
 /**
- * Date: November 10, 2025
+ * Date: September 25, 2025
  * @author Jose Bastidas
- *
-
- * Data Structures:
- * - List<String> unsecuredEndpoints:
- *     Stores endpoint paths that do not require authentication.
- *     Implemented as a fixed-size List created from Arrays.asList() for efficient lookup.
- * 
- * Algorithms:
- * - Token Validation Algorithm:
- *     Steps:
- *       1. Extract the "Authorization" header.
- *       2. Verify the presence of a Bearer token.
- *       3. Use JsonWebToken utility to check token expiration.
- *       4. Decode the email embedded in the token.
- *       5. Retrieve the corresponding user record via AuthenticationService.
- *     - The algorithm is linear in time (O(1) per request) because it involves
- *       only direct lookups and decoding operations.
- *     - Chosen over alternatives like session-based authentication for scalability,
- *       since JWT-based validation is stateless and ideal for distributed REST APIs.
  */
 
 package com.musicApp.backend.features.authentication.filter;

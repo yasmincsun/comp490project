@@ -1,15 +1,7 @@
 /**
- * Date: November 10, 2025
- * Programmer: Jose Bastidas
+ * Date: September 25, 2025
+ * @author Jose Bastidas
  *
- * Data Structures:
- * - List<AuthenticationUser> for online users
- *
- * Algorithms / Design Decisions:
- * - Email verification & password reset token generation:
- *     Uses SecureRandom to generate a 5-digit numeric token.
- *     Tokens are hashed using Encoder for secure storage.
- *     Expiry is handled via LocalDateTime, providing time-based validation.
  **/
 
 package com.musicApp.backend.features.authentication.service;

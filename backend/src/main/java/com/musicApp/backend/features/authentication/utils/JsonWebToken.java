@@ -1,15 +1,7 @@
 /**
- * Date: November 10, 2025
+ * Date: September 25, 2025
  * @author Jose Bastidas
  *
- * Algorithms / Design Decisions:
- * - JWT tokens are generated using HMAC-SHA256 for integrity and authenticity
- * - Token expiration is set to 10 hours (configurable)
- * - Google OAuth ID tokens are validated against Google's public keys (JWKs)
- *   using RSA key reconstruction from modulus/exponent
- * - Designed for stateless authentication and secure token verification
- * - Chosen because JWT is standard for secure stateless authentication and
- *   works well with web/mobile applications
  */
 
 package com.musicApp.backend.features.authentication.utils;

@@ -1,11 +1,8 @@
 /**
- * Date: November 10, 2025
+ * Date: September 25, 2025
  * @author Jose Bastidas
  *
- * Data Structures:
- * - Relationships: List<Playlist>, List<Review>, Mood
- *
- */
+ */ 
 
 package com.musicApp.backend.features.authentication.model;
 
@@ -98,6 +95,7 @@ public class AuthenticationUser {
     }
 
     /**
+     * Gets user's ID.
      * @return unique ID of the user in the database
      */
     public Long getId() {
@@ -105,6 +103,7 @@ public class AuthenticationUser {
     }
 
     /**
+     * Reuturns if user's email is verified.
      * @return true if the user's email has been verified
      */
     public Boolean getEmailVerified() {
@@ -120,6 +119,7 @@ public class AuthenticationUser {
     }
 
     /**
+     * Gets user's email.
      * @return user's registered email address
      */
     public String getEmail() {
@@ -127,6 +127,7 @@ public class AuthenticationUser {
     }
 
     /**
+     * Gets user's email verification token.
      * @return token used for verifying the user's email
      */
     public String getEmailVerificationToken() {
@@ -142,6 +143,7 @@ public class AuthenticationUser {
     }
 
     /**
+     * Gets user's email verification token expiration date.
      * @return date and time when the email verification token expires
      */
     public LocalDateTime getEmailVerificationTokenExpiryDate() {
@@ -157,6 +159,7 @@ public class AuthenticationUser {
     }
 
     /**
+     * Gets the password reset token.
      * @return token used for resetting the user's password
      */
     public String getPasswordResetToken() {
@@ -172,6 +175,7 @@ public class AuthenticationUser {
     }
 
     /**
+     * Gets the password reset token's expiration date.
      * @return timestamp for when the password reset token expires
      */
     public LocalDateTime getPasswordResetTokenExpiryDate() {
@@ -187,6 +191,7 @@ public class AuthenticationUser {
     }
 
     /**
+     * Gets user's password.
      * @return the user's password (hashed)
      */
     public String getPassword() {
@@ -218,6 +223,7 @@ public class AuthenticationUser {
     }
 
     /**
+     * Gets user's first name.
      * @return first name of the user
      */
     public String getName() {
@@ -233,6 +239,7 @@ public class AuthenticationUser {
     }
 
     /**
+     * Gets user's last name.
      * @return user's last name
      */
     public String getLastName() {
@@ -248,6 +255,7 @@ public class AuthenticationUser {
     }
 
     /**
+     * Gets username.
      * @return unique username associated with the user
      */
     public String getUsername(){
@@ -263,6 +271,7 @@ public class AuthenticationUser {
     }
 
     /**
+     * Gets friend count.
      * @return total number of friends linked to this user
      */
     public int getFriendCount(){
@@ -270,6 +279,7 @@ public class AuthenticationUser {
     }
 
     /**
+     * Gets playlist count.
      * @return total number of playlists created by the user
      */
     public int getPlaylistCount(){
@@ -277,6 +287,7 @@ public class AuthenticationUser {
     }
 
     /**
+     * Returns if user is logged in.
      * @return true if the user is currently logged in
      */
     public boolean isLoginStatus(){
@@ -300,6 +311,7 @@ public class AuthenticationUser {
     }
 
     /**
+     * Returns user's mood.
      * @return current {@link Mood} associated with the user
      */
     public Mood getCurrentMood() {
