@@ -1,22 +1,8 @@
 /**
- * Class Name: AuthenticationResponseBody
- * Package: com.musicApp.backend.features.authentication.dto
  * Date: November 10, 2025
  * @author Jose Bastidas
  *
-
- * Important Functions:
- * - Getter methods:
- *       Provide read-only access to private fields, since all fields are declared `final`.
- *
- * Data Structures:
- * - Primitive wrapper types (`String`, `Boolean`) are used for flexibility and null safety.
- * - Immutable object design: all fields are `final`, ensuring thread safety and data consistency.
- *
- * Algorithms:
- * - None. This class is purely a data container used to transfer response data.
- *   The immutability design pattern is used intentionally to prevent data mutation once constructed.
- */
+*/
 
 package com.musicApp.backend.features.authentication.dto;
 

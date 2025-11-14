@@ -1,4 +1,5 @@
 /**
+ * Date: November 10, 2025
  * @author Jose Bastidas
  *
  * Data Structures:
@@ -40,10 +41,6 @@ public class BackendController {
 
     /**
      * Handles missing or unreadable request body errors.
-     * <p>
-     *     Input: HttpMessageNotReadableException
-     * <p>   
-     *     Output: ResponseEntity&lt;Map&lt;String, String&gt;&gt; with HTTP 400
      * @param e the {@link HttpMessageNotReadableException} thrown when the request body is invalid or missing
      * @return a {@link ResponseEntity} containing an error message and HTTP 400 (Bad Request) status
      */
@@ -54,10 +51,6 @@ public class BackendController {
 
     /**
      * Handles invalid or failed validation of method arguments.
-     * <p>
-     *     Input: MethodArgumentNotValidException
-     * <p>
-     *     Output: ResponseEntity&lt;Map&lt;String, String&gt;&gt; with detailed field errors
      * @param e the {@link MethodArgumentNotValidException} containing validation errors for request fields
      * @return a {@link ResponseEntity} with detailed validation error messages and HTTP 400 (Bad Request) status
      */
@@ -72,10 +65,6 @@ public class BackendController {
 
     /**
      * Handles 404 errors when requested resources are not found.
-     * <p>
-     *     Input: NoResourceFoundException
-     * <p>
-     *     Output: ResponseEntity&lt;Map&lt;String, String&gt;&gt; with HTTP 404
      * @param e the {@link NoResourceFoundException} thrown when the requested resource or endpoint does not exist
      * @return a {@link ResponseEntity} with an error message and HTTP 404 (Not Found) status
      */
@@ -86,10 +75,6 @@ public class BackendController {
 
     /**
      * Handles database constraint violations, such as duplicate entries.
-     * <p>
-     *     Input: DataIntegrityViolationException
-     * <p>
-     *     Output: ResponseEntity&lt;Map&lt;String, String&gt;&gt; with HTTP 400
      * @param e the {@link DataIntegrityViolationException} thrown when a database constraint is violated
      * @return a {@link ResponseEntity} with an explanatory message and HTTP 400 (Bad Request) status
      */
@@ -103,10 +88,6 @@ public class BackendController {
 
     /**
      *  Handles missing HTTP request parameters.
-     * <p>
-     *     Input: MissingServletRequestParameterException
-     * <p>
-     *     Output: ResponseEntity&lt;Map&lt;String, String&gt;&gt; with HTTP 400
      * @param e the {@link MissingServletRequestParameterException} thrown when a required parameter is not provided
      * @return a {@link ResponseEntity} containing an error message and HTTP 400 (Bad Request) status
      */
@@ -117,10 +98,6 @@ public class BackendController {
 
     /**
      *   Handles illegal or invalid method argument errors.
-     * <p>
-     *     Input: IllegalArgumentException or IllegalStateException
-     * <p>
-     *     Output: ResponseEntity&lt;Map&lt;String, String&gt;&gt; with HTTP 400
      * @param e the {@link IllegalArgumentException} or {@link IllegalStateException} thrown due to invalid method arguments
      * @return a {@link ResponseEntity} containing the exception message and HTTP 400 (Bad Request) status
      */
@@ -131,10 +108,6 @@ public class BackendController {
 
     /**
      * Handles cases where a requested file does not exist.
-     * <p>
-     *     Input: NoSuchFileException
-     * <p>
-     *     Output: ResponseEntity&lt;Map&lt;String, String&gt;&gt; with HTTP 404
      * @param e the {@link NoSuchFileException} thrown when a file cannot be found
      * @return a {@link ResponseEntity} containing an error message and HTTP 404 (Not Found) status
      */
@@ -145,10 +118,6 @@ public class BackendController {
 
     /**
      * Catches all other unhandled exceptions and returns a generic error response.
-     * <p>
-     *     Input: Exception
-     * <p>
-     *     Output: ResponseEntity&lt;Map&lt;String, String&gt;&gt; with HTTP 500
      * @param e the generic {@link Exception} thrown during request processing
      * @return a {@link ResponseEntity} containing the exception message and HTTP 500 (Internal Server Error) status
      */

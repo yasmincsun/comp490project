@@ -1,39 +1,16 @@
 /**
- * Class Name: AuthenticationService
- * Package: com.musicApp.backend.features.authentication.service
  * Date: November 10, 2025
  * Programmer: Jose Bastidas
  *
- 
- * Important Functions:
- *
- *
  * Data Structures:
- * - Optional<AuthenticationUser> for safe retrieval of users
  * - List<AuthenticationUser> for online users
- * - LocalDateTime for token expiry tracking
- * - String for hashed tokens and passwords
  *
  * Algorithms / Design Decisions:
  * - Email verification & password reset token generation:
  *     Uses SecureRandom to generate a 5-digit numeric token.
  *     Tokens are hashed using Encoder for secure storage.
  *     Expiry is handled via LocalDateTime, providing time-based validation.
- *
- * - JWT-based authentication:
- *     JsonWebToken utility generates stateless tokens for session management.
- *     Chosen over session-based methods for scalability in REST API.
- *
- * - Login status management:
- *     login() and logout() update a boolean field in the database to track online users.
- *
- * - Registration flow:
- *     Password is securely hashed.
- *     Email verification token is sent immediately to prevent unauthorized login.
- *
- * - Password reset flow:
- *     Token expiration is enforced, and old tokens are cleared after use.
- */
+ **/
 
 package com.musicApp.backend.features.authentication.service;
 
@@ -106,8 +83,6 @@ public class AuthenticationService {
     /**
      *     Generates a random 5-digit numeric token, hashes it, stores it with expiry,
      *     and sends an email to the user for verification.
-     *     Inputs: User email
-     *     Outputs: None
      * @param email the email address of the user to send the verification token to
      * @throws IllegalArgumentException if the user is not found or already verified
      */
@@ -151,9 +126,6 @@ public void sendEmailVerificationToken(String email) {
 
     /**
      *     Validates the email verification token, checks expiry, and marks email as verified.
-     *     Inputs: Token, email
-     *     Outputs: None
-     *
      * @param token the plain-text verification token entered by the user
      * @param email the email address associated with the verification attempt
      * @throws IllegalArgumentException if the user does not exist, token is invalid, or expired
@@ -204,8 +176,6 @@ public void validateEmailVerificationToken(String token, String email) {
     /**
      *     Registers a new user, encodes their password, generates an email verification token,
      *     sends the verification email, and returns a JWT in the AuthenticationResponseBody.
-     *     Inputs: AuthenticationRequestBody containing user details
-     *     Outputs: AuthenticationResponseBody containing JWT and status message
      * @param registerRequestBody a DTO containing user registration details
      * @return an {@link AuthenticationResponseBody} containing the JWT and a confirmation message
      */
@@ -310,8 +280,6 @@ public AuthenticationResponseBody register(AuthenticationRequestBody registerReq
     /**
     *     Authenticates a user by verifying email and password, marks them as online,
     *     and returns a JWT in the AuthenticationResponseBody.
-    *     Inputs: AuthenticationRequestBody
-    *     Outputs: AuthenticationResponseBody
      * @param loginRequestBody a DTO containing the user’s login credentials
      * @return an {@link AuthenticationResponseBody} containing JWT, username, email, and login status
      * @throws IllegalArgumentException if credentials are invalid
@@ -338,8 +306,6 @@ public AuthenticationResponseBody register(AuthenticationRequestBody registerReq
 /**
  *   logout(String token):
  *     Marks the user associated with the JWT as offline.
- *     Inputs: JWT string
- *     Outputs: None
      * @param token the JWT token of the user to log out
      * @throws IllegalArgumentException if no user corresponds to the provided token
      */
