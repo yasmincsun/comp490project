@@ -1,17 +1,7 @@
 /**
- * Date: November 10, 2025
+ * Date: September 25, 2025
  * @author Jose Bastidas
  *
- * Data Structures:
- * - List<AuthenticationUser>: Used to return multiple active users.
- *
- * Algorithms:
- * - Token-based authentication flow:
- *     The system uses JWTs for stateless authentication, allowing secure user identification without
- *     maintaining server-side sessions.
- *     Chosen for scalability and compatibility with modern REST architectures.
- * - Email verification and password reset rely on random token generation and time-based validation
- *     implemented in the service layer.
  */
 
 package com.musicApp.backend.features.authentication.controller;

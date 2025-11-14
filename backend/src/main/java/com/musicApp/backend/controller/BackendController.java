@@ -1,14 +1,6 @@
 /**
- * Date: November 10, 2025
+ * Date: September 25, 2025
  * @author Jose Bastidas
- *
- * Data Structures:
- * - Map&lt;String, String&gt;: Used to create JSON-style responses containing error messages.
- *
- * Algorithms:
- * - No complex algorithmic logic is used. Each handler follows a direct conditional
- *   or message-extraction pattern to generate meaningful client responses.
- *   This design was chosen for clarity and maintainability rather than performance.
  */
 
 

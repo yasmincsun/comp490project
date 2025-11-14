@@ -1,16 +1,6 @@
 /**
- * Date: November 10, 2025
+ * Date: September 25, 2025
  * @author Jose Bastidas
- *
- *
- * Data Structures:
- * - byte[] for storing SHA-256 hash
- *
- * Algorithms / Design Decisions:
- * - SHA-256 hashing algorithm is used for secure one-way encryption.
- * - Base64 encoding ensures the hashed byte array can be safely stored as a String.
- * - matches() method provides a secure comparison without storing or revealing raw passwords.
- * - Chosen for security, simplicity, and compatibility with token/password verification.
  */
 
 package com.musicApp.backend.features.authentication.utils;

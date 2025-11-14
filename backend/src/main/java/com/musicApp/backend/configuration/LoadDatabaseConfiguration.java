@@ -1,15 +1,6 @@
 /**
- * Class Name: LoadDatabaseConfiguration
- * Package: com.musicApp.backend.configuration
- * Date: November 10, 2025
+ * Date: September 25, 2025
  * @author Jose Bastidas
- *
- * Algorithms:
- * - Simple conditional check: Uses a query (findByEmail) to determine whether a
- *   specific user record already exists. If it doesn’t, a new AuthenticationUser
- *   object is created and persisted.
- *   This approach was chosen for simplicity and efficiency since the dataset is small
- *   and initialization happens only once at startup.
  */
 
 

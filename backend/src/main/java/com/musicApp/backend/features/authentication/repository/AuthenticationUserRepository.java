@@ -1,12 +1,7 @@
 /**
- * Date: November 10, 2025
+ * Date: September 25, 2025
  * @author Jose Bastidas
- *
- * Data Structures:
- * - Returns Optional<AuthenticationUser> for safe handling of null results.
- * - Returns List<AuthenticationUser> for multiple users matching a query.
- *
-*/
+*/ 
 
 package com.musicApp.backend.features.authentication.repository;
 
