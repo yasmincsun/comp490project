@@ -1,20 +1,12 @@
 /**
- * Interface Name: AuthenticationUserRepository
- * Package: com.musicApp.backend.features.authentication.repository
  * Date: November 10, 2025
  * @author Jose Bastidas
  *
-
  * Data Structures:
  * - Returns Optional<AuthenticationUser> for safe handling of null results.
  * - Returns List<AuthenticationUser> for multiple users matching a query.
  *
- * Algorithms / Design Decisions:
- * - This repository leverages Spring Data JPA’s query derivation mechanism, meaning
- *   method names are automatically converted into SQL queries based on naming conventions.
- * - Optional return types reduce the risk of NullPointerException in service layers.
- * - The login status query is designed for real-time user tracking.
- */
+*/
 
 package com.musicApp.backend.features.authentication.repository;
 

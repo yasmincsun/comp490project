@@ -1,14 +1,9 @@
 /**
- * Class Name: AuthenticationController
- * Package: com.musicApp.backend.features.authentication.controller
  * Date: November 10, 2025
  * @author Jose Bastidas
  *
  * Data Structures:
- * - AuthenticationUser: Entity representing the application’s user model.
- * - AuthenticationRequestBody / AuthenticationResponseBody: DTOs for login and registration payloads.
  * - List<AuthenticationUser>: Used to return multiple active users.
- * - JWT (JSON Web Token): Used for stateless user authentication.
  *
  * Algorithms:
  * - Token-based authentication flow:
@@ -70,10 +65,6 @@ public class AuthenticationController {
 
     /**
      * Retrieves the currently authenticated user’s information.
-     * <p>
-     *     Input: AuthenticationUser (from request attribute)
-     * <p>
-     *     Output: AuthenticationUser (user data)
      * @param authenticationUser the authenticated user object retrieved from the request attribute
      * @return the full {@link AuthenticationUser} information corresponding to the user's email
      */
@@ -84,8 +75,6 @@ public class AuthenticationController {
 
     /**
      *  Handles user login and JWT token generation.
-     *     Input: AuthenticationRequestBody (email, password)
-     *     Output: AuthenticationResponseBody (JWT token and user info)
      * @param loginRequestBody the {@link AuthenticationRequestBody} containing user email and password
      * @return an {@link AuthenticationResponseBody} with the JWT token and basic user details
      */
@@ -96,9 +85,6 @@ public class AuthenticationController {
 
     /**
      * Handles new user registration and sends a verification email.
-     *     Input: AuthenticationRequestBody (registration data)
-     *     Output: AuthenticationResponseBody
-     *     Throws: MessagingException, UnsupportedEncodingException
      * @param registerRequestBody the {@link AuthenticationRequestBody} containing registration data
      * @return an {@link AuthenticationResponseBody} with user info and confirmation message
      * @throws MessagingException if there is an issue while sending the verification email
@@ -113,8 +99,6 @@ public class AuthenticationController {
 
     /**
      *  Logs out a user by invalidating their JWT token.
-     *     Input: Authorization header with Bearer token
-     *     Output: HTTP response message
      * @param authHeader the "Authorization" HTTP header containing the Bearer token
      * @return a {@link ResponseEntity} containing a success or failure message
      */
@@ -131,9 +115,6 @@ public class AuthenticationController {
 
     /**
     *     Retrieves all currently active (logged-in) users.
-    *       Input: None
-    *      Output: {@code List<AuthenticationUser>}
-
      * @return a list of {@link AuthenticationUser} objects representing active users
      */
     @GetMapping("/online-users")
@@ -144,8 +125,6 @@ public class AuthenticationController {
 
     /**
      *   Validates an email verification token, marks the user as verified, and activates login status.
-     *     Input: token (verification token), Authorization header (JWT)
-     *     Output: HTTP response message
      * @param token the email verification token submitted by the user
      * @param authHeader the "Authorization" header containing the JWT token
      * @return a {@link ResponseEntity} indicating success or failure of verification
@@ -183,8 +162,6 @@ public class AuthenticationController {
 
     /**
      *   Sends a new email verification token to the authenticated user.
-     *     Input: authenticated user (from request attribute)
-     *     Output: success message string
      * @param user the currently authenticated {@link AuthenticationUser}
      * @return a confirmation message indicating that the token was sent
      */
@@ -196,8 +173,6 @@ public class AuthenticationController {
 
     /**
      * Sends a password reset token to the given email address.
-     *     Input: email
-     *     Output: success message string
      * @param email the email address to which the password reset token will be sent
      * @return a confirmation message indicating that the token was sent
      */
@@ -209,8 +184,6 @@ public class AuthenticationController {
 
     /**
      *     Resets the user’s password if a valid reset token is provided.
-     *     Input: new password, reset token, email
-     *     Output: success message string
      * @param newPassword the new password to be set
      * @param token the password reset token provided to the user
      * @param email the email address associated with the account
@@ -227,8 +200,6 @@ public class AuthenticationController {
 
     /**
      *     Resends the email verification token using JWT-derived email.
-     *     Input: Authorization header (JWT)
-     *     Output: HTTP response message
      * @param authHeader the "Authorization" header containing the user's JWT
      * @return a {@link ResponseEntity} indicating whether the resend was successful or not
      */

@@ -1,16 +1,6 @@
 /**
- * Class Name: JsonWebToken
- * Package: com.musicApp.backend.features.authentication.utils
  * Date: November 10, 2025
  * @author Jose Bastidas
- *
-
-
- *
- * Data Structures:
- * - Uses Claims (from io.jsonwebtoken) for JWT payload
- * - Uses SecretKey for HMAC signing
- * - Uses RestTemplate to fetch JSON Web Keys from Google
  *
  * Algorithms / Design Decisions:
  * - JWT tokens are generated using HMAC-SHA256 for integrity and authenticity
@@ -71,8 +61,6 @@ public class JsonWebToken {
 
     /**
      * Generates a JWT token with the user's email as the subject.
-     *     Inputs: email - the user's email
-     *     Outputs: JWT string, signed with HMAC-SHA256, valid for 10 hours
      * @param email the user's email to embed as the token subject
      * @return {@link String} representing the signed JWT token, valid for 10 hours
      */
@@ -87,8 +75,6 @@ public class JsonWebToken {
 
     /**
      *     Extracts all claims from a JWT.
-     *     Inputs: JWT token string
-     *     Outputs: Claims object containing all claims
      * @param token the JWT token string
      * @return {@link Claims} object containing all claims in the token
      */
@@ -104,8 +90,6 @@ public class JsonWebToken {
 
     /**
      *     Retrieves the email (subject) from a JWT token.
-     *     Inputs: JWT token string
-     *     Outputs: Email as String
      * @param token the JWT token string
      * @return {@link String} representing the email embedded in the token
      */
@@ -129,8 +113,6 @@ public class JsonWebToken {
 
     /**
      *     Checks whether a JWT token has expired.
-     *     Inputs: JWT token string
-     *     Outputs: boolean
      * @param token the JWT token string
      * @return {@code true} if the token is expired, {@code false} otherwise
      */

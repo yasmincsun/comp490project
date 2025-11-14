@@ -4,12 +4,6 @@
  * Date: November 10, 2025
  * @author Jose Bastidas
  *
- * Data Structures:
- * - AuthenticationUser: Represents a user entity with fields such as first name,
- *   last name, username, email, and password.
- * - AuthenticationUserRepository: A Spring Data JPA repository for performing CRUD
- *   operations on AuthenticationUser objects.
- *
  * Algorithms:
  * - Simple conditional check: Uses a query (findByEmail) to determine whether a
  *   specific user record already exists. If it doesn’t, a new AuthenticationUser
@@ -52,10 +46,6 @@ public class LoadDatabaseConfiguration {
     /**
      * Creates a CommandLineRunner bean that checks if a default user exists in the
      *     repository and adds one if not.
-     * <p>
-     *  Input: AuthenticationUserRepository (repository for user entities)
-     * <p>
-     *  Output: CommandLineRunner (executed automatically at startup)
      * @param authenticationUserRepository the repository used to query and persist {@link AuthenticationUser} entities
      * @return a {@link CommandLineRunner} instance that initializes the database with a default user
      */

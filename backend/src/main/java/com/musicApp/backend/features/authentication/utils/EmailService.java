@@ -1,18 +1,10 @@
 /**
- * Class Name: EmailService
- * Package: com.musicApp.backend.features.authentication.utils
  * Date: November 10, 2025
  * Programmer: Jose Bastidas
  *
  * Data Structures:
  * - Uses MimeMessage and MimeMessageHelper (from Jakarta Mail) to structure the email.
  *
- * Algorithms / Design Decisions:
- * - Uses JavaMailSender for email delivery.
- * - The helper ensures proper encoding and allows HTML content in emails.
- * - Designed as a service bean to be injected into other classes (like AuthenticationService)
- *   for separation of concerns and testability.
- * - No complex algorithms; focuses on reliable email delivery.
  */
 
 package com.musicApp.backend.features.authentication.utils;
@@ -45,12 +37,6 @@ public class EmailService {
 
     /**
     *     Sends an email to the specified recipient with the provided subject and HTML content.
-    *     Inputs:
-    *       - email: Recipient's email address
-    *       - subject: Subject line of the email
-    *       - content: Email body (can contain HTML)
-    *     Outputs: None
-    *     Throws: MessagingException, UnsupportedEncodingException if the email cannot be sent.
      * @param email   the recipient's email address (e.g., "user@example.com")
      * @param subject the subject line of the email
      * @param content the body of the email message; may include HTML markup

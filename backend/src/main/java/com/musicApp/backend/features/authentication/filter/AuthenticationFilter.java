@@ -7,10 +7,7 @@
  * - List<String> unsecuredEndpoints:
  *     Stores endpoint paths that do not require authentication.
  *     Implemented as a fixed-size List created from Arrays.asList() for efficient lookup.
- * - AuthenticationUser:
- *     Domain model representing the authenticated user. Attached to the request
- *     attributes after successful verification.
- *
+ * 
  * Algorithms:
  * - Token Validation Algorithm:
  *     Steps:
@@ -95,13 +92,7 @@ public class AuthenticationFilter extends HttpFilter {
      *     endpoint. If so, it verifies the Authorization header and validates the
      *     JWT. Upon success, it attaches the authenticated user to the request
      *     context for downstream access by controllers.<br>
-     *     Inputs:<br>
-     *         - HttpServletRequest: the incoming request<br>
-     *         - HttpServletResponse: the outgoing response<br>
-     *         - FilterChain: allows continuation of the request-processing chain<br>
-     *     Outputs:<br>
-     *         - Calls chain.doFilter() to continue request flow if authenticated<br>
-     *         - Returns 401 Unauthorized with JSON message if authentication fails<br>
+     * 
      * @param request  the incoming {@link HttpServletRequest} to be filtered
      * @param response the {@link HttpServletResponse} used to send back the result
      * @param chain    the {@link FilterChain} allowing the request to proceed if authentication passes
