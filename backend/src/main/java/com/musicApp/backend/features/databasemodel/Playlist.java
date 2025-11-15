@@ -1,3 +1,8 @@
+/**
+ * Date: September 25, 2025
+ * @author: M. Alfaro
+ */
+
 package com.musicApp.backend.features.databasemodel;
 
 // import com.musicApp.backend.features.databasemodel.User;
@@ -11,7 +16,6 @@ import java.util.List;
  * Entity class for Playlist
  * Uses JPA  to define the entity and its relationships. It creates a table named "playlists" with fields 
  * for playlistID, userID, title, comment, privacy, runtime, and songs.
- * @author: M. Alfaro
  */
 
 @Entity
