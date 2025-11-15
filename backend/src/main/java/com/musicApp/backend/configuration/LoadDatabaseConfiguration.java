@@ -3,7 +3,7 @@
  * @author Jose Bastidas
  */
 
-
+ 
 package com.musicApp.backend.configuration;
 
 import com.musicApp.backend.features.authentication.model.AuthenticationUser;
