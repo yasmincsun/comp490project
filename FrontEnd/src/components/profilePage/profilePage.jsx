@@ -4,7 +4,7 @@ import "./profilePage.css";
 
 /**
  * Declares a constant variable named MOCK_ARTISTS
- * <p>
+ * <p> 
  * This method sets the value of MOCK_ARTISTS to be a constant array. This list provides the user with a list of options to include as their favorite on their profile page.
  */
 const MOCK_ARTISTS = [

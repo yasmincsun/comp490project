@@ -3,7 +3,7 @@
  * <p>
  * This class provides basic styling information for the Front page container, including information on positionality on the screen, size, and font used. 
  * @author Yasmin Zubair 
- * @version 1.0 
+ * @version 1.0  
  */
 .frontpage-container {
   min-height: 100vh;

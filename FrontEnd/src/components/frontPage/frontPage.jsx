@@ -4,7 +4,7 @@ import './frontPage.css';
 
 /**
  * Declares a constant variable named FrontPage
- * <p>
+ * <p> 
  * This method sets the value of FrontPage to be constant. This function is used to navigate between pages in Javascript.
  */
 const FrontPage = () => {
