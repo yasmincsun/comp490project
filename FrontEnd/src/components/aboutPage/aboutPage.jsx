@@ -4,7 +4,7 @@ import './aboutPage.css';
 
 /**
  * Declares a constant variable named AboutPage
- * <p>
+ * <p> 
  * This method sets the value of AboutPage to be constant. This function is used to navigate between pages in Javascript.
  *
  */

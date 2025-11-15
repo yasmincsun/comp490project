@@ -4,7 +4,7 @@ import './developerPage.css';
 
 /**
  * Declares a constant variable named DeveloperPage
- * <p>
+ * <p> 
  * This method sets the value of DeveloperPage to be constant. This function is used to navigate between pages in Javascript.
  */
 const DeveloperPage = () => {

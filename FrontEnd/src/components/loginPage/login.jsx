@@ -7,7 +7,7 @@ import passwordIcon from "../assets/password.png";
 
 /**
  * Changes display based on user input 
- * <p>
+ * <p> 
  * Displays a login input form if the user already has an account or displays a signup input form if the user wants to create an account
  */
 const FormWithValidation = () => {

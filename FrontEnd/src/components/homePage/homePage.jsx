@@ -4,7 +4,7 @@ import "./homePage.css"
 
 /**
  * Declares a constant variable named HomePage
- * <p>
+ * <p> 
  * This function displays and runs the entirety of the Home Page. This page contains information about generating playlists and collecting information from the user’s Spotify account. The user’s Spotify playlists are displayed on the home page. Personalized features, like the user-chosen background	color, are also displayed here. 
  */
 const HomePage = () => {
