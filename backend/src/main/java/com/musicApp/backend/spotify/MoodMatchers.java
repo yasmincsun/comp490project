@@ -4,6 +4,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+/**
+ * A big hash map that contains all the moods the search engine supports, plus
+ * keywords that are associated with the mood. The keywords act as a way to search
+ * for songs that contain these keywords and scores them
+ * 
+ */
+
 public final class MoodMatchers {
 
     public static final Map<String, List<Pattern>> MOOD_MATCHERS = Map.ofEntries(
