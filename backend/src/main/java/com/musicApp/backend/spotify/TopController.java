@@ -1,3 +1,7 @@
+/**
+ * Date: September 25, 2025
+ * @author Allen Guevarra
+ */
 package com.musicApp.backend.spotify;
 
 import org.springframework.http.ResponseEntity;
@@ -10,12 +14,30 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A REST controller to show a user's top artists
+ */
+
 @RestController
 public class TopController {
+
+  /**
+   * Handles Spotify Authentication and give the API calls
+   */
   private final SpotifyAuthService auth;
 
+    /**
+     * A constructor with the authentication service
+     * @param auth holds the Spotify authentication service to allow access to the user's top artist
+     */
   public TopController(SpotifyAuthService auth) { this.auth = auth; }
 
+    /**
+     * An endpoint that shows the user's top Spotify Artist
+     * @param session holds the current HTTP session
+     * @return a JSON of the User ID and a lost of their top artists
+     * @throws Exception if the request fails
+     */
   @GetMapping("/me/top")
   public ResponseEntity<?> top(HttpSession session) throws Exception {
     String userId = (String) session.getAttribute("userId");
