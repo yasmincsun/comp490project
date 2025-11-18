@@ -85,6 +85,7 @@ public class AuthenticationUser {
     private Boolean loginStatus = false; //find a way to change when someone is online
     private int playlist_count;
     private int friends_count;
+    private int color;
 
     @ManyToOne
     @JoinColumn(name = "mood_id")
@@ -107,6 +108,7 @@ public class AuthenticationUser {
         this.username = username;
         this.email = email;
         this.password = password;
+        
     }
 
     public AuthenticationUser() {
@@ -221,6 +223,14 @@ public class AuthenticationUser {
 
     public Mood getCurrentMood() {
          return currentMood;
+    }
+
+    public void setColor(int color){
+        this.color = color;
+    }
+
+    public int getColor(){
+        return color;
     }
 
 }
