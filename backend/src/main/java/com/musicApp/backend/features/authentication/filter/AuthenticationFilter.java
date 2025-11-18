@@ -1,30 +1,6 @@
 /**
- * Class Name: AuthenticationFilter
- * Package: com.musicApp.backend.features.authentication.filter
- * Date: November 10, 2025
- * Programmer: Jose Bastidas
- *
-
- * Data Structures:
- * - List<String> unsecuredEndpoints:
- *     Stores endpoint paths that do not require authentication.
- *     Implemented as a fixed-size List created from Arrays.asList() for efficient lookup.
- * - AuthenticationUser:
- *     Domain model representing the authenticated user. Attached to the request
- *     attributes after successful verification.
- *
- * Algorithms:
- * - Token Validation Algorithm:
- *     Steps:
- *       1. Extract the "Authorization" header.
- *       2. Verify the presence of a Bearer token.
- *       3. Use JsonWebToken utility to check token expiration.
- *       4. Decode the email embedded in the token.
- *       5. Retrieve the corresponding user record via AuthenticationService.
- *     - The algorithm is linear in time (O(1) per request) because it involves
- *       only direct lookups and decoding operations.
- *     - Chosen over alternatives like session-based authentication for scalability,
- *       since JWT-based validation is stateless and ideal for distributed REST APIs.
+ * Date: September 25, 2025
+ * @author Jose Bastidas
  */
 
 package com.musicApp.backend.features.authentication.filter;
@@ -70,13 +46,21 @@ public class AuthenticationFilter extends HttpFilter {
             "/mood/by",
             "/playlist",
             "/playlist/add",
-            "/playlist/from-mood"
+            "/playlist/from-mood",
+            "/"
 
     );
 
     private final JsonWebToken jsonWebTokenService;
     private final AuthenticationService authenticationService;
 
+
+    /**
+     * Constructs an {@code AuthenticationFilter} with the required authentication and token services.
+     *
+     * @param jsonWebTokenService the {@link JsonWebToken} utility used for validating and decoding JWTs
+     * @param authenticationService the {@link AuthenticationService} used to retrieve user details based on token data
+     */
     public AuthenticationFilter(JsonWebToken jsonWebTokenService, AuthenticationService authenticationService) {
         this.jsonWebTokenService = jsonWebTokenService;
         this.authenticationService = authenticationService;
@@ -85,18 +69,18 @@ public class AuthenticationFilter extends HttpFilter {
 
     /**
      *doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain):
-    *     The core filtering method. It checks whether the request targets a secured
-    *     endpoint. If so, it verifies the Authorization header and validates the
-    *     JWT. Upon success, it attaches the authenticated user to the request
-    *     context for downstream access by controllers.<br>
-    *     Inputs:<br>
-    *         - HttpServletRequest: the incoming request<br>
-    *         - HttpServletResponse: the outgoing response<br>
-    *         - FilterChain: allows continuation of the request-processing chain<br>
-    *     Outputs:<br>
-    *         - Calls chain.doFilter() to continue request flow if authenticated<br>
-    *         - Returns 401 Unauthorized with JSON message if authentication fails<br>
-     */
+     *     The core filtering method. It checks whether the request targets a secured
+     *     endpoint. If so, it verifies the Authorization header and validates the
+     *     JWT. Upon success, it attaches the authenticated user to the request
+     *     context for downstream access by controllers.<br>
+     * 
+     * @param request  the incoming {@link HttpServletRequest} to be filtered
+     * @param response the {@link HttpServletResponse} used to send back the result
+     * @param chain    the {@link FilterChain} allowing the request to proceed if authentication passes
+     *
+     * @throws IOException if an input or output error occurs while processing the request
+     * @throws ServletException if the request could not be handled, typically due to an invalid or missing token
+     */    
     @Override
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
        
@@ -119,17 +103,6 @@ public class AuthenticationFilter extends HttpFilter {
         }
 
         String path = request.getRequestURI();
-
-        // if(unsecuredEndpoints.contains(path)){
-        //     chain.doFilter(request, response);
-        //     return;
-        // }
-
-//         boolean isUnsecured = unsecuredEndpoints.stream().anyMatch(path::startsWith);
-//         if (isUnsecured) {
-//             chain.doFilter(request, response);
-//             return;
-// }
 
         if (unsecuredEndpoints.contains(path) 
         || path.startsWith("/static/")  // Optional: skip all static resources

@@ -1,24 +1,9 @@
 /**
- * Class Name: LoadDatabaseConfiguration
- * Package: com.musicApp.backend.configuration
- * Date: November 10, 2025
+ * Date: September 25, 2025
  * @author Jose Bastidas
- *
- * Data Structures:
- * - AuthenticationUser: Represents a user entity with fields such as first name,
- *   last name, username, email, and password.
- * - AuthenticationUserRepository: A Spring Data JPA repository for performing CRUD
- *   operations on AuthenticationUser objects.
- *
- * Algorithms:
- * - Simple conditional check: Uses a query (findByEmail) to determine whether a
- *   specific user record already exists. If it doesn’t, a new AuthenticationUser
- *   object is created and persisted.
- *   This approach was chosen for simplicity and efficiency since the dataset is small
- *   and initialization happens only once at startup.
  */
 
-
+ 
 package com.musicApp.backend.configuration;
 
 import com.musicApp.backend.features.authentication.model.AuthenticationUser;
@@ -40,6 +25,11 @@ import org.springframework.context.annotation.Configuration;
 public class LoadDatabaseConfiguration {
     private final Encoder encoder;
 
+    /**
+     * Constructs the {@code LoadDatabaseConfiguration} with a password encoder dependency.
+     *
+     * @param encoder the {@link Encoder} utility used for encrypting user passwords before saving them
+     */
     public LoadDatabaseConfiguration(Encoder encoder) {
         this.encoder = encoder;
     }
@@ -47,12 +37,8 @@ public class LoadDatabaseConfiguration {
     /**
      * Creates a CommandLineRunner bean that checks if a default user exists in the
      *     repository and adds one if not.
-     * <p>
-     *  Input: AuthenticationUserRepository (repository for user entities)
-     * <p>
-     *  Output: CommandLineRunner (executed automatically at startup)
-     * @param authenticationUserRepository
-     * @return
+     * @param authenticationUserRepository the repository used to query and persist {@link AuthenticationUser} entities
+     * @return a {@link CommandLineRunner} instance that initializes the database with a default user
      */
     @Bean
     public CommandLineRunner initDatabase(AuthenticationUserRepository authenticationUserRepository){
