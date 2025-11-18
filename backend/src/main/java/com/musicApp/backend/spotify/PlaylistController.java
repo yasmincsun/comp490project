@@ -1,3 +1,7 @@
+/**
+ * Date: September 25, 2025
+ * @author Allen Guevarra
+ */
 package com.musicApp.backend.spotify;
 
 import org.springframework.http.ResponseEntity;
@@ -7,18 +11,44 @@ import se.michaelthelin.spotify.SpotifyApi;
 
 import java.util.*;
 
+/**
+ * 
+ * A REST controller that handles the creation of the playlist
+ * 
+ * It contains endpoints to create playlists, add tracks to those playlists, and generate them
+ * 
+ */
 @RestController
 public class PlaylistController {
+
+  /**
+   * Gives Spotify authentication to the user
+   */
   private final SpotifyAuthService auth;
+
+  /**
+   * The service that generates the recommendations
+   */
   private final MoodService moodService;
 
+    /**
+     * A constructor that creates the authentication and mood service
+     * 
+     * @param auth is the Spotify authentication
+     * @param moodService is the service for the mood search engine
+     */
   public PlaylistController(SpotifyAuthService auth, MoodService moodService) {
     this.auth = auth;
     this.moodService = moodService;
   }
 
-  /** 
-   * Create a new private playlist and add provided track URIs.
+  /**
+   * Create a new private playlist 
+   * 
+   * @param body is the JSON that contains the playlist details and track URIs
+   * @param session is the current HTTP session
+   * @return a {@link ResponseEntity} with the playlist or with an error message
+   * 
    */
   @PostMapping("/playlist")
   public ResponseEntity<?> createAndAdd(@RequestBody Map<String, Object> body, HttpSession session) {
@@ -50,6 +80,14 @@ public class PlaylistController {
     }
   }
 
+  /**
+   * Adds track(s) to a playlist
+   * 
+   * @param body contains a JSON of the Playlist ID and URIs to add
+   * @param session the current HTTP session 
+   * @return a {@link ResponseEntity} with the tracks added or an error
+   */
+
   /** Add items to an existing playlist by ID. */
   @PostMapping("/playlist/add")
   public ResponseEntity<?> addToExisting(@RequestBody Map<String, Object> body, HttpSession session) {
@@ -77,8 +115,13 @@ public class PlaylistController {
   }
 
   /**
-   * One-call endpoint: build a playlist from mood results and save to the user's Spotify.
-   * Allows both GET and POST so you can trigger from browser or API client.
+   * Builds a playlist based on the mood preference
+   * 
+   * @param mood is the user's selected mood
+   * @param name is the custom playlist name
+   * @param limit is the number of songs allowed in a playlist
+   * @param session the current HTTP session
+   * @return a {@link ResponseEntity} containing the playlist generated, or an error
    */
   @RequestMapping(value = "/playlist/from-mood", method = { RequestMethod.GET, RequestMethod.POST })
   public ResponseEntity<?> playlistFromMood(
@@ -113,7 +156,7 @@ public class PlaylistController {
 
       var created = api.createPlaylist(userId, playlistName)
           .public_(false)
-          .description("Auto-generated from mood: " + res.mood().bucket())
+          .description("Here's a playlist when you feel " + res.mood().bucket())
           .build()
           .execute();
 

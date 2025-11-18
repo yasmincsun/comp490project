@@ -1,7 +1,5 @@
  /**
- * Class Name: BackendApplication
- * Package: com.musicApp.backend
- * Date: November 10, 2025
+ * Date: September 25, 2025
  * @author Jose Bastidas
  */
 
@@ -23,13 +21,9 @@ import io.github.cdimascio.dotenv.Dotenv;
 public class BackendApplication {
   
 	/**
-	 *	Loads environment variables and launches the Spring Boot application.
-	 *<p>
-   *   Input: Command-line arguments (String[])
-	 *<p>
-   *   Output: None (starts the application context)
-	 * @param args
-	 */
+	 * Loads environment variables and launches the Spring Boot application.
+   * @param args Command-line arguments passed to the application
+	*/
 	public static void main(String[] args) {
 
 		 Dotenv dotenv = Dotenv.load();
@@ -47,11 +41,7 @@ public class BackendApplication {
 
 	/**
 	 *	Declares a RestTemplate bean for performing RESTful HTTP requests.
-	 *<p>
-   * 	 Input: None
-	 *<p>
-   * 	 Output: RestTemplate object (used throughout the app for external API calls)
-	 * @return RestTemplate object
+   * @return RestTemplate instance used for making HTTP calls to external services
 	 */
 	@Bean
 	public RestTemplate restTemplate() {

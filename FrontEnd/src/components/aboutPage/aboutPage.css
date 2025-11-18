@@ -1,3 +1,10 @@
+/**
+ * Provides styling for the AboutUs page container
+ * <p> 
+ * This class provides basic styling information for the AboutUs page container, including information on positionality on the screen, size, and font used. 
+ * @author Yasmin Zubair 
+ * @version 1.0
+ */
 .aboutpage-container {
   min-height: 100vh;
   background-color: #dde2ef;
@@ -5,6 +12,13 @@
   position: relative;
 }
 
+/**
+ * Provides styling for the navigation bar on the AboutUs page
+ * <p>
+ * This class provides basic styling information for the navigation bar on the AboutUs page, including information on positionality on the screen, size, and shadowing. 
+ * @author Yasmin Zubair 
+ * @version 1.0 
+ */
 .aboutpage-nav {
   position: fixed;
   top: 0;
@@ -19,11 +33,25 @@
   z-index: 100;
 }
 
+/**
+ * Provides styling for the navigation buttons on the AboutUs page
+ * <p>
+ * This class provides basic styling information for the navigation buttons, that are contained on the navigation bar, on the AboutUs page, including information on positionality on the bar and space between each button.
+ * @author Yasmin Zubair 
+ * @version 1.0 
+ */
 .nav-buttons {
   display: flex;
   gap: 20px;
 }
 
+/**
+ * Provides extensive styling for the navigation buttons on the AboutUs page
+ * <p>
+ * This class provides styling information for the navigation buttons, that are contained on the navigation bar, on the AboutUs page. The display of the buttons themselves, like the color, font, and cursor type, are declared here.
+ * @author Yasmin Zubair 
+ * @version 1.0 
+ */
 .nav-btn {
   padding: 10px 20px;
   font-family: 'Times New Roman', Times, serif;
@@ -37,15 +65,36 @@
   transition: background-color 0.2s;
 }
 
+/**
+ * Changes the styling of the button. 
+ * <p>
+ * This class provides styling information for the navigation buttons, when the cursor is on top of them. The color of the button is slightly changed to let the user know that that specific button is the one they will click. 
+ * @author Yasmin Zubair 
+ * @version 1.0 
+ */
 .nav-btn:hover {
   background: rgba(85, 107, 47, 0.1);
 }
 
+/**
+ * Changes the styling of the button. 
+ * <p>
+ * This class provides styling information for the navigation buttons, when the button is clicked. The color of the button is slightly changed to let the user know that the button click has been successfully received. 
+ * @author Yasmin Zubair 
+ * @version 1.0 
+ */
 .nav-btn.active {
   background: rgba(85, 107, 47, 0.1);
   color: #808000;
 }
 
+/**
+ * Provides extensive styling for the Login button on the AboutUs page
+ * <p>
+ * This class provides styling information for the Login button that is on the AboutUs page. The display of the button itself, like the color, font, and cursor type, are declared here.
+ * @author Yasmin Zubair 
+ * @version 1.0 
+ */
 .login-btn {
   padding: 10px 20px;
   font-family: 'Times New Roman', Times, serif;
@@ -60,10 +109,24 @@
   transition: background-color 0.2s;
 }
 
+/**
+ * Changes the styling of the button. 
+ * <p>
+ * This class provides styling information for the Login button, when the cursor is on top of it. The color of the button is slightly changed to let the user know that that specific button is the one they will click. 
+ * @author Yasmin Zubair 
+ * @version 1.0 
+ */
 .login-btn:hover {
   background: #6a6b00;
 }
 
+/**
+ * Provides styling for the AboutUs page content
+ * <p>
+ * This class provides basic styling information for the AboutUs page content, including information on positionality on the screen and size.
+ * @author Yasmin Zubair 
+ * @version 1.0 
+ */
 .aboutpage-content {
   padding-top: 100px;
   max-width: 1200px;

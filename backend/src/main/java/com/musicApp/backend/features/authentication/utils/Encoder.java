@@ -1,19 +1,6 @@
 /**
- * Class Name: Encoder
- * Package: com.musicApp.backend.features.authentication.utils
- * Date: November 10, 2025
+ * Date: September 25, 2025
  * @author Jose Bastidas
- *
- *
- * Data Structures:
- * - byte[] for storing SHA-256 hash
- * - Base64 String for storing the encoded hash
- *
- * Algorithms / Design Decisions:
- * - SHA-256 hashing algorithm is used for secure one-way encryption.
- * - Base64 encoding ensures the hashed byte array can be safely stored as a String.
- * - matches() method provides a secure comparison without storing or revealing raw passwords.
- * - Chosen for security, simplicity, and compatibility with token/password verification.
  */
 
 package com.musicApp.backend.features.authentication.utils;
@@ -35,10 +22,9 @@ public class Encoder {
 
     /**
      *     Converts a plain string into a SHA-256 hash and encodes it in Base64.
-     *     Inputs: rawString - the string to encode
-     *     Outputs: Base64-encoded SHA-256 hash as a String
-     * @param rawString
-     * @return
+     * @param rawString the plain text string to encode (e.g., password or token)
+     * @return a {@link String} representing the Base64-encoded SHA-256 hash
+     * @throws RuntimeException if the SHA-256 algorithm is not available
      */
     public String encode(String rawString){
         try {
@@ -52,11 +38,10 @@ public class Encoder {
 
     /**
      * Checks whether the raw string, when encoded, matches the provided encoded string.
-     *     Inputs: rawString, encodedString
-     *     Outputs: boolean indicating if the strings match
-     * @param rawString
-     * @param encodedString
-     * @return
+     * @param rawString     the plain text string to check
+     * @param encodedString the previously encoded Base64-encoded SHA-256 hash
+     * @return {@code true} if the encoded raw string matches the provided encoded string;
+     *         {@code false} otherwise
      */
     public boolean matches(String rawString, String encodedString){
         return encode(rawString).equals(encodedString);

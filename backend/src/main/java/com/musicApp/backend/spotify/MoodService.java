@@ -1,3 +1,7 @@
+/**
+ * Date: September 25, 2025
+ * @author Allen Guevarra
+ */
 package com.musicApp.backend.spotify;
 
 import org.springframework.stereotype.Service;
@@ -14,16 +18,41 @@ import java.util.stream.Collectors;
 @Service
 public class MoodService {
 
+  /**
+   * 
+   * A pattern that checks for tracks that contain featuring artists and removes
+   * them from consideration. 
+   * 
+   */
+
   private static final Pattern FEAT_PATTERN = Pattern.compile(
     "\\s*(\\(|\\[)?\\s*(feat\\.|featuring|with)\\s+[^)\\]]+(\\)|\\])?",
     Pattern.CASE_INSENSITIVE
   );
+
+  /**
+   * 
+   * A pattern that checks songs for variations of the original like remasters, remixes, or 
+   * any edits to ensure there are no duplicate tracks being recommended
+   * 
+   */
 
   private static final Pattern VERSION_PATTERN = Pattern.compile(
     "\\s*[-–:]?\\s*(remaster(ed)?(\\s*\\d{4})?|radio edit|single version|album version|clean|explicit|demo|live|mix|edit|version)\\b.*",
     Pattern.CASE_INSENSITIVE
   );
 
+  /**
+   * 
+   * A method to help remove duplicate tracks and compare songs for originality
+   * 
+   * For example, If Song A exists, but Song A has another variation featuring an artist or a remix or an edit, this
+   * method removes the variations
+   * 
+   * @param name is the track name
+   * @returns the original track, or a canonicalized track
+   * 
+   */
   private static String canonicalTitle(String name) {
   if (name == null) return "";
   String n = Normalizer.normalize(name, Normalizer.Form.NFKD);
@@ -36,23 +65,61 @@ public class MoodService {
   return n;
 }
 
+/**
+ * Helps fetch the artist ID from a track
+ * 
+ * @param t holds the track
+ * @return gives the artist ID or an empty string if a track doesn't have an artist
+ */
 private static String primaryArtistId(Track t) {
   if (t == null || t.getArtists() == null || t.getArtists().length == 0 || t.getArtists()[0] == null)
     return "";
   return t.getArtists()[0].getId() == null ? "" : t.getArtists()[0].getId();
 }
 
+  /**
+   * Handles authentication for the user to use the search engine
+   */
   private final SpotifyAuthService auth;
 
+
+  /**
+   * 
+   * A constructor that is linked with the {@link SpotifyAuthService}
+   * 
+   * Important so that users are authorized to use the MoodService
+   * 
+   */
   public MoodService(SpotifyAuthService auth) {
     this.auth = auth;
   }
 
+
+  /**
+   * A record to holds how similar the track's or mood is or genre characteristics
+   * 
+   * @param valence measures how positve a song is
+   * @param energy measures song intensity
+   * @param tempo measures song BPM
+   * @param danceability measures how danceable a song is
+   * @param bucket is the mood its achieving to collect
+   */
   public static record MoodVector(double valence, double energy, double tempo,
                                   double danceability, String bucket) {}
+  /**
+   * A record for returning the mood and the recommendations
+   */
   public static record MoodResult(MoodVector mood,
                                   List<Map<String, Object>> recommendations) {}
-
+  /**
+   * Computes the user's mood profile and returns a neutral recommendation
+   * 
+   * It goes through a user's top tracks (or an artist's top tracks if not available)
+   * 
+   * @param userId holds the user's SpotifyId
+   * @return a link to {@link MoodResult}, containing a neutral set of trakcs
+   * @throws Exception if API call fails or authorization is invalid
+   */
   public MoodResult computeAndRecommend(String userId) throws Exception {
     SpotifyApi api = auth.apiForUser(userId);
 
@@ -124,15 +191,32 @@ private static String primaryArtistId(Track t) {
   }
 
   /**
-   * Genre-based filtering for a SELECTED mood (works in dev mode) with
-   * non-deterministic, weighted sampling so each request can yield a new set.
-   *
-   * Example moods: happy, chill, pumped, melancholic
+   * Generates the playlist with the user's mood of preference
+   * 
+   * It analyzes the user's favorite tracks and artist, and matches them against
+   * the keywords in {@link MoodMatchers}, then scores what is best fit
+   * 
+   * @param userId the user's Spotify ID
+   * @param selectedMood the user's mood of preference
+   * @return a {@link MoodResult} containing a list of songs best fit for the mood
+   * @throws Exception if the API call fails
    */
   public MoodResult recommendBySelectedMood(String userId, String selectedMood) throws Exception {
     return recommendBySelectedMood(userId, selectedMood, 10);
   }
 
+
+/**
+ * This method helps generate the mood-based recommendation
+ * 
+ * It fetches the user tracks and their genres, matches the genres against the patterns in {@link MoodMatchers}
+ * scores the track per artist, then randomly samples a small set per artist to create a balanced playlist
+ * @param userId holds the user's Spotify ID
+ * @param selectedMood user's mood of preference
+ * @param limit the number of songs to return
+ * @return a {@link MoodResult} with the computed mood vector and reccomendations
+ * @throws Exception if the API calls fail
+ */
   public MoodResult recommendBySelectedMood(String userId, String selectedMood, int limit) throws Exception {
     SpotifyApi api = auth.apiForUser(userId);
 

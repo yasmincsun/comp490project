@@ -5,6 +5,11 @@ import userIcon from "../assets/person.png";
 import emailIcon from "../assets/email.png";
 import passwordIcon from "../assets/password.png";
 
+/**
+ * Changes display based on user input 
+ * <p> 
+ * Displays a login input form if the user already has an account or displays a signup input form if the user wants to create an account
+ */
 const FormWithValidation = () => {
   const [mode, setMode] = useState("login"); // 'login' or 'signup'
   const [formData, setFormData] = useState({
@@ -14,6 +19,7 @@ const FormWithValidation = () => {
     email: "",
     password: "",
   });
+
   const [formErrors, setFormErrors] = useState({
     name: "",
     lastname: "",
@@ -21,11 +27,20 @@ const FormWithValidation = () => {
     email: "",
     password: "",
   });
+
   const [errorMsg, setErrorMsg] = useState("");
+
   const [verificationMode, setVerificationMode] = useState(false);
+
   const [verificationCode, setVerificationCode] = useState("");
+
   const navigate = useNavigate();
 
+  /**
+ * Checks values of user input 
+ * <p>
+ * Checks whether the user’s inputs are valid, ensuring that they are including all required fields in the standard format. Error messages are displayed to the user if they are missing a component or included information in an incorrect format. 
+ */
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
@@ -51,6 +66,11 @@ const FormWithValidation = () => {
     }
   };
 
+  /**
+ * Processes the login information 
+ * <p>
+ * This function processes the login information after ensuring the inputs are valid, and sends the information through to the backend. The information is then stored in the database and now gives the user the option to login using their information. 
+ */
 const handleSubmit = async (event) => {
   event.preventDefault();
 
@@ -72,6 +92,7 @@ const handleSubmit = async (event) => {
       mode === "signup"
         ? "http://localhost:8080/api/v1/authentication/register"
         : "http://localhost:8080/api/v1/authentication/login";
+
 
     // 2.) Map frontend field to backend field
     const payload = mode === "signup"
@@ -119,6 +140,11 @@ const handleSubmit = async (event) => {
 
 console.log("Sending verification code:", verificationCode);
 
+/**
+ * Sends verification code 
+ * <p>
+ * This function sends a verification code to the user’s email address to confirm their account. Verifying the email address ensures that spam bots are not created, and guarantees that the user did not accidentally input the wrong address. The verification code is sent via MailChimp, which is accessed through Port 8080.  
+ */
   const handleVerification = async () => {
   if (!verificationCode.trim()) {
     alert("Please enter the verification code.");
@@ -171,7 +197,12 @@ console.log("Sending verification code:", verificationCode);
   }
 };
 
-
+/**
+ * Displays the Login Page and runs all of the components 
+ * <p>
+ * This function displays and runs the entirety of the Login Page. This method checks whether the user wants to login or sign up, and runs validations to ensure that the user’s information is accurate. 
+* @return Login Page display to the Web Page
+ */
   return (
     <div className="container">
       <div className="login-home-btn-container">

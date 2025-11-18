@@ -1,22 +1,8 @@
 /**
- * Class Name: AuthenticationResponseBody
- * Package: com.musicApp.backend.features.authentication.dto
- * Date: November 10, 2025
+ * Date: September 25, 2025
  * @author Jose Bastidas
  *
-
- * Important Functions:
- * - Getter methods:
- *       Provide read-only access to private fields, since all fields are declared `final`.
- *
- * Data Structures:
- * - Primitive wrapper types (`String`, `Boolean`) are used for flexibility and null safety.
- * - Immutable object design: all fields are `final`, ensuring thread safety and data consistency.
- *
- * Algorithms:
- * - None. This class is purely a data container used to transfer response data.
- *   The immutability design pattern is used intentionally to prevent data mutation once constructed.
- */
+*/
 
 package com.musicApp.backend.features.authentication.dto;
 
@@ -39,8 +25,8 @@ public class AuthenticationResponseBody {
 
     /**
      * Used for simple responses containing only a token and message.
-     * @param token
-     * @param message
+     * @param token   the JWT token generated upon successful authentication
+     * @param message a textual message describing the result of the operation
      */
     public AuthenticationResponseBody(String token, String message) {
         this.token = token;
@@ -52,11 +38,11 @@ public class AuthenticationResponseBody {
 
     /**
      * Used for more detailed responses including user information and login state.
-     * @param token
-     * @param message
-     * @param username
-     * @param email
-     * @param loginStatus
+     * @param token       the JWT token issued to the user
+     * @param message     a message summarizing the authentication result
+     * @param username    the username associated with the authenticated user
+     * @param email       the email of the authenticated user
+     * @param loginStatus indicates whether the authentication attempt was successful
      */
    public AuthenticationResponseBody(String token, String message, String username, String email, Boolean loginStatus) {
         this.token = token;
@@ -66,22 +52,48 @@ public class AuthenticationResponseBody {
         this.loginStatus = loginStatus;
     }
 
+    /**
+     * Returns the JSON Web Token (JWT) associated with this authentication response.
+     *
+     * @return the JWT token, or {@code null} if not applicable
+     */
     public String getToken() {
         return token;
     }
 
+    /**
+     * Returns the message describing the outcome of the authentication request.
+     *
+     * @return a textual message about the authentication result
+     */
     public String getMessage() {
         return message;
     }
 
+    /**
+     * Returns the username associated with the authenticated user.
+     *
+     * @return the username, or {@code null} if not included in the response
+     */
     public String getUsername() {
         return username;
     }
 
+    /**
+     * Returns the email address associated with the authenticated user.
+     *
+     * @return the user’s email, or {@code null} if not included in the response
+     */
     public String getEmail() {
         return email;
     }
 
+    /**
+     * Indicates whether the user is successfully logged in.
+     *
+     * @return {@code true} if login succeeded, {@code false} otherwise;
+     *         may be {@code null} for minimal responses
+     */
     public Boolean getLoginStatus() {
         return loginStatus;
     }

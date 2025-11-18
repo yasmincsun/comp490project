@@ -1,3 +1,10 @@
+/**
+ * Provides styling for the FrontPage container
+ * <p>
+ * This class provides basic styling information for the Front page container, including information on positionality on the screen, size, and font used. 
+ * @author Yasmin Zubair 
+ * @version 1.0  
+ */
 .frontpage-container {
   min-height: 100vh;
   background-color: #dde2ef;
@@ -5,6 +12,13 @@
   position: relative;
 }
 
+/**
+ * Provides styling for the navigation bar on the Front page
+ * <p>
+ * This class provides basic styling information for the navigation bar on the Front page, including information on positionality on the screen, size, and shadowing. 
+ * @author Yasmin Zubair 
+ * @version 1.0 
+ */
 .frontpage-nav {
   position: fixed;
   top: 0;
@@ -19,11 +33,25 @@
   z-index: 100;
 }
 
+/**
+ * Provides styling for the navigation buttons on the Front page
+ * <p>
+ * This class provides basic styling information for the navigation buttons, that are contained on the navigation bar, on the Front page, including information on positionality on the bar and space between each button.
+ * @author Yasmin Zubair 
+ * @version 1.0 
+ */
 .nav-buttons {
   display: flex;
   gap: 20px;
 }
 
+/**
+ * Provides extensive styling for the navigation buttons on the Front page
+ * <p>
+ * This class provides styling information for the navigation buttons, that are contained on the navigation bar, on the Front page. The display of the buttons themselves, like the color, font, and cursor type, are declared here.
+ * @author Yasmin Zubair 
+ * @version 1.0 
+ */
 .nav-btn {
   padding: 10px 20px;
   font-family: 'Times New Roman', Times, serif;
@@ -37,10 +65,24 @@
   transition: background-color 0.2s;
 }
 
+/**
+ * Changes the styling of the button. 
+ * <p>
+ * This class provides styling information for the navigation buttons, when the cursor is on top of them. The color of the button is slightly changed to let the user know that that specific button is the one they will click. 
+ * @author Yasmin Zubair 
+ * @version 1.0 
+ */
 .nav-btn:hover {
   background: rgba(85, 107, 47, 0.1);
 }
 
+/**
+ * Provides extensive styling for the Login button on the Front page
+ * <p>
+ * This class provides styling information for the Login button that is on the Front page. The display of the button itself, like the color, font, and cursor type, are declared here.
+ * @author Yasmin Zubair 
+ * @version 1.0 
+ */
 .login-btn {
   padding: 10px 20px;
   font-family: 'Times New Roman', Times, serif;
@@ -55,10 +97,24 @@
   transition: background-color 0.2s;
 }
 
+/**
+ * Changes the styling of the button. 
+ * <p>
+ * This class provides styling information for the Login button, when the cursor is on top of it. The color of the button is slightly changed to let the user know that that specific button is the one they will click. 
+ * @author Yasmin Zubair 
+ * @version 1.0 
+ */
 .login-btn:hover {
   background: #6a6b00;
 }
 
+/**
+ * Provides styling for the Front page content
+ * <p>
+ * This class provides basic styling information for the Front page content, including information on positionality on the screen and size.
+ * @author Yasmin Zubair 
+ * @version 1.0 
+ */
 .frontpage-content {
   padding-top: 120px;
   text-align: center;
@@ -66,18 +122,39 @@
   margin: 0 auto;
 }
 
+/**
+ * Provides styling for the Front page content header
+ * <p>
+ * This class provides basic styling information for the Front page content header, including information on positionality on the screen and size.
+ * @author Yasmin Zubair 
+ * @version 1.0 
+ */
 .frontpage-content h1 {
   font-size: 48px;
   color: #556B2F;
   margin-bottom: 20px;
 }
 
+/**
+ * Provides styling for the Front page content header paragraphs
+ * <p>
+ * This class provides basic styling information for text on the Front page content header, including information on positionality on the screen and font size.
+ * @author Yasmin Zubair 
+ * @version 1.0 
+ */
 .frontpage-content p {
   font-size: 24px;
   color: #4a4a4a;
   margin-bottom: 40px;
 }
 
+/**
+ * Provides extensive styling for the Start button on the Front page
+ * <p>
+ * This class provides styling information for the Start button that is on the AboutUs page. The display of the button itself, like the color, font, and cursor type, are declared here. The Start button takes the user to the main login page to have them register for an account. 
+ * @author Yasmin Zubair 
+ * @version 1.0 
+ */
 .start-btn {
   padding: 15px 40px;
   font-size: 20px;
@@ -89,6 +166,13 @@
   transition: background-color 0.2s;
 }
 
+/**
+ * Changes the styling of the button. 
+ * <p>
+ * This class provides styling information for the Start button, when the cursor is on top of it. The color of the button is slightly changed to let the user know that that specific button is the one they will click. 
+ * @author Yasmin Zubair 
+ * @version 1.0 
+ */
 .start-btn:hover {
   background: #445624;
 }
