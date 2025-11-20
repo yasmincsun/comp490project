@@ -9,7 +9,6 @@ import "./homePage.css"
  */
 const HomePage = () => {
     const [mood, setMood] = useState("");
-    const [genre, setGenre] = useState("");
     const [bgColor, setBgColor] = useState("");
     const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
     const navigate = useNavigate();
@@ -37,7 +36,7 @@ const HomePage = () => {
     const handleSearch = (e) => {
         e.preventDefault();
         // You can handle the generate logic here
-        alert(`Mood: ${mood}, Genre: ${genre}`);
+        alert(`Mood: ${mood}`);
     };
 
         // 🔹 Handle logout
@@ -99,51 +98,23 @@ const HomePage = () => {
             {/* Search Bar at Very Top */}
             <div className="homepage-searchbar-top">
                 <form className="homepage-form-top" onSubmit={handleSearch}>
-                    <input
-                        type="text"
-                        placeholder="How are you feeling today?"
+                    <select
                         value={mood}
                         onChange={e => setMood(e.target.value)}
-                        className="homepage-input-top"
-                    />
-                    <div className="homepage-genre-select-top">
-                        <label>Select a genre:</label>
-                        <select
-                            value={genre}
-                            onChange={e => setGenre(e.target.value)}
-                            className="homepage-select-top"
-                        >
-                            <option value="">Choose genre</option>
-                            <option value="pop">Pop</option>
-                            <option value="rap">Rap</option>
-                            <option value="country">Country</option>
-                            <option value="indie">Indie</option>
-                            <option value="alternative">Alternative</option>
-                        </select>
-                    </div>
+                        className="form-control homepage-select-top"
+                    >
+                        <option value="">How are you feeling today?</option>
+                        <option value="happy">Happy</option>
+                        <option value="chill">Chill</option>
+                        <option value="pumped">Pumped</option>
+                        <option value="melancholic">Melancholic</option>
+                        <option value="romantic">Romantic</option>
+                    </select>
                     <button type="submit" className="homepage-generate-btn">Generate</button>
                 </form>
             </div>
 
-            {/* Left Sidebar */}
-            <div className="homepage-sidebar homepage-sidebar-left homepage-sidebar-lower homepage-sidebar-custom">
-                <h2>Playlist</h2>
-                {/* Playlist content here */}
-            </div>
-
-            {/* Right Sidebar */}
-            <div className="homepage-sidebar homepage-sidebar-right homepage-sidebar-lower homepage-sidebar-custom">
-                <h2>Chat</h2>
-                {/* Chat content here */}
-                {/* Login button overlays the chat sidebar */}
-                {/* <button
-                    className="homepage-login-btn-over-chat"
-                    onClick={() => navigate("/login")}
-                >
-                    LOGIN
-                </button> */}
-            </div>
-
+    
             {/* Main Content */}
             <div className="homepage-main">
                 {/* Spotify Login Question */}
