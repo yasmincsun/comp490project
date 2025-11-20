@@ -7,8 +7,7 @@
  */
 .developerpage-container {
   min-height: 100vh;
-  background-color: #dde2ef;
-  font-family: 'Times New Roman', Times, serif;
+  background-color: var(--bg-cream);
   position: relative;
 }
 
