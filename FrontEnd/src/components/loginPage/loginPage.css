@@ -6,15 +6,12 @@
     z-index: 2;
 }
 
-
-
 .login-home-btn {
-    padding: 10px 20px;
-    font-family: 'Times New Roman', Times, serif;
-    background: #d995bdff;
-    color: white;
+    padding: 10px 18px;
+    background: #bad5ce;
+    color: var(--btn-text);
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
 }
 .login-mode-btns {
@@ -55,7 +52,7 @@
     margin-top: 00px; 
     width: 650px; 
     height: 650px;
-    background: #bad5ce;
+    background: var(--panel-cream);
     padding-bottom: 30px; 
 }
 
