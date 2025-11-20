@@ -5,8 +5,6 @@
   text-align: center;
 }
 
-
-
 .logo {
   height: 6em;
   padding: 1.5em;
@@ -42,3 +40,98 @@
 .read-the-docs {
   color: #888;
 }
+
+:root {
+  --bg-cream: #eaf6ff; /* light blue background */
+  --panel-cream: #f8fbff; /* very pale blue panels */
+  --accent-green: #9fd6a5;
+  --accent-dark: #6aa65a;
+  --muted: #6b6b6b;
+  --btn-bg: var(--accent-green);
+  --btn-hover: #85bf8f; 
+  --panel-contrast: #ffffff; /* contrasting panel/card color */
+  --btn-accent: #4ab3c6; /* alternate button color (generate) */
+  --btn-accent-hover: #3aa1b4;
+  --btn-text: #ffffff;
+  --input-bg: #ffffff;
+  --radius: 8px;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Times New Roman', Times, serif;
+  background-color: #eaf6ff;
+  color: #222;
+}
+
+/* Unified button and input styles used across components */
+.btn, button, .nav-btn, .login-btn, .submitLogin, .login-mode-btn {
+  padding: 10px 18px;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 16px;
+  transition: background-color 180ms ease, transform 120ms ease;
+  min-width: 110px;
+  height: 44px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.btn:hover, button:hover, .nav-btn:hover, .login-btn:hover, .submitLogin:hover, .login-mode-btn:hover {
+  background: var(--btn-hover);
+  transform: translateY(-1px);
+}
+
+/* Make secondary buttons lighter */
+.btn.secondary, .nav-btn.secondary {
+  background: transparent;
+  color: var(--accent-dark);
+  border: 1px solid rgba(106,166,90,0.18);
+}
+
+/* Unified input/select style */
+.form-control, input, select, textarea {
+  width: 480px;
+  max-width: 100%;
+  height: 48px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.08);
+  background: var(--input-bg);
+  font-family: inherit;
+  font-size: 16px;
+  color: #222;
+  box-sizing: border-box;
+  transition: box-shadow 140ms ease, border-color 140ms ease;
+}
+
+.form-control:focus, input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--accent-dark);
+  box-shadow: 0 4px 12px rgba(106,166,90,0.12);
+}
+
+/* Utility for form layout */
+.form-row { display:flex; gap:16px; align-items:center; }
+
+/* Force buttons to contrast with background; most buttons default to accent green */
+button, input[type="button"], input[type="submit"], .btn, .profile-btn, .small-btn, .remove-small, .changePageContainer, .submitLogin, .start-btn {
+  background: var(--btn-bg) !important;
+  color: var(--btn-text) !important;
+}
+
+/* Keep generate buttons using the alternate accent */
+.homepage-generate-btn, .restart-button {
+  background: var(--btn-accent) !important;
+  color: var(--btn-text) !important;
+}
+
+.homepage-generate-btn:hover, .restart-button:hover { background: var(--btn-accent-hover) !important; transform: translateY(-1px); }
+
+

@@ -2,9 +2,9 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Times New Roman', Times, serif;
   height: 100vh;
-  background: #608dba;
+  background: #c7dbef;
   color: #333;
 }
 
@@ -12,15 +12,16 @@ body {
 .app-container {
   max-width: 600px;
   margin: 50px auto;
-  background: #154f27;
+  background: #f8fbff; /* pale panel color */
   padding: 30px;
   border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
 /* Header styling */
 h1,
 h2 {
+  background: #9fc594; 
   text-align: center;
   margin-bottom: 20px;
 }
@@ -39,10 +40,10 @@ h2 {
   margin: 8px 0;
   border: 2px solid transparent;
   border-radius: 6px;
-  background: #e7ecf0;
+  background: #fff;
   cursor: pointer;
   text-align: left;
-  transition: background 0.3s, border 0.3s;
+  transition: background 0.2s, border 0.2s;
 }
 
 .option:hover {
@@ -50,8 +51,9 @@ h2 {
 }
 
 .option.selected {
-  background: #085696;
-  border: 2px solid #0d7748;
+  background: #4ab3c6; /* accent for selected option */
+  border: 2px solid #3aa1b4;
+  color: #fff;
 }
 
 /* Navigation button styles */
@@ -64,16 +66,17 @@ h2 {
 .nav-buttons button {
   padding: 10px 20px;
   border: none;
-  background: #1c910f5e;
+  background: #9fd6a5; /* accent green */
   color: white;
   border-radius: 6px;
   cursor: pointer;
   font-size: 1em;
-  transition: background 0.3s;
+  transition: background 0.2s, transform 0.12s;
 }
 
 .nav-buttons button:hover {
-  background: #0d7748;
+  background: #85bf8f;
+  transform: translateY(-1px);
 }
 
 .nav-buttons button:disabled {
@@ -87,16 +90,17 @@ h2 {
   margin: 20px auto;
   padding: 10px 20px;
   border: none;
-  background: #42a5f5;
+  background: #4ab3c6; /* accent color */
   color: white;
   border-radius: 6px;
   cursor: pointer;
   font-size: 1em;
-  transition: background 0.3s;
+  transition: background 0.2s, transform 0.12s;
 }
 
 .restart-button:hover {
-  background: #1e88e5;
+  background: #3aa1b4;
+  transform: translateY(-1px);
 }
 
 /* Score display styling */

@@ -33,7 +33,7 @@ const ProfilePage = () => {
   const [view, setView] = useState("profile"); // 'profile' or 'account'
   const [nickname, setNickname] = useState("");
   const [description, setDescription] = useState("");
-  const [bgColor, setBgColor] = useState("#dde2ef");
+  const [bgColor, setBgColor] = useState("#eaf6ff");
   const [profilePic, setProfilePic] = useState(null);
   const [artistQuery, setArtistQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -59,7 +59,7 @@ const ProfilePage = () => {
       if (data) {
         setNickname(data.nickname || "");
         setDescription(data.description || "");
-        setBgColor(data.bgColor || "#dde2ef");
+        setBgColor(data.bgColor || "#eaf6ff");
         setProfilePic(data.profilePic || null);
         setFavorites(data.favorites || []);
         setName(data.name || "");
@@ -107,7 +107,7 @@ const ProfilePage = () => {
   const clearProfile = () => {
     setNickname("");
     setDescription("");
-    setBgColor("#dde2ef");
+    setBgColor("#eaf6ff");
     setProfilePic(null);
     setFavorites([]);
     setName("");
