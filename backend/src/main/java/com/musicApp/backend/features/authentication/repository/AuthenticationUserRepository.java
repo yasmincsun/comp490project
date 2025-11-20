@@ -36,7 +36,7 @@ public interface AuthenticationUserRepository extends JpaRepository<Authenticati
      */
     Optional<AuthenticationUser> findByUsername(String username);
 
-
+ 
     /**
      * Retrieves a list of all users who are currently marked
      * as logged in (loginStatus == true). Useful for displaying online users.
