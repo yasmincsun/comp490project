@@ -50,7 +50,7 @@ public class AuthenticationService {
         this.authenticationUserRepository = authenticationUserRepository;
         this.emailService = emailService;
     }
-
+ 
 
 /**
     * Generates a random numeric email verification token consisting of 5 digits.

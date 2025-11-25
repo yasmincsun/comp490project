@@ -17,7 +17,7 @@ import java.util.List;
 
 import com.musicApp.backend.features.databasemodel.*;;
 
-/**
+/** 
  * This class represents the user entity for the MusicApp backend and maps to the
  * "users" table in the database. It stores all relevant user information, including
  * authentication credentials, account status, social data (friends, playlists), and
