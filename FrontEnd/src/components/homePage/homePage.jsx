@@ -157,6 +157,41 @@ const handleLogout = async () => {
                         <option value="pumped">Pumped</option>
                         <option value="melancholic">Melancholic</option>
                         <option value="romantic">Romantic</option>
+                        <option value="nostalgic">Nostalgic</option>
+                        <option value="energetic">Energetic</option>
+                        <option value="peaceful">Peaceful</option>
+                        <option value="dark">Dark</option>
+                        <option value="motivated">Motivated</option>
+                        <option value="sad">Sad</option>
+                        <option value="angry">Angry</option>
+                        <option value="relaxed">Relaxed</option>
+                        <option value="hopeful">Hopeful</option>
+                        <option value="lonely">Lonely</option>
+                        <option value="mysterious">Mysterious</option>
+                        <option value="gritty">Gritty</option>
+                        <option value="groovy">Groovy</option>
+                        <option value="wild">Wild</option>
+                        <option value="epic">Epic</option>
+                        <option value="focused">Focused</option>
+                        <option value="funny">Funny</option>
+                        <option value="spiritual">Spiritual</option>
+                        <option value="rebellious">Rebellious</option>
+                        <option value="cozy">Cozy</option>
+                        <option value="adventurous">Adventurous</option>
+                        <option value="playful">Playful</option>
+                        <option value="mellow">Mellow</option>
+                        <option value="party">Party</option>
+                        <option value="sentimental">Sentimental</option>
+                        <option value="country">Country</option>
+                        <option value="spooky">Spooky</option>
+                        <option value="heroic">Heroic</option>
+                        <option value="sexy">Sexy</option>
+                        <option value="moody">Moody</option>
+                        <option value="motivational">Motivational</option>
+                        <option value="creative">Creative</option>
+                        <option value="high">High</option>
+                        <option value="free">Free</option>
+
                     </select>
                     <button type="submit" className="homepage-generate-btn">Generate</button>     {/* Change this */}
                 </form>
