@@ -92,10 +92,11 @@ public class AuthenticationFilter extends HttpFilter {
        
        
        
-       
-        response.addHeader("Access-Control-Allow-Origin", "*");
-        response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-        response.addHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:5173");  //Change address to whatever frontend port
+        response.setHeader("Access-Control-Allow-Credentials", "true");
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
 
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
             response.setStatus(HttpServletResponse.SC_OK);
@@ -112,6 +113,19 @@ public class AuthenticationFilter extends HttpFilter {
         chain.doFilter(request, response);
         return;
     }
+
+
+
+//     if (unsecuredEndpoints.stream().anyMatch(path::startsWith)
+//     || path.startsWith("/static/")
+//     || path.endsWith(".ico")
+//     || path.endsWith(".js")
+//     || path.endsWith(".css")) {
+
+//     chain.doFilter(request, response);
+//     return;
+// }
+
 
 
         try{

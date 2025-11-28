@@ -88,10 +88,15 @@ const handleSubmit = async (event) => {
   if (Object.keys(validationErrors).length > 0) return; // Stop if errors
 
   try {
-    const endpoint =
-      mode === "signup"
-        ? "http://localhost:8080/api/v1/authentication/register"
-        : "http://localhost:8080/api/v1/authentication/login";
+    // const endpoint =
+      // mode === "signup"
+      //   ? "http://localhost:8080/api/v1/authentication/register"
+      //   : "http://localhost:8080/api/v1/authentication/login";
+      const endpoint =
+  mode === "signup"
+    ? "http://127.0.0.1:8080/api/v1/authentication/register"
+    : "http://127.0.0.1:8080/api/v1/authentication/login";
+
 
 
     // 2.) Map frontend field to backend field
@@ -153,31 +158,59 @@ console.log("Sending verification code:", verificationCode);
 
   try {
     // Attempt query string method
+    // let res = await fetch(
+    //   `http://localhost:8080/api/v1/authentication/validate-email-verification-token?token=${verificationCode}`,
+    //   {
+    //     method: "PUT",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       "Authorization": `Bearer ${localStorage.getItem("authToken") || ""}` // optional
+    //     }
+    //   }
+    // );
+
     let res = await fetch(
-      `http://localhost:8080/api/v1/authentication/validate-email-verification-token?token=${verificationCode}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("authToken") || ""}` // optional
-        }
-      }
-    );
+  `http://127.0.0.1:8080/api/v1/authentication/validate-email-verification-token?token=${verificationCode}`,
+  {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${localStorage.getItem("authToken") || ""}`
+    }
+  }
+);
+
 
     // If 401, try sending token in body instead
+    // if (res.status === 401) {
+    //   res = await fetch(
+    //     "http://localhost:8080/api/v1/authentication/validate-email-verification-token",
+    //     {
+    //       method: "PUT",
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //         "Authorization": `Bearer ${localStorage.getItem("authToken") || ""}` // optional
+    //       },
+    //       body: JSON.stringify({ token: verificationCode })
+    //     }
+    //   );
+    // }
+
     if (res.status === 401) {
-      res = await fetch(
-        "http://localhost:8080/api/v1/authentication/validate-email-verification-token",
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${localStorage.getItem("authToken") || ""}` // optional
-          },
-          body: JSON.stringify({ token: verificationCode })
-        }
-      );
+  res = await fetch(
+    "http://127.0.0.1:8080/api/v1/authentication/validate-email-verification-token",
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem("authToken") || ""}`
+      },
+      body: JSON.stringify({ token: verificationCode }),
+      credentials: "include" // <--- make sure cookies are sent
     }
+  );
+}
+
 
     // Parse response
     const data = await res.json().catch(() => ({}));

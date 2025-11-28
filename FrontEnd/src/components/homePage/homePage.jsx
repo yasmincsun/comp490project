@@ -33,30 +33,78 @@ const HomePage = () => {
         }
     }, []);
 
-    const handleSearch = (e) => {
-        e.preventDefault();
-        // You can handle the generate logic here
-        alert(`Mood: ${mood}`);
-    };
+   const handleSearch = async (e) => {
+    e.preventDefault();
+
+    try {
+
+        const response = await fetch(`http://127.0.0.1:8080/playlist/from-mood?mood=${mood}&limit=10`, {
+         //const response = await fetch(`http://127.0.0.1:8080/mood/by?mood=${mood}`, {
+        method: "GET",
+        credentials: "include"
+    });
+
+
+        if (!response.ok) {
+            throw new Error("Backend returned error: " + response.status);
+        }
+
+        const data = await response.json();
+        console.log("Mood response:", data);
+
+        alert("Mood sent: " + mood);
+    } catch (err) {
+        console.error("Error:", err);
+        alert("Failed to fetch recommendations.");
+    }
+};
+
 
         // 🔹 Handle logout
-    const handleLogout = async () => {
-        try {
-            const token = localStorage.getItem("authToken");
-            await fetch("http://localhost:8080/api/v1/authentication/logout", {
-                method: "PUT",
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
-            });
-            localStorage.removeItem("authToken");; // clear JWT
-            setIsLoggedIn(false);
-            navigate("/login");
-        } catch (error) {
-            console.error("Logout failed:", error);
-        }
-    };
+
+const handleLogout = async () => {
+  try {
+    const token = localStorage.getItem("authToken");
+    const res = await fetch(`http://127.0.0.1:8080/api/v1/authentication/logout`, {
+      method: "PUT",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error(`Logout failed with status ${res.status}`);
+    }
+
+    localStorage.removeItem("authToken");
+    setIsLoggedIn(false);
+    navigate("/login");
+  } catch (error) {
+    console.error("Logout failed:", error);
+    alert("Logout failed. Please try again.");
+  }
+};
+
+
+
+    // const handleLogout = async () => {
+    //     try {
+    //         const token = localStorage.getItem("authToken");
+    //         await fetch("http://localhost:8080/api/v1/authentication/logout", {
+    //             method: "PUT",
+    //             headers: {
+    //                 "Authorization": `Bearer ${token}`,
+    //                 "Content-Type": "application/json",
+    //             },
+    //         });
+    //         localStorage.removeItem("authToken");; // clear JWT
+    //         setIsLoggedIn(false);
+    //         navigate("/login");
+    //     } catch (error) {
+    //         console.error("Logout failed:", error);
+    //     }
+    // };
 
 /**
  * Displays the Home Page and runs all of the components 
@@ -110,7 +158,7 @@ const HomePage = () => {
                         <option value="melancholic">Melancholic</option>
                         <option value="romantic">Romantic</option>
                     </select>
-                    <button type="submit" className="homepage-generate-btn">Generate</button>
+                    <button type="submit" className="homepage-generate-btn">Generate</button>     {/* Change this */}
                 </form>
             </div>
 
