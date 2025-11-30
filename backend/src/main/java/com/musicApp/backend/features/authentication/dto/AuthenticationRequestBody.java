@@ -46,6 +46,10 @@ public class AuthenticationRequestBody {
         this.password = password;
     }
 
+    // No-arg constructor
+    public AuthenticationRequestBody() {
+    }
+
     /**
      * Gets the user's first name.
      *
@@ -100,6 +104,23 @@ public class AuthenticationRequestBody {
     public void setUsername(String username){
         this.username = username;
     }
+
+
+
+
+
+    /**
+     * Sets the user's email. Used for testing.
+     *
+     * @param email the email assigned to the user
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+
+
+
 
     /**
      * Gets the user's email.
