@@ -1,7 +1,7 @@
 /**
  * Date: September 25, 2025
  * @author Jose Bastidas
- *
+ * 
  **/
 
 package com.musicApp.backend.features.authentication.service;
@@ -97,7 +97,7 @@ public void sendEmailVerificationToken(String email) {
     user.setEmailVerificationTokenExpiryDate(LocalDateTime.now().plusMinutes(durationInMinutes));
     authenticationUserRepository.save(user);
 
-    System.out.println("Generated token for " + email + ": " + emailVerificationToken); // 🔹 debug
+    System.out.println("Generated token for " + email + ": " + emailVerificationToken); //  debug
 
     String subject = "Email Verification";
     String body = String.format(
@@ -123,26 +123,35 @@ public void sendEmailVerificationToken(String email) {
      * @throws IllegalArgumentException if the user does not exist, token is invalid, or expired
      */
 public void validateEmailVerificationToken(String token, String email) {
+    
+    // Node 1 : Return user using email
     Optional<AuthenticationUser> userOpt = authenticationUserRepository.findByEmail(email);
-
+    // Node 2: Check if user exists
     if (userOpt.isEmpty()) {
         throw new IllegalArgumentException("User not found.");
     }
-
+    // Node 3: Extract user and print info
     AuthenticationUser user = userOpt.get();
     System.out.println("Submitted token: " + token);
     System.out.println("Saved hashed token: " + user.getEmailVerificationToken());
-
-    if (encoder.matches(token, user.getEmailVerificationToken())) {
+    // Node 4: Check if provided token matches hashed token
+    if (encoder.matches(token, user.getEmailVerificationToken())) {       
+        // Node 5: Check if token is expired
         if (user.getEmailVerificationTokenExpiryDate().isBefore(LocalDateTime.now())) {
             throw new IllegalArgumentException("Email verification token expired.");
         }
+        // Node 6: Mark email as verified
         user.setEmailVerified(true);
+        // Node 7: Clear verification token + expiry
         user.setEmailVerificationToken(null);
         user.setEmailVerificationTokenExpiryDate(null);
+        // Node 8: Save updated user
         authenticationUserRepository.save(user);
+        // Node 9: Print success message
         System.out.println("Email verified for: " + email);
-    } else {
+    } 
+    // Node 10: Token does NOT match
+    else {
         throw new IllegalArgumentException("Invalid email verification token.");
     }
 }
@@ -277,16 +286,29 @@ public AuthenticationResponseBody register(AuthenticationRequestBody registerReq
      * @throws IllegalArgumentException if credentials are invalid
      */
     public AuthenticationResponseBody login(AuthenticationRequestBody loginRequestBody) {
-        AuthenticationUser user = authenticationUserRepository.findByEmail(loginRequestBody.getEmail()).orElseThrow(() -> new IllegalArgumentException("User not found."));
+        
+        // Node 1: Find user by email
+        AuthenticationUser user = authenticationUserRepository
+        .findByEmail(loginRequestBody.getEmail())
+        .orElseThrow(() -> new IllegalArgumentException("User not found."));
+       // Node 2: exit (user not found)
+       
+
+        // Node 3: Validate password
         if (!encoder.matches(loginRequestBody.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("Password is incorrect.");
         }
 
-        // Marks user online
+        // Node 4: Mark user as online
         user.setLoginStatus(true);
+
+        // Node 5: Save updated user
         authenticationUserRepository.save(user);
 
+        // Node 6: Generate JWT token
         String token = jsonWebToken.generateToken(loginRequestBody.getEmail());
+        
+        // Node 7: Return response body
         return new AuthenticationResponseBody(token, "Authentication succeeded. ", 
         user.getUsername(), 
         user.getEmail(), 
