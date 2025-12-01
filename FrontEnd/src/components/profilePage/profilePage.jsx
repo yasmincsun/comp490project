@@ -21,6 +21,23 @@ const MOCK_ARTISTS = [
   "Ed Sheeran",
   "Bruno Mars",
   "Dua Lipa",
+  "Ariana Grande",
+  "Post Malone",
+  "Travis Scott",
+  "Playboi Carti",
+  "Lil Uzi Vert",
+  "The 1975",
+  "Arctic Monkeys",
+  "Kings of Leon",
+  "The Strokes",
+  "Franz Ferdinand",
+  "Two Door Cinema Club",
+  "Tame Impala",
+  "MGMT",
+  "Vampire Weekend",
+  "Foster the People",
+  "MGMT",
+  "The Killers",
 ];
 
 /**
@@ -31,16 +48,21 @@ const MOCK_ARTISTS = [
 const ProfilePage = () => {
   const navigate = useNavigate();
   const [view, setView] = useState("profile"); // 'profile' or 'account'
-  const [nickname, setNickname] = useState("");
-  const [description, setDescription] = useState("");
-  const [bgColor, setBgColor] = useState("#eaf6ff");
+  
+  // ========== DATABASE VARIABLES: Save these to the database ==========
+  const [nickname, setNickname] = useState("");             // User's nickname
+  const [description, setDescription] = useState("");       // User's bio/description
+  const [bgColor, setBgColor] = useState("#eaf6ff9f");     // User's background color preference
+  const [favorites, setFavorites] = useState([]);           // User's list of favorite artists (max 3)
+  // ====================================================================
+  
   const [profilePic, setProfilePic] = useState(null);
   const [artistQuery, setArtistQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const [favorites, setFavorites] = useState([]);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  
   const fileInputRef = useRef(null);
   // editing states for account panel
   const [editingName, setEditingName] = useState(false);
@@ -125,7 +147,7 @@ const ProfilePage = () => {
   return (
     <div className="profilepage-container" style={{ background: bgColor }}>
       <div className="profilepage-login-btn-topright">
-        <button className="profilepage-back-btn" onClick={() => navigate("/")}>Home</button>
+        <button className="profilepage-back-btn" onClick={() => navigate("/home")}>Home</button>
       </div>
 
       <div className="left-panel">
