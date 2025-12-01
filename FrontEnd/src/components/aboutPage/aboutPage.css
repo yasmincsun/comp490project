@@ -5,11 +5,12 @@
  * @author Yasmin Zubair 
  * @version 1.0
  */
-.aboutpage-container {
+.aboutPage-container {
   min-height: 100vh;
-  background-color: var(--panel-cream);
+  background: linear-gradient(135deg, #5b9fd6 0%, #6fa3d8 50%, #4a9fb8 100%);
   position: relative;
   padding-bottom: 40px;
+  font-family: 'Times New Roman', Times, serif;
 }
 
 /**
