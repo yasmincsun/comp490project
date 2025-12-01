@@ -7,9 +7,11 @@
  */
 .developerpage-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #5b9fd6 0%, #6fa3d8 50%, #4a9fb8 100%);
   position: relative;
   font-family: 'Times New Roman', Times, serif;
+  background: linear-gradient(45deg, #065f46 0%, #0ea5a4 30%, #0369a1 60%, #073b4c 100%);
+  background-size: 300% 300%;
+  animation: gradientShiftDev 12s linear infinite;
 }
 
 /**
@@ -32,6 +34,7 @@
   background: rgba(255, 255, 255, 0.95);
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   z-index: 100;
+  gap: 16px;
 }
 
 /**
@@ -54,14 +57,14 @@
  * @version 1.0 
  */
 .nav-btn {
-  padding: 10px 20px;
+  padding: 20px 40px; /* doubled */
   font-family: 'Times New Roman', Times, serif;
   background: transparent;
   color: #556B2F;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 32px; /* doubled */
   font-weight: bold;
   transition: background-color 0.2s;
 }
@@ -97,14 +100,14 @@
  * @version 1.0 
  */
 .login-btn {
-  padding: 10px 20px;
+  padding: 20px 36px; /* doubled */
   font-family: 'Times New Roman', Times, serif;
-  background: #808000;
+  background: var(--logo-green);
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 32px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   text-transform: uppercase;
   transition: background-color 0.2s;
@@ -133,4 +136,48 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 120px 40px 40px;
+}
+
+.logo-btn {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  cursor: pointer;
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.team-card {
+  background: rgba(255,255,255,0.9);
+  border-radius: 12px;
+  padding: 20px;
+  min-height: 360px;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+
+.team-card img {
+  position: absolute;
+  top: 25%; /* approximately 25% from top */
+  left: 50%;
+  transform: translate(-50%, -25%);
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.team-card h3 { margin-top: 140px; }
+.team-card p { color: #334155; }
+
+@keyframes gradientShiftDev {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }

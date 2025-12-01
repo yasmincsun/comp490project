@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import projectLogo from '../assets/projectLogo.png';
 import './frontPage.css';
 
 /**
@@ -19,6 +20,7 @@ const FrontPage = () => {
   return (
     <div className="frontpage-container">
       <nav className="frontpage-nav">
+        <img src={projectLogo} alt="Moody logo" className="logo-btn" onClick={() => navigate('/')} />
         <div className="nav-buttons">
           <button onClick={() => navigate('/about')} className="nav-btn">About</button>
           <button onClick={() => navigate('/developers')} className="nav-btn">Developers</button>
