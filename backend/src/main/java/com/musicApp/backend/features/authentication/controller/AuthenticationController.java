@@ -32,7 +32,7 @@ import java.util.List;
  * and uses the JsonWebToken utility for JWT-based authentication and the EmailService for
  * sending verification and password reset emails.
  */
-@CrossOrigin(origins = "http://localhost:5173") // adjust if frontend uses a different port
+@CrossOrigin(origins = "http://127.0.0.1:5173") // adjust if frontend uses a different port
 @RestController
 @RequestMapping("/api/v1/authentication")
 public class AuthenticationController {

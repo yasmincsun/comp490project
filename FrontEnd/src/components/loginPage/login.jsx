@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./loginPage.css";
 import userIcon from "../assets/person.png";
@@ -36,6 +36,15 @@ const FormWithValidation = () => {
 
   const navigate = useNavigate();
 
+  // Disable page scrolling while this component is mounted to prevent background scroll
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow || "";
+    };
+  }, []);
+
   /**
  * Checks values of user input 
  * <p>
@@ -47,19 +56,19 @@ const FormWithValidation = () => {
 
     // Validation rules
     if (name === "name" && mode === "signup" && value.trim() === "") {
-      setFormErrors({ ...formErrors, name: "Name is required." });
+      setFormErrors({ ...formErrors, name: "First Name is Required." });
     } 
     else if (name === "lastname" && mode === "signup" && value.trim() === "") {
-      setFormErrors({ ...formErrors, lastname: "Lastname is required." });
+      setFormErrors({ ...formErrors, lastname: "Last Name is Required." });
     } 
     else if (name === "username" && mode === "signup" && value.trim() === "") {
-      setFormErrors({ ...formErrors, username: "Username is required." });
+      setFormErrors({ ...formErrors, username: "Username is Required." });
     } 
     else if (name === "email" && !/^\S+@\S+\.\S+$/.test(value)) {
       setFormErrors({ ...formErrors, email: "Invalid email address." });
     } 
     else if (name === "password" && value.trim() === "") {
-      setFormErrors({ ...formErrors, password: "Password is required." });
+      setFormErrors({ ...formErrors, password: "Password is Required." });
     } 
     else {
       setFormErrors({ ...formErrors, [name]: "" });
@@ -77,21 +86,26 @@ const handleSubmit = async (event) => {
   // 1.) Validate fields
   const validationErrors = {};
   if (mode === "signup") {
-    if (!formData.name.trim()) validationErrors.name = "Name is required.";
-    if (!formData.lastname.trim()) validationErrors.lastname = "Last name is required.";
-    if (!formData.username.trim()) validationErrors.username = "Username is required.";
+    if (!formData.name.trim()) validationErrors.name = "Name is Required.";
+    if (!formData.lastname.trim()) validationErrors.lastname = "Last Name is Required.";
+    if (!formData.username.trim()) validationErrors.username = "Username is Required.";
   }
   if (!/^\S+@\S+\.\S+$/.test(formData.email)) validationErrors.email = "Invalid email address.";
-  if (!formData.password.trim()) validationErrors.password = "Password is required.";
+  if (!formData.password.trim()) validationErrors.password = "Password is Required.";
 
   setFormErrors(validationErrors);
   if (Object.keys(validationErrors).length > 0) return; // Stop if errors
 
   try {
-    const endpoint =
-      mode === "signup"
-        ? "http://localhost:8080/api/v1/authentication/register"
-        : "http://localhost:8080/api/v1/authentication/login";
+    // const endpoint =
+      // mode === "signup"
+      //   ? "http://localhost:8080/api/v1/authentication/register"
+      //   : "http://localhost:8080/api/v1/authentication/login";
+      const endpoint =
+  mode === "signup"
+    ? "http://127.0.0.1:8080/api/v1/authentication/register"
+    : "http://127.0.0.1:8080/api/v1/authentication/login";
+
 
 
     // 2.) Map frontend field to backend field
@@ -153,31 +167,59 @@ console.log("Sending verification code:", verificationCode);
 
   try {
     // Attempt query string method
+    // let res = await fetch(
+    //   `http://localhost:8080/api/v1/authentication/validate-email-verification-token?token=${verificationCode}`,
+    //   {
+    //     method: "PUT",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       "Authorization": `Bearer ${localStorage.getItem("authToken") || ""}` // optional
+    //     }
+    //   }
+    // );
+
     let res = await fetch(
-      `http://localhost:8080/api/v1/authentication/validate-email-verification-token?token=${verificationCode}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("authToken") || ""}` // optional
-        }
-      }
-    );
+  `http://127.0.0.1:8080/api/v1/authentication/validate-email-verification-token?token=${verificationCode}`,
+  {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${localStorage.getItem("authToken") || ""}`
+    }
+  }
+);
+
 
     // If 401, try sending token in body instead
+    // if (res.status === 401) {
+    //   res = await fetch(
+    //     "http://localhost:8080/api/v1/authentication/validate-email-verification-token",
+    //     {
+    //       method: "PUT",
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //         "Authorization": `Bearer ${localStorage.getItem("authToken") || ""}` // optional
+    //       },
+    //       body: JSON.stringify({ token: verificationCode })
+    //     }
+    //   );
+    // }
+
     if (res.status === 401) {
-      res = await fetch(
-        "http://localhost:8080/api/v1/authentication/validate-email-verification-token",
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${localStorage.getItem("authToken") || ""}` // optional
-          },
-          body: JSON.stringify({ token: verificationCode })
-        }
-      );
+  res = await fetch(
+    "http://127.0.0.1:8080/api/v1/authentication/validate-email-verification-token",
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem("authToken") || ""}`
+      },
+      body: JSON.stringify({ token: verificationCode }),
+      credentials: "include" // <--- make sure cookies are sent
     }
+  );
+}
+
 
     // Parse response
     const data = await res.json().catch(() => ({}));
@@ -203,6 +245,20 @@ console.log("Sending verification code:", verificationCode);
  * This function displays and runs the entirety of the Login Page. This method checks whether the user wants to login or sign up, and runs validations to ensure that the user’s information is accurate. 
 * @return Login Page display to the Web Page
  */
+  // determine if form is complete (for signup require name/lastname/username/email/password; for login only email/password)
+  const isComplete = () => {
+    if (mode === "signup") {
+      return (
+        formData.name.trim() &&
+        formData.lastname.trim() &&
+        formData.username.trim() &&
+        formData.email.trim() &&
+        formData.password.trim()
+      );
+    }
+    return formData.email.trim() && formData.password.trim();
+  };
+
   return (
     <div className="container">
       <div className="login-home-btn-container">
@@ -230,44 +286,62 @@ console.log("Sending verification code:", verificationCode);
           <form onSubmit={handleSubmit}>
             {mode === "signup" && (
               <>
-                <label className="nameInput">
+                <label className="rowInput nameInput">
                   <img src={userIcon} width={40} height={40} alt="" />
-                  Name:
-                  <input type="text" name="name" value={formData.name} onChange={handleInputChange} />
-                  <span className="error">{formErrors.name}</span>
+                  <div className="labelAndField">
+                    <span className="labelText">First Name:</span>
+                    <input className="fieldInput" type="text" name="name" value={formData.name} onChange={handleInputChange} />
+                    <span className="error">{formErrors.name}</span>
+                  </div>
                 </label>
 
-                <label className="lastnameInput">
+                <label className="rowInput lastnameInput">
                   <img src={userIcon} width={40} height={40} alt="" />
-                  Last Name:
-                  <input type="text" name="lastname" value={formData.lastname} onChange={handleInputChange} />
-                  <span className="error">{formErrors.lastname}</span>
+                  <div className="labelAndField">
+                    <span className="labelText">Last Name:</span>
+                    <input className="fieldInput" type="text" name="lastname" value={formData.lastname} onChange={handleInputChange} />
+                    <span className="error">{formErrors.lastname}</span>
+                  </div>
                 </label>
 
-                <label className="usernameInput">
+                <label className="rowInput usernameInput">
                   <img src={userIcon} width={40} height={40} alt="" />
-                  Username:
-                  <input type="text" name="username" value={formData.username} onChange={handleInputChange} />
-                  <span className="error">{formErrors.username}</span>
+                  <div className="labelAndField">
+                    <span className="labelText">Username:</span>
+                    <input className="fieldInput" type="text" name="username" value={formData.username} onChange={handleInputChange} />
+                    <span className="error">{formErrors.username}</span>
+                  </div>
                 </label>
               </>
             )}
 
-            <label className="emailInput">
+            <label className="rowInput emailInput">
               <img src={emailIcon} width={40} height={40} alt="" />
-              Email:
-              <input type="email" name="email" value={formData.email} onChange={handleInputChange} />
-              <span className="error">{formErrors.email}</span>
+              <div className="labelAndField">
+                <span className="labelText">Email:</span>
+                <input className="fieldInput" type="email" name="email" value={formData.email} onChange={handleInputChange} />
+                <span className="error">{formErrors.email}</span>
+              </div>
             </label>
 
-            <label className="passwordInput">
+            <label className="rowInput passwordInput">
               <img src={passwordIcon} width={40} height={40} alt="" />
-              Password:
-              <input type="password" name="password" value={formData.password} onChange={handleInputChange} />
-              <span className="error">{formErrors.password}</span>
+              <div className="labelAndField">
+                <span className="labelText">Password:</span>
+                <input className="fieldInput" type="password" name="password" value={formData.password} onChange={handleInputChange} />
+                <span className="error">{formErrors.password}</span>
+              </div>
             </label>
 
-            <button type="submit">Submit</button>
+            <div className="submitWrapper">
+              <button
+                type="submit"
+                className={`submitBtn ${isComplete() ? 'enabled' : 'disabled'}`}
+                disabled={!isComplete()}
+              >
+                Submit
+              </button>
+            </div>
           </form>
         ) : (
           <div className="verification-container">
