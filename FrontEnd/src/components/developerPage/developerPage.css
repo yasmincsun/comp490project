@@ -7,8 +7,9 @@
  */
 .developerpage-container {
   min-height: 100vh;
-  background-color: var(--bg-cream);
+  background: linear-gradient(135deg, #5b9fd6 0%, #6fa3d8 50%, #4a9fb8 100%);
   position: relative;
+  font-family: 'Times New Roman', Times, serif;
 }
 
 /**
