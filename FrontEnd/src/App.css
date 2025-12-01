@@ -45,6 +45,7 @@
   --bg-cream: #1a4d7a; /* vibrant deep blue background */
   --panel-cream: #2a6fa0; /* vibrant panel blue */
   --accent-green: #2dd4bf; /* vibrant teal/cyan */
+  --logo-green: #10b981; /* emerald green used for logo and login on front page */
   --accent-dark: #14b8a6; /* vibrant darker teal */
   --muted: #4b5563;
   --btn-bg: var(--accent-green);

@@ -16,10 +16,10 @@
 }
 .login-mode-btns {
     text-align: center;
-    margin-bottom: 6px; /* bring the login/sign up buttons slightly higher */
+    margin-bottom: 6px; 
 }
 .login-mode-btn {
-    padding: 6.8px 16px; /* slightly shorter vertically (~15%) */
+    padding: 6.8px 16px; 
     margin: 0 5px;
     font-family: 'Times New Roman', Times, serif;
     background: #bad5ce;
@@ -40,17 +40,14 @@
     font-size: 16px;
     text-align: center;
 }
-/* 
-    gap: 30px; 
-    margin: 60px auto; 
-    */ 
+
 
 .container{ 
     display: flex; 
     flex-direction: column;
     margin: auto; 
     /* slightly higher on the screen than default */
-    margin-top: 12px;
+    margin-top: 125px;
     width: 650px; 
     /* let height grow with content so submit button isn't clipped */
     height: auto;
