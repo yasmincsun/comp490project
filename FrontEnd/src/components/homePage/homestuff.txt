@@ -1,0 +1,211 @@
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import "./homePage.css"
+
+/**
+ * Declares a constant variable named HomePage
+ * <p> 
+ * This function displays and runs the entirety of the Home Page. This page contains information about generating playlists and collecting information from the user’s Spotify account. The user’s Spotify playlists are displayed on the home page. Personalized features, like the user-chosen background	color, are also displayed here. 
+ */
+const HomePage = () => {
+    const [mood, setMood] = useState("");
+    const [bgColor, setBgColor] = useState("");
+    const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
+    const [generated, setGenerated] = useState(false);    // Track if any moods have been generated
+    const [generatedMoods, setGeneratedMoods] = useState([]); // Array of generated mood objects {id, mood}
+    const [error, setError] = useState(""); // Error message for validation
+    const navigate = useNavigate();
+
+/**
+ * Sets up the Home Page environment
+ * <p>
+ * This function checks whether or not the user is logged into their account, and stores their Spotify API token to their local account. This function also receives the user’s inputted mood and genre choice to generate a playlist. The received values are then displayed back to the user in a dialogue box.  
+ */
+    useEffect(() => {
+        const token = localStorage.getItem("authToken"); // Make sure this matches how you store your JWT
+        setIsLoggedIn(!!token);
+    }, []);
+
+    // apply background color from profile (localStorage)
+    useEffect(() => {
+        try {
+            const data = JSON.parse(localStorage.getItem('profileData') || 'null');
+            if (data && data.bgColor) setBgColor(data.bgColor);
+        } catch (e) {
+            console.error("Error parsing profile data:", e);
+        }
+    }, []);
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        
+        // Validate that a mood has been selected
+        if (!mood || mood === "") {
+            setError("Please select your mood before generating!");
+            // Clear error after 3 seconds
+            setTimeout(() => setError(""), 3000);
+            return;
+        }
+        
+        // Clear any previous error
+        setError("");
+        
+        // Add new mood to the list
+        const newMoodObject = {
+            id: Date.now(), // Use timestamp as unique ID
+            mood: mood
+        };
+        
+        setGeneratedMoods([...generatedMoods, newMoodObject]);
+        setGenerated(true);
+        
+        // Reset dropdown for next selection
+        setMood("");
+    };
+
+        // 🔹 Handle logout
+    const handleLogout = async () => {
+        try {
+            const token = localStorage.getItem("authToken");
+            await fetch("http://localhost:8080/api/v1/authentication/logout", {
+                method: "PUT",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            });
+            localStorage.removeItem("authToken");; // clear JWT
+            setIsLoggedIn(false);
+            navigate("/login");
+        } catch (error) {
+            console.error("Logout failed:", error);
+        }
+    };
+
+/**
+ * Displays the Home Page and runs all of the components 
+ * <p>
+ * This function displays and runs the entirety of the Home Page. This method checks the user’s login status and provides the user with the Playlist generation function.
+* @return Home Page display to the Web Page
+ */
+
+    return (
+        <div className="homepage-container" style={bgColor ? { backgroundColor: bgColor } : {}}>
+            {/* 🔹 Top-right Buttons */}
+            <div className="homepage-login-btn-topright">
+                <button
+                    className="homepage-login-btn"
+                    onClick={async () => {
+                        if (isLoggedIn) {
+                            await handleLogout(); // logout and redirect
+                        } else {
+                            navigate("/login"); // go to login page
+                        }
+                    }}
+                >
+                    {isLoggedIn ? "LOGOUT" : "LOGIN"}
+                </button>
+
+                {isLoggedIn && (
+                    <button
+                        className="homepage-login-btn"
+                        style={{ marginLeft: 12 }}
+                        onClick={() => navigate("/profile")}
+                    >
+                        PROFILE
+                    </button>
+                )}
+            </div>
+
+                
+    
+            {/* Search Bar at Very Top */}
+            <div className={`homepage-searchbar-top ${generated ? 'moved-to-top' : 'centered'}`}>
+                <form className="homepage-form-top" onSubmit={handleSearch}>
+                    <div className="homepage-form-content">
+                        <select
+                            value={mood}
+                            onChange={e => setMood(e.target.value)}
+                            className="form-control homepage-select-top"
+                        >
+                            <option value="">How are you feeling today?</option>
+                            <option value="happy">Happy</option>
+                            <option value="sad">Sad</option>
+                            <option value="angry">Angry</option>
+                            <option value="calm">Calm</option>
+                            <option value="excited">Excited</option>
+                            <option value="bored">Bored</option>
+                            <option value="nostalgic">Nostalgic</option>
+                            <option value="relaxed">Relaxed</option>
+                            <option value="anxious">Anxious</option>
+                            <option value="romantic">Romantic</option>
+                            <option value="mysterious">Mysterious</option>
+                            <option value="gritty">Gritty</option>
+                            <option value="groovy">Groovy</option>
+                            <option value="wild">Wild</option>
+                            <option value="epic">Epic</option>
+                            <option value="focused">Focused</option>
+                            <option value="funny">Funny</option>
+                            <option value="spiritual">Spiritual</option>
+                            <option value="rebellious">Rebellious</option>
+                            <option value="cozy">Cozy</option>
+                            <option value="adventurous">Adventurous</option>
+                            <option value="playful">Playful</option>
+                            <option value="mellow">Mellow</option>
+                            <option value="party">Party</option>
+                            <option value="sentimental">Sentimental</option>
+                            <option value="country">Country</option>
+                            <option value="spooky">Spooky</option>
+                            <option value="heroic">Heroic</option>
+                            <option value="sexy">Sexy</option>
+                            <option value="moody">Moody</option>
+                            <option value="motivational">Motivational</option>
+                            <option value="creative">Creative</option>
+                            <option value="high">High</option>
+                            <option value="free">Free</option>
+                        </select>
+                        <button type="submit" className="homepage-generate-btn">Generate</button>
+                    </div>
+                </form>
+                
+                {/* Error Message */}
+                {error && (
+                    <div className="homepage-error-message">
+                        {error}
+                    </div>
+                )}
+            </div>
+
+            {/* Mood Gallery - Display all generated moods (if any exist) */}
+            {generated && (
+                <div className="homepage-gallery-container">
+                    <div className="homepage-mood-gallery">
+                        {generatedMoods.map((moodObj) => (
+                            <div key={moodObj.id} className="homepage-mood-box">
+                                <p className="homepage-mood-text">{moodObj.mood}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* Main Content - Spotify Login Question (show in middle until generated) */}
+            {!generated && (
+                <div className="homepage-main">
+                    <div className="homepage-spotify-question">
+                        Want your playlist personalized to your taste?{' '}
+                        <span
+                            className="homepage-spotify-link"
+                            style={{ color: '#14b8a6', cursor: 'pointer', textDecoration: 'underline' }}
+                            onClick={() => navigate('/login')}
+                        >
+                            Login with your Spotify
+                        </span>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default HomePage;
