@@ -139,42 +139,46 @@
 }
 
 .logo-btn {
-  width: 64px;
-  height: 64px;
+  width: 256px;
+  height: 256px;
   object-fit: contain;
   cursor: pointer;
 }
 
 .team-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(4, 1fr); /* four vertical columns */
   gap: 24px;
   margin-top: 24px;
 }
 
 .team-card {
-  background: rgba(255,255,255,0.9);
+  background: #4CB817; /* requested green */
   border-radius: 12px;
-  padding: 20px;
-  min-height: 360px;
-  position: relative;
-  overflow: hidden;
+  padding: 28px 16px 36px;
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
   text-align: center;
+  color: white;
 }
 
 .team-card img {
-  position: absolute;
-  top: 25%; /* approximately 25% from top */
-  left: 50%;
-  transform: translate(-50%, -25%);
-  width: 140px;
-  height: 140px;
+  width: 96px; /* smaller image */
+  height: 96px;
   border-radius: 50%;
   object-fit: cover;
+  margin-top: 12px; /* a little bit from the top */
 }
 
-.team-card h3 { margin-top: 140px; }
-.team-card p { color: #334155; }
+.team-card h3 {
+  margin-top: 12px;
+  margin-bottom: 6px;
+}
+
+.team-card p { color: rgba(255,255,255,0.9); }
 
 @keyframes gradientShiftDev {
   0% { background-position: 0% 50%; }

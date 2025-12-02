@@ -37,13 +37,13 @@ const FormWithValidation = () => {
   const navigate = useNavigate();
 
   // Disable page scrolling while this component is mounted to prevent background scroll
-  useEffect(() => {
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = previousOverflow || "";
-    };
-  }, []);
+  // useEffect(() => {
+  //   const previousOverflow = document.body.style.overflow;
+  //   document.body.style.overflow = "hidden";
+  //   return () => {
+  //     document.body.style.overflow = previousOverflow || "";
+  //   };
+  // }, []);
 
   /**
  * Checks values of user input 

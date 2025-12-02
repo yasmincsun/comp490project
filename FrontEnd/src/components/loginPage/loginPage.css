@@ -47,7 +47,7 @@
     flex-direction: column;
     margin: auto; 
     /* slightly higher on the screen than default */
-    margin-top: 125px;
+    margin-top: 90px;
     width: 650px; 
     /* let height grow with content so submit button isn't clipped */
     height: auto;
