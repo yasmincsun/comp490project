@@ -31,7 +31,7 @@ const AboutPage = () => {
         <button onClick={() => navigate('/login')} className="login-btn">Login</button>
       </nav>
       <div className="aboutpage-content">
-        <div className="about-animated-center">will fill in this info later</div>
+        <div className="about-animated-center">MOODY is our program that creates Spotify playlists based on the user's inputted mood. <br></br>There are over 30 moods to choose from, each with a unique playlist generated using Spotify's API. Users can log in with their Spotify account to save and access their playlists directly on Spotify. Moody utilizes Java to establish the backend of the program, MySQL to securely store user and program information, and JavaScript and CSS to develop and display the graphical user interface. Our program offers an accessible and interesting way for users to enhance their listening experiences, without having to use any strenous effort. </div>
       </div>
     </div>
   );
