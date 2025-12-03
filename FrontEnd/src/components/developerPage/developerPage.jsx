@@ -34,22 +34,22 @@ const DeveloperPage = () => {
           <div className="team-card">
             <img src={teamPic} alt="MIGUEL" />
             <h3>MIGUEL</h3>
-            <p>role information here</p>
+            <p>Database Design: <br></br> <br></br> Created a MySQL Database that stores User, API, and other program information</p>
           </div>
           <div className="team-card">
             <img src={teamPic} alt="JOSE" />
             <h3>JOSE</h3>
-            <p>role information here</p>
+            <p>Backend Development: <br></br> <br></br> Created necessary backend components and connected the UI to the backend of the program</p>
           </div>
           <div className="team-card">
             <img src={teamPic} alt="ALLEN" />
             <h3>ALLEN</h3>
-            <p>role information here</p>
+            <p>API: <br></br> <br></br> Established a connection with Spotify's API that allowed REAL playlists to be generated</p>
           </div>
           <div className="team-card">
             <img src={teamPic} alt="YASMIN" />
             <h3>YASMIN</h3>
-            <p>role information here</p>
+            <p>User Interface Design: <br></br> <br></br> Created the GUI using React, JavaScript, and CSS</p>
           </div>
         </div>
       </div>

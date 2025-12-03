@@ -35,7 +35,7 @@
   height: 77px; /* compact header +5px */
   height: 87px; /* compact header + additional space */
   padding: 0 16px; /* horizontal padding only */
-  background: rgba(255, 255, 255, 0.95);
+  background: #0369a1;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   z-index: 100;
   overflow: visible; /* allow logo to overflow outside the header */
@@ -176,7 +176,7 @@
 }
 
 .team-card {
-  background: #0B6623; /* darker forest green (less neon) */
+  background: #91c5e7; /* darker forest green (less neon) */
   border-radius: 12px;
   padding: 28px 16px 36px;
   min-height: 420px;
@@ -185,6 +185,7 @@
   align-items: center;
   justify-content: flex-start;
   text-align: center;
+  font-size: 22px;
   color: white;
 }
 
