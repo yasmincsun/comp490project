@@ -12,6 +12,7 @@
   background: linear-gradient(45deg, #065f46 0%, #0ea5a4 30%, #0369a1 60%, #073b4c 100%);
   background-size: 300% 300%;
   animation: gradientShiftDev 12s linear infinite;
+  overflow: hidden; /* disable page scroll on developer page */
 }
 
 /**
@@ -30,11 +31,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 40px;
+  gap: 16px;
+  height: 77px; /* compact header +5px */
+  height: 87px; /* compact header + additional space */
+  padding: 0 16px; /* horizontal padding only */
   background: rgba(255, 255, 255, 0.95);
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   z-index: 100;
-  gap: 16px;
+  overflow: visible; /* allow logo to overflow outside the header */
 }
 
 /**
@@ -47,6 +51,10 @@
 .nav-buttons {
   display: flex;
   gap: 20px;
+  position: absolute; /* center the buttons block horizontally in the header */
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 /**
@@ -100,17 +108,22 @@
  * @version 1.0 
  */
 .login-btn {
-  padding: 20px 36px; /* doubled */
+  /* reduced size to match front page */
+  padding: 10px 18px;
   font-family: 'Times New Roman', Times, serif;
   background: var(--logo-green);
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 32px;
+  font-size: 16px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   text-transform: uppercase;
   transition: background-color 0.2s;
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 /**
@@ -143,6 +156,16 @@
   height: 256px;
   object-fit: contain;
   cursor: pointer;
+  position: absolute;
+  left: 16px;
+  top: calc(50% - 98px);
+  z-index: 200;
+}
+
+@media (max-width: 800px) {
+  .logo-btn { width: 160px; height: 160px; top: calc(50% - 50px); }
+  .developerpage-nav { height: 71px; }
+  .nav-btn { font-size: 24px; padding: 10px 18px; min-width: 160px; }
 }
 
 .team-grid {
@@ -153,7 +176,7 @@
 }
 
 .team-card {
-  background: #4CB817; /* requested green */
+  background: #0B6623; /* darker forest green (less neon) */
   border-radius: 12px;
   padding: 28px 16px 36px;
   min-height: 420px;

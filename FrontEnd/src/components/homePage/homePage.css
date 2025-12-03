@@ -14,14 +14,17 @@
 
 .homepage-login-btn {
     padding: 10px 18px;
-    background: var(--btn-bg);
-    color: var(--btn-text);
+    background: linear-gradient(90deg, var(--btn-bg1, #789c90), var(--btn-bg2, #9bb1cd));
+    background-size: 200% 200%;
+    color: black;
     border: none;
     border-radius: 8px;
     cursor: pointer;
     font-size: 16px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     text-transform: uppercase;
+    font-family: 'Times New Roman', Times, serif;
+    animation: btnGradientShift 6s ease infinite;
 }
 
 .homepage-login-btn:hover {
@@ -55,7 +58,7 @@
     transform: translateY(0);
     min-height: auto;
     padding-top: 15px;
-    background: rgba(74, 144, 226, 0.92);
+    background: rgba(173, 200, 231, 0.92);
     justify-content: flex-start;
 }
 
@@ -69,13 +72,16 @@
     max-width: 100%;
     border-radius: 0;
     padding: 16px 30px;
-    background: #8ab4f8;
+    background: #b8cff3;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 20px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     width: 100%;
+
+    position: relative; /* anchor for dropdown options */
+}
 
 
 .homepage-form-content {
@@ -167,17 +173,60 @@
     font-size: 18px;
     padding: 8px;
 }
+
+/* Custom dropdown styles */
+.dropdown-wrapper { display:flex; align-items:center; }
+.custom-dropdown { position: relative; width: 650px; }
+.dropdown-selected {
+    height: 60px; /* same size as original select */
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    padding: 12px 24px;
+    background: #fff; /* question stays white */
+    border-radius: 8px;
+    border: 1px solid rgba(0,0,0,0.08);
+    font-size: 32px; /* same as original select */
+    cursor: pointer;
+    font-family: 'Times New Roman', Times, serif;
+    color: #1a4d7a;
+}
+.dropdown-caret { margin-left: 12px; font-size: 20px; }
+.dropdown-options {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%); /* center the smaller dropdown under the larger selected */
+    width: 420px; /* smaller options width */
+    max-height: 320px;
+    overflow-y: auto;
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid rgba(0,0,0,0.08);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+    z-index: 300;
+}
+.dropdown-option {
+    padding: 10px 12px;
+    cursor: pointer;
+    font-size: 16px;
+}
+.dropdown-option:hover { background: #f2f7fb; }
 .homepage-generate-btn {
-    padding: 10px 18px;
-    background: #10b981;
+    height: 60px;
+    padding: 12px 24px;
+    background: #10b981; /* emerald green to match ConnectSpotify */
     color: black;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    min-width: 110px;
+    font-size: 24px;
     font-weight: 700;
     text-transform: uppercase;
     font-family: 'Times New Roman', Times, serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .homepage-generate-btn:hover {
@@ -186,21 +235,16 @@
 }
 
 .homepage-error-message {
-    position: fixed;
-    top: 100px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: white;
+    margin: 12px auto 0 auto;
+    background: transparent;
     color: #dc2626;
-    padding: 12px 20px;
-    border-radius: 8px;
-    font-size: 14px;
+    padding: 0;
+    border-radius: 0;
+    font-size: 18px;
     font-weight: 600;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    z-index: 200;
-    animation: slideDown 0.3s ease-out;
+    box-shadow: none;
+    text-align: center;
     font-family: 'Times New Roman', Times, serif;
-    border: 2px solid #dc2626;
 }
 
 @keyframes slideDown {
@@ -228,43 +272,54 @@
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
     width: 100%;
-    max-width: 1400px;
+    max-width: 920px; /* keeps each box a reasonable size for 4 per row */
     padding: 0 20px;
 }
 
 .homepage-mood-box {
-    background: white;
-    border: 2px solid #2dd4bf;
+    /* mood colors are provided via inline CSS vars from JSX */
+    --mood-color1: var(--mood-color1, #9fe6cf);
+    --mood-color2: var(--mood-color2, #7fd4b8);
+    --mood-color3: var(--mood-color3, #5fc2a1);
+    background: linear-gradient(45deg, var(--mood-color1) 0%, var(--mood-color2) 50%, var(--mood-color3) 100%);
+    background-size: 400% 400%;
+    animation: moodGradientShift 6s ease infinite;
     border-radius: 12px;
-    padding: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 180px;
-    height: 180px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    animation: slideInBox 0.4s ease-out;
+    width: 100%;
+    aspect-ratio: 1 / 1; /* keep perfect square and scale to grid column */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+    transform-origin: center;
+    transition: transform 320ms ease, opacity 320ms ease;
 }
 
 @keyframes slideInBox {
     from {
         opacity: 0;
-        transform: translateX(-20px);
+        transform: translateX(-18px) scale(0.96);
     }
     to {
         opacity: 1;
-        transform: translateX(0);
+        transform: translateX(0) scale(1);
     }
 }
 
+/* transient incoming animation for newly added mood */
+.homepage-mood-box.new {
+    animation: slideInBox 360ms cubic-bezier(.16,.84,.44,1), moodGradientShift 6s ease infinite;
+}
+
 .homepage-mood-text {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 700;
-    color: #1a4d7a;
+    color: #ffffff;
     text-transform: capitalize;
     text-align: center;
     margin: 0;
     font-family: 'Times New Roman', Times, serif;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.25);
 }
 
 .homepage-spotify-question {
@@ -297,7 +352,12 @@
 }
 
 .homepage-container {
-    background: linear-gradient(135deg, #a8d5f7 0%, #b8dff5 50%, #9ed2f0 100%);
+    /* animated background between two colors provided by CSS variables (set from JSX) */
+    --home-bg1: #c4dbefff; /* default primary */
+    --home-bg2: #8ab4f8; /* default secondary (bright contrast) */
+    background: linear-gradient(45deg, var(--home-bg1) 0%, var(--home-bg2) 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 6s ease infinite;
     min-height: 100vh;
     display: flex;
     flex-direction: row;
@@ -505,4 +565,18 @@
     font-weight: 600;
     color: #1a4d7a;
     font-family: 'Times New Roman', Times, serif;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    25% { background-position: 100% 50%; }
+    50% { background-position: 100% 0%; }
+    75% { background-position: 0% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes btnGradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }

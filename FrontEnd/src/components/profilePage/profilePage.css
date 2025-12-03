@@ -16,7 +16,7 @@
 .profilepage-back-btn {
     padding: 10px 20px;
     font-family: 'Times New Roman', Times, serif;
-    background: #808000;
+    background: #0b4828;
     color: white;
     border: none;
     border-radius: 5px;
@@ -117,7 +117,7 @@
 
 .profile-btn {
     padding: 8px 12px;
-    background: #556B2F;
+    background: #0b4828;
     color: #fff;
     border: none;
     border-radius: 6px;
@@ -198,11 +198,11 @@
 }
 
 .search-results {
-    max-height: 180px;
+    max-height: 280px;
     overflow: auto;
     background: #fff;
     border: 1px solid #ddd;
-    padding: 8px;
+    padding: 12px;
     border-radius: 6px;
     font-family: 'Times New Roman', Times, serif;
 }

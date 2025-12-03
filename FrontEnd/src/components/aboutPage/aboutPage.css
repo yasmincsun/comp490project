@@ -13,6 +13,7 @@
   background: linear-gradient(45deg, #064e3b 0%, #0ea5a4 30%, #0369a1 60%, #073b4c 100%);
   background-size: 300% 300%;
   animation: gradientShift 10s linear infinite;
+  overflow: hidden; /* disable page scroll on about page */
 }
 
 /**
@@ -28,10 +29,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 32px;
+  gap: 16px;
+  height: 87px; /* compact header + additional space */
+  padding: 0 16px; /* horizontal padding only */
   background: linear-gradient(180deg, rgba(255,255,255,0.95), var(--panel-cream));
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   z-index: 100;
+  overflow: visible; /* allow logo to overflow outside the header */
 }
 
 /**
@@ -44,6 +48,10 @@
 .nav-buttons {
   display: flex;
   gap: 16px;
+  position: absolute; /* center the buttons block horizontally in the header */
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 /**
@@ -95,12 +103,18 @@
  * @version 1.0 
  */
 .login-btn {
-  padding: 20px 36px; /* doubled */
+  /* reduced size to match front page */
+  padding: 10px 18px;
+  font-size: 16px;
   background: var(--logo-green);
   color: var(--btn-text);
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   text-transform: uppercase;
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 /**
@@ -129,11 +143,24 @@
   color: var(--muted);
 }
 
+/* make content header smaller when present while keeping nav/logo sizes */
+.aboutpage-content h1 { font-size: 32px; }
+
 .logo-btn {
   width: 256px;
   height: 256px;
   object-fit: contain;
   cursor: pointer;
+  position: absolute;
+  left: 16px;
+  top: calc(50% - 98px);
+  z-index: 200;
+}
+
+@media (max-width: 800px) {
+  .logo-btn { width: 160px; height: 160px; top: calc(50% - 50px); }
+  .aboutpage-nav { height: 71px; }
+  .nav-btn { font-size: 24px; padding: 10px 18px; min-width: 160px; }
 }
 
 .about-animated-center {
