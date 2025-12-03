@@ -29,7 +29,7 @@ const FrontPage = () => {
       </nav>
       <div className="frontpage-content">
         <h1>Welcome to Moody</h1>
-        <p>STUFF WILL BE ADDED HERE WHEN WE HAVE THINGS I CAN ATTACH</p>
+        <p>Generate Spotify playlists based on your moods!</p>
       </div>
     </div>
   );

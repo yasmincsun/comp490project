@@ -228,7 +228,8 @@ console.log("Sending verification code:", verificationCode);
     if (res.ok) {
       alert("Email verified successfully!");
       setVerificationMode(false);
-      navigate("/home");
+      // navigate to connect spotify screen first so user can connect their account
+      navigate("/connect-spotify");
     } else {
       // Show backend error message if any
       alert(data.message || `Verification failed. Status code: ${res.status}`);
@@ -346,13 +347,26 @@ console.log("Sending verification code:", verificationCode);
         ) : (
           <div className="verification-container">
             <p>We’ve sent a verification code to your email.</p>
-            <input
-              type="text"
-              placeholder="Enter verification code"
-              value={verificationCode}
-              onChange={(e) => setVerificationCode(e.target.value)}
-            />
-            <button onClick={handleVerification}>Verify Email</button>
+
+            <label className="rowInput verification-row">
+              <img src={emailIcon} width={40} height={40} alt="" />
+              <div className="labelAndField">
+                <span className="labelText">Code:</span>
+                <input
+                  className="fieldInput"
+                  type="text"
+                  placeholder="Enter verification code"
+                  value={verificationCode}
+                  onChange={(e) => setVerificationCode(e.target.value)}
+                />
+              </div>
+            </label>
+
+            <div className="submitWrapper">
+              <button className="submitBtn enabled" onClick={handleVerification}>
+                Verify Email
+              </button>
+            </div>
           </div>
         )}
 

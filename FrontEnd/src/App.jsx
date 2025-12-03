@@ -6,6 +6,7 @@ import HomePage from "./components/homePage/homePage";
 import FrontPage from "./components/frontPage/frontPage";
 import AboutPage from "./components/aboutPage/aboutPage";
 import DeveloperPage from "./components/developerPage/developerPage";
+import ConnectSpotify from "./components/spotify/ConnectSpotify";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/developers" element={<DeveloperPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/home" element={<HomePage />} />
+          <Route path="/connect-spotify" element={<ConnectSpotify />} />
           <Route path="/profile" element={<ProfilePage />} />
         </Routes>
       </BrowserRouter>
