@@ -1,5 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import projectLogo from '../assets/projectLogo.png';
+import teamPic from '../assets/teamMembers.png';
 import './developerPage.css';
 
 /**
@@ -19,15 +21,37 @@ const DeveloperPage = () => {
   return (
     <div className="developerpage-container">
       <nav className="developerpage-nav">
+        <img src={projectLogo} alt="Moody logo" className="logo-btn" onClick={() => navigate('/')} />
         <div className="nav-buttons">
-          <button onClick={() => navigate('/')} className="nav-btn">Front Page</button>
+          {/* <button onClick={() => navigate('/')} className="nav-btn">Front Page</button> */}
           <button onClick={() => navigate('/about')} className="nav-btn">About</button>
           <button onClick={() => navigate('/developers')} className="nav-btn active">Developers</button>
         </div>
         <button onClick={() => navigate('/login')} className="login-btn">Log In</button>
       </nav>
       <div className="developerpage-content">
-        {/* Content will be added later */}
+        <div className="team-grid">
+          <div className="team-card">
+            <img src={teamPic} alt="MIGUEL" />
+            <h3>MIGUEL</h3>
+            <p>Database Design: <br></br> <br></br> Created a MySQL Database that stores User, API, and other program information</p>
+          </div>
+          <div className="team-card">
+            <img src={teamPic} alt="JOSE" />
+            <h3>JOSE</h3>
+            <p>Backend Development: <br></br> <br></br> Created necessary backend components and connected the UI to the backend of the program</p>
+          </div>
+          <div className="team-card">
+            <img src={teamPic} alt="ALLEN" />
+            <h3>ALLEN</h3>
+            <p>API: <br></br> <br></br> Established a connection with Spotify's API that allowed REAL playlists to be generated</p>
+          </div>
+          <div className="team-card">
+            <img src={teamPic} alt="YASMIN" />
+            <h3>YASMIN</h3>
+            <p>User Interface Design: <br></br> <br></br> Created the GUI using React, JavaScript, and CSS</p>
+          </div>
+        </div>
       </div>
     </div>
   );

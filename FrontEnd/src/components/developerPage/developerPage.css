@@ -7,8 +7,12 @@
  */
 .developerpage-container {
   min-height: 100vh;
-  background-color: var(--bg-cream);
   position: relative;
+  font-family: 'Times New Roman', Times, serif;
+  background: linear-gradient(45deg, #065f46 0%, #0ea5a4 30%, #0369a1 60%, #073b4c 100%);
+  background-size: 300% 300%;
+  animation: gradientShiftDev 12s linear infinite;
+  overflow: hidden; /* disable page scroll on developer page */
 }
 
 /**
@@ -27,10 +31,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 40px;
-  background: rgba(255, 255, 255, 0.95);
+  gap: 16px;
+  height: 77px; /* compact header +5px */
+  height: 87px; /* compact header + additional space */
+  padding: 0 16px; /* horizontal padding only */
+  background: #0369a1;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   z-index: 100;
+  overflow: visible; /* allow logo to overflow outside the header */
 }
 
 /**
@@ -43,6 +51,10 @@
 .nav-buttons {
   display: flex;
   gap: 20px;
+  position: absolute; /* center the buttons block horizontally in the header */
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 /**
@@ -53,14 +65,14 @@
  * @version 1.0 
  */
 .nav-btn {
-  padding: 10px 20px;
+  padding: 20px 40px; /* doubled */
   font-family: 'Times New Roman', Times, serif;
   background: transparent;
   color: #556B2F;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 32px; /* doubled */
   font-weight: bold;
   transition: background-color 0.2s;
 }
@@ -96,9 +108,10 @@
  * @version 1.0 
  */
 .login-btn {
-  padding: 10px 20px;
+  /* reduced size to match front page */
+  padding: 10px 18px;
   font-family: 'Times New Roman', Times, serif;
-  background: #808000;
+  background: var(--logo-green);
   color: white;
   border: none;
   border-radius: 5px;
@@ -107,6 +120,10 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   text-transform: uppercase;
   transition: background-color 0.2s;
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 /**
@@ -132,4 +149,63 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 120px 40px 40px;
+}
+
+.logo-btn {
+  width: 256px;
+  height: 256px;
+  object-fit: contain;
+  cursor: pointer;
+  position: absolute;
+  left: 16px;
+  top: calc(50% - 98px);
+  z-index: 200;
+}
+
+@media (max-width: 800px) {
+  .logo-btn { width: 160px; height: 160px; top: calc(50% - 50px); }
+  .developerpage-nav { height: 71px; }
+  .nav-btn { font-size: 24px; padding: 10px 18px; min-width: 160px; }
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* four vertical columns */
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.team-card {
+  background: #91c5e7; /* darker forest green (less neon) */
+  border-radius: 12px;
+  padding: 28px 16px 36px;
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  font-size: 22px;
+  color: white;
+}
+
+.team-card img {
+  width: 96px; /* smaller image */
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-top: 12px; /* a little bit from the top */
+}
+
+.team-card h3 {
+  margin-top: 12px;
+  margin-bottom: 6px;
+}
+
+.team-card p { color: rgba(255,255,255,0.9); }
+
+@keyframes gradientShiftDev {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }

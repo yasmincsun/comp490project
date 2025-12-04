@@ -13,13 +13,14 @@
     border: none;
     border-radius: 8px;
     cursor: pointer;
+    font-family: 'Times New Roman', Times, serif;
 }
 .login-mode-btns {
     text-align: center;
-    margin-bottom: 10px;
+    margin-bottom: 6px; 
 }
 .login-mode-btn {
-    padding: 8px 16px;
+    padding: 6.8px 16px; 
     margin: 0 5px;
     font-family: 'Times New Roman', Times, serif;
     background: #bad5ce;
@@ -40,29 +41,54 @@
     font-size: 16px;
     text-align: center;
 }
-/* 
-    gap: 30px; 
-    margin: 60px auto; 
-    */ 
+
+/* Verification container should reuse login form sizing and center */
+.verification-container{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:18px;
+}
+
+.verification-container p{
+    margin:0;
+    color:#111;
+}
+
+.verification-row{ /* reuse .rowInput visuals */
+    width:480px;
+}
+
+.verification-container .submitBtn{
+    width:260px; /* slightly larger verify button to match login submit */
+    height:72px;
+}
+
 
 .container{ 
     display: flex; 
     flex-direction: column;
     margin: auto; 
-    margin-top: 00px; 
+    /* slightly higher on the screen than default */
+    margin-top: 90px;
     width: 650px; 
-    height: 650px;
+    /* let height grow with content so submit button isn't clipped */
+    height: auto;
     background: var(--panel-cream);
     padding-bottom: 30px; 
+    /* allow visible overflow so elements aren't clipped */
+    overflow: visible;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .header{ 
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px; 
+    gap: 6px; 
     width: 100%; 
-    margin-top: 30px;
+    margin-top: 12px; /* bring header up a bit so buttons sit closer */
 }
 
 .text{ 
@@ -81,10 +107,10 @@
 }
 
 .inputs{ 
-    margin-top: 55px;
+    margin-top: 18px;
     display: flex;
     flex-direction: column;
-    gap: 25px; 
+    gap: 24px; /* consistent spacing between rows */
 }
 
 .input{ 
@@ -101,15 +127,7 @@
     margin: 0px 30px; 
 }
 
-.nameInput{ 
-    display: flex;
-    align-items: center;
-    margin: auto; 
-    width: 480px;
-    height: 80px; 
-    background: #fff;
-    border-radius: 6px;
-}
+/* .nameInput kept implicitly by .rowInput styles */
 
 .lastnameInput{ 
     display: flex;
@@ -160,35 +178,110 @@
     font-size: 19px;
 }
 
-.nameInput input{ 
-    height: 50px;
-    width: 400px; 
-    background: transparent;
-    border: none; 
-    outline: none;
-    color: #797979; 
-    font-size: 19px;
+/* New row layout for label + input on same line */
+.rowInput{
+    display: flex;
+    align-items: center;
+    margin: 0 auto; /* keep consistent spacing controlled by .inputs gap */
+    width: 480px;
+    background: #fff;
+    border-radius: 6px;
+    padding: 18px 14px; /* slightly taller to match other rows, move typing a bit left */
+    box-sizing: border-box;
+    position: relative; /* for positioning error messages */
+}
+/* add a small visual gap showing background between white rectangles */
+/* use .inputs gap for consistent spacing; removed per-row margin */
+
+.rowInput img{
+    margin-right: 16px;
 }
 
-.emailInput input{ 
-    height: 50px;
-    width: 400px; 
-    background: transparent;
-    border: none; 
-    outline: none;
-    color: #797979; 
-    font-size: 19px;
+.labelAndField{
+    display: flex;
+    flex-direction: row; /* put label and input on same line */
+    align-items: center;
+    width: 100%;
+    gap: 12px;
 }
 
-.passwordInput input{ 
-    height: 50px;
-    width: 400px; 
-    background: transparent;
-    border: none; 
-    outline: none;
-    color: #797979; 
-    font-size: 19px;
+.labelText{
+    font-size: 16px;
+    color: #111;
+    margin: 0; /* keep label on same baseline as input */
+    width: 90px; /* slightly narrower so typing zone moves left */
+    text-align: left;
 }
+
+.fieldInput{
+    height: 44px;
+    width: calc(100% - 100px - 12px); /* remaining space after label and gap */
+    padding: 6px 12px;
+    background: transparent; /* let the outer white rectangle be the visible box */
+    border: none; /* remove inner rectangle border */
+    border-radius: 4px;
+    outline: none;
+    color: #333;
+    font-size: 16px;
+}
+
+.fieldInput:focus{
+    border-color: #cfcfcf;
+}
+
+/* Submit button large and positioned under inputs */
+.submitWrapper{
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.submitBtn{
+    width: 220px;
+    height: 72px; /* three times larger than previous */
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: 700;
+    font-family: 'Times New Roman', Times, serif; /* use Times New Roman for submit */
+    transition: background-color 150ms ease, transform 80ms ease;
+}
+
+.submitBtn.disabled{
+    background: #d7d7d7; /* grey */
+    color: #666;
+    cursor: not-allowed;
+}
+
+.submitBtn.enabled{
+    background: #bdbdbd; /* slightly darker when enabled */
+    color: #111;
+}
+
+.submitBtn.enabled:hover{
+    background: #a9a9a9; /* visible but not too dark */
+    transform: translateY(-2px);
+}
+
+/* error messages placed inside the white rectangle at the right side */
+.rowInput .error{
+    position: absolute;
+    right: 18px;
+    color: #c0392b;
+    font-size: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    white-space: nowrap;
+}
+
+/* fallback: allow multi-line messages inside the rectangle */
+.rowInput .error.wrap{
+    white-space: normal;
+    max-width: 220px;
+}
+
+/* inputs are styled via .fieldInput now */
 
 .forgotPassword{
     padding-left: 62px;

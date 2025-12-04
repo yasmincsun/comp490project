@@ -42,18 +42,19 @@
 }
 
 :root {
-  --bg-cream: #eaf6ff; /* light blue background */
-  --panel-cream: #f8fbff; /* very pale blue panels */
-  --accent-green: #9fd6a5;
-  --accent-dark: #6aa65a;
-  --muted: #6b6b6b;
+  --bg-cream: #1a4d7a; /* vibrant deep blue background */
+  --panel-cream: #2a6fa0; /* vibrant panel blue */
+  --accent-green: #2dd4bf; /* vibrant teal/cyan */
+  --logo-green: #10b981; /* emerald green used for logo and login on front page */
+  --accent-dark: #14b8a6; /* vibrant darker teal */
+  --muted: #4b5563;
   --btn-bg: var(--accent-green);
-  --btn-hover: #85bf8f; 
-  --panel-contrast: #ffffff; /* contrasting panel/card color */
-  --btn-accent: #4ab3c6; /* alternate button color (generate) */
-  --btn-accent-hover: #3aa1b4;
+  --btn-hover: #14b8a6; 
+  --panel-contrast: #f0fdfa; /* light contrast panel */
+  --btn-accent: #2dd4bf; /* vibrant teal (replacing orange) */
+  --btn-accent-hover: #1db8a4; /* darker teal (replacing dark orange) */
   --btn-text: #ffffff;
-  --input-bg: #ffffff;
+  --input-bg: #f0fdfa;
   --radius: 8px;
 }
 
@@ -62,8 +63,8 @@ html, body, #root {
   margin: 0;
   padding: 0;
   font-family: 'Times New Roman', Times, serif;
-  background-color: #eaf6ff;
-  color: #222;
+  background: linear-gradient(135deg, #5b9fd6 0%, #6fa3d8 50%, #4a9fb8 100%);
+  color: #1a4d7a;
 }
 
 /* Unified button and input styles used across components */

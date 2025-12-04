@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import projectLogo from '../assets/projectLogo.png';
 import './frontPage.css';
 
 /**
@@ -19,6 +20,7 @@ const FrontPage = () => {
   return (
     <div className="frontpage-container">
       <nav className="frontpage-nav">
+        <img src={projectLogo} alt="Moody logo" className="logo-btn" onClick={() => navigate('/')} />
         <div className="nav-buttons">
           <button onClick={() => navigate('/about')} className="nav-btn">About</button>
           <button onClick={() => navigate('/developers')} className="nav-btn">Developers</button>
@@ -27,7 +29,7 @@ const FrontPage = () => {
       </nav>
       <div className="frontpage-content">
         <h1>Welcome to Moody</h1>
-        <p>STUFF WILL BE ADDED HERE WHEN WE HAVE THINGS I CAN ATTACH</p>
+        <p>Generate Spotify playlists based on your moods!</p>
       </div>
     </div>
   );

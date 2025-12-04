@@ -1,0 +1,46 @@
+:root{
+  /* rely on global vars in App.css (e.g. --logo-green, --panel-cream) */
+}
+
+.connect-spotify-container{
+  /* cover the entire viewport and center content exactly */
+  position: fixed;
+  inset: 0; /* top:0; right:0; bottom:0; left:0 */
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background: var(--panel-cream);
+  z-index: 9999;
+}
+
+.connect-spotify-box{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  width:100%;
+}
+
+.connect-spotify-btn{
+  /* use exact emerald green used elsewhere */
+  background: #10b981; /* matches --logo-green */
+  color: #000;
+  border: none;
+  height: 72px;
+  width: clamp(280px, 60vw, 900px);
+  border-radius: 9999px;
+  font-size: 28px;
+  font-weight: 800;
+  cursor: pointer;
+  /* subtle outer shadow and a slightly darker base shadow to match the screenshot */
+  box-shadow: 0 6px 0 rgba(0,0,0,0.08), 0 10px 30px rgba(16,185,129,0.12);
+  transition: transform 120ms ease, box-shadow 120ms ease;
+  font-family: 'Times New Roman', Times, serif;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.connect-spotify-btn:hover{
+  transform: translateY(-3px);
+  box-shadow: 0 10px 0 rgba(0,0,0,0.10), 0 16px 40px rgba(16,185,129,0.16);
+}

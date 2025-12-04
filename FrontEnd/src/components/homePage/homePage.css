@@ -14,14 +14,17 @@
 
 .homepage-login-btn {
     padding: 10px 18px;
-    background: var(--btn-bg);
-    color: var(--btn-text);
+    background: linear-gradient(90deg, var(--btn-bg1, #789c90), var(--btn-bg2, #9bb1cd));
+    background-size: 200% 200%;
+    color: black;
     border: none;
     border-radius: 8px;
     cursor: pointer;
     font-size: 16px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     text-transform: uppercase;
+    font-family: 'Times New Roman', Times, serif;
+    animation: btnGradientShift 6s ease infinite;
 }
 
 .homepage-login-btn:hover {
@@ -35,61 +38,113 @@
     left: 0;
     width: 100vw;
     z-index: 10;
-    background: #bad5ce;
-    padding: 18px 0 0 0;
+    background: transparent;
+    padding: 0;
+    transition: all 0.6s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.homepage-searchbar-top.centered {
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.homepage-searchbar-top.moved-to-top {
+    top: 0;
+    transform: translateY(0);
+    min-height: auto;
+    padding-top: 15px;
+    background: rgba(173, 200, 231, 0.92);
+    justify-content: flex-start;
+}
+
+.homepage-searchbar-top.moved-to-top .homepage-form-top {
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
 .homepage-form-top {
     margin: 0 auto;
-    max-width: 920px;
-    border-radius: 12px;
-    padding: 14px 18px;
-        background: #9fb8b1; /* contrast from page background */
+    max-width: 100%;
+    border-radius: 0;
+    padding: 16px 30px;
+    background: #b8cff3;
     display: flex;
-    align-items: right;
-    justify-content: flex-start;
-    gap: 18px;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     width: 100%;
-    margin-top: 18px;
-    margin-bottom: 18px;
+
+    position: relative; /* anchor for dropdown options */
 }
 
-.homepage-main {
-    flex: 1;
-    margin-left: 33vw;
-    margin-right: 33vw;
-    margin-top: 120px;
+
+.homepage-form-content {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
-    min-height: 100vh;
-    position: relative;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
 }
 
-.homepage-sidebar-custom {
+.homepage-result-container {
     position: fixed;
-    width: 50vw;
-    height: 66vh;
-    bottom: 0;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 20;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.homepage-result-square {
+    background: #f0fdfa;
+    border: 3px solid #2dd4bf;
+    border-radius: 16px;
+    width: 240px;
+    height: 240px;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
-    background: linear-gradient(180deg, var(--panel-cream), #f0f6ef);
-    color: #234b28;
-    padding: 20px 18px;
-    box-sizing: border-box;
-    border-radius: 20px 20px 0 0;
-    z-index: 5;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    animation: slideInResult 0.5s ease-out;
 }
 
-.homepage-sidebar-left.homepage-sidebar-custom {
-    left: 0;
+@keyframes slideInResult {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
-.homepage-sidebar-right.homepage-sidebar-custom {
-    right: 0;
+.homepage-result-text {
+    font-size: 16px;
+    color: #1a4d7a;
+    margin-bottom: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.homepage-result-mood {
+    font-size: 32px;
+    color: #2dd4bf;
+    font-weight: 700;
+    text-transform: capitalize;
+    text-align: center;
 }
 
 .homepage-input-top {
@@ -99,19 +154,172 @@
     border: 1px solid rgba(0, 0, 0, 0.08);
     width: 320px;
 }
+
+.homepage-select-top {
+    padding: 12px 24px;
+    font-size: 32px;
+    border-radius: 8px;
+    border: 1px solid #1a4d7a;
+    background: #f0fdfa;
+    color: #1a4d7a;
+    cursor: pointer;
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: 500;
+    min-width: 650px;
+    text-align: center;
+}
+
+.homepage-select-top option {
+    font-size: 18px;
+    padding: 8px;
+}
+
+/* Custom dropdown styles */
+.dropdown-wrapper { display:flex; align-items:center; }
+.custom-dropdown { position: relative; width: 650px; }
+.dropdown-selected {
+    height: 60px; /* same size as original select */
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    padding: 12px 24px;
+    background: #fff; /* question stays white */
+    border-radius: 8px;
+    border: 1px solid rgba(0,0,0,0.08);
+    font-size: 32px; /* same as original select */
+    cursor: pointer;
+    font-family: 'Times New Roman', Times, serif;
+    color: #1a4d7a;
+}
+.dropdown-caret { margin-left: 12px; font-size: 20px; }
+.dropdown-options {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%); /* center the smaller dropdown under the larger selected */
+    width: 420px; /* smaller options width */
+    max-height: 320px;
+    overflow-y: auto;
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid rgba(0,0,0,0.08);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+    z-index: 300;
+}
+.dropdown-option {
+    padding: 10px 12px;
+    cursor: pointer;
+    font-size: 16px;
+}
+.dropdown-option:hover { background: #f2f7fb; }
 .homepage-generate-btn {
-    padding: 10px 18px;
-    background: #c7dbef; 
-    color: var(--btn-text);
+    height: 60px;
+    padding: 12px 24px;
+    background: #10b981; /* emerald green to match ConnectSpotify */
+    color: black;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    min-width: 110px;
+    font-size: 24px;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-family: 'Times New Roman', Times, serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .homepage-generate-btn:hover {
-    background: var(--btn-accent-hover);
+    background: #059669;
     transform: translateY(-1px);
+}
+
+.homepage-error-message {
+    margin: 12px auto 0 auto;
+    background: transparent;
+    color: #dc2626;
+    padding: 0;
+    border-radius: 0;
+    font-size: 18px;
+    font-weight: 600;
+    box-shadow: none;
+    text-align: center;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+.homepage-gallery-container {
+    margin-top: 100px;
+    width: 100%;
+    padding: 40px 20px;
+    display: flex;
+    justify-content: flex-start;
+    min-height: calc(100vh - 100px);
+}
+
+.homepage-mood-gallery {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    width: 100%;
+    max-width: 920px; /* keeps each box a reasonable size for 4 per row */
+    padding: 0 20px;
+}
+
+.homepage-mood-box {
+    /* mood colors are provided via inline CSS vars from JSX */
+    --mood-color1: var(--mood-color1, #9fe6cf);
+    --mood-color2: var(--mood-color2, #7fd4b8);
+    --mood-color3: var(--mood-color3, #5fc2a1);
+    background: linear-gradient(45deg, var(--mood-color1) 0%, var(--mood-color2) 50%, var(--mood-color3) 100%);
+    background-size: 400% 400%;
+    animation: moodGradientShift 6s ease infinite;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    aspect-ratio: 1 / 1; /* keep perfect square and scale to grid column */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+    transform-origin: center;
+    transition: transform 320ms ease, opacity 320ms ease;
+}
+
+@keyframes slideInBox {
+    from {
+        opacity: 0;
+        transform: translateX(-18px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+/* transient incoming animation for newly added mood */
+.homepage-mood-box.new {
+    animation: slideInBox 360ms cubic-bezier(.16,.84,.44,1), moodGradientShift 6s ease infinite;
+}
+
+.homepage-mood-text {
+    font-size: 20px;
+    font-weight: 700;
+    color: #ffffff;
+    text-transform: capitalize;
+    text-align: center;
+    margin: 0;
+    font-family: 'Times New Roman', Times, serif;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.25);
 }
 
 .homepage-spotify-question {
@@ -144,11 +352,17 @@
 }
 
 .homepage-container {
-    background-color: var(--panel-cream);
+    /* animated background between two colors provided by CSS variables (set from JSX) */
+    --home-bg1: #c4dbefff; /* default primary */
+    --home-bg2: #8ab4f8; /* default secondary (bright contrast) */
+    background: linear-gradient(45deg, var(--home-bg1) 0%, var(--home-bg2) 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 6s ease infinite;
     min-height: 100vh;
     display: flex;
     flex-direction: row;
     position: relative;
+    font-family: 'Times New Roman', Times, serif;
 }
 
 .homepage-sidebar {
@@ -171,18 +385,6 @@
 
 .homepage-sidebar-right {
     right: 0;
-}
-
-.homepage-main {
-    flex: 1;
-    margin-left: 200px;
-    margin-right: 200px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    position: relative;
 }
 
 .homepage-form {
@@ -333,4 +535,48 @@
 .noAccount span {
     color: #4c00b4;
     cursor: pointer;
+}
+
+/* Content area that holds either welcome message or gallery */
+.homepage-content-area {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 20px;
+}
+
+/* Main welcome section - centered in middle until mood generated */
+.homepage-main {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    text-align: center;
+}
+
+.homepage-spotify-question {
+    font-size: 24px;
+    font-weight: 600;
+    color: #1a4d7a;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    25% { background-position: 100% 50%; }
+    50% { background-position: 100% 0%; }
+    75% { background-position: 0% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes btnGradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
