@@ -1,7 +1,7 @@
 /**
  * Date: September 25, 2025
  * @author Jose Bastidas
- */
+ */ 
 
 package com.musicApp.backend.features.authentication.utils;
 
