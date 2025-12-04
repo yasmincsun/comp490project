@@ -15,7 +15,7 @@ const MOOD_COLORS = {
     "melancholic": ["#4B0082", "#8B008B", "#4169E1"],
     "romantic": ["#FF69B4", "#FF1493", "#DA70D6"],
     "nostalgic": ["#DEB887", "#CD853F", "#DAA520"],
-    "energetic": ["#FF1493", "#FFD700", "#00FF00"],
+    "energetic": ["#FF4500", "#FFD700", "#FF1493"],
     "peaceful": ["#20B2AA", "#90EE90", "#98FB98"],
     "dark": ["#1C1C1C", "#2F4F4F", "#191970"],
     "motivated": ["#FF6347", "#FFD700", "#00CED1"],
@@ -26,9 +26,9 @@ const MOOD_COLORS = {
     "lonely": ["#696969", "#778899", "#A9A9A9"],
     "mysterious": ["#2F4F4F", "#4B0082", "#191970"],
     "gritty": ["#696969", "#A0522D", "#8B4513"],
-    "groovy": ["#FF1493", "#00FF00", "#FFD700"],
-    "wild": ["#FF4500", "#FF1493", "#00FF00"],
-    "epic": ["#FFD700", "#FF6347", "#4169E1"],
+    "groovy": ["#8A2BE2", "#FF7F50", "#20B2AA"],
+    "wild": ["#FF4500", "#FF1493", "#00CED1"],
+    "epic": ["#0f172a", "#1f2937", "#f59e0b"],
     "focused": ["#1C1C1C", "#4169E1", "#00CED1"],
     "funny": ["#FFD700", "#FF69B4", "#00FF00"],
     "spiritual": ["#9370DB", "#DDA0DD", "#E6B0FF"],
@@ -37,7 +37,7 @@ const MOOD_COLORS = {
     "adventurous": ["#FF4500", "#00CED1", "#32CD32"],
     "playful": ["#FF69B4", "#FFD700", "#32CD32"],
     "mellow": ["#DEB887", "#F08080", "#FFB6C1"],
-    "party": ["#FF1493", "#FFD700", "#00FF00"],
+    "party": ["#FF00FF", "#00FFFF", "#FFD700"],
     "sentimental": ["#FFB6C1", "#DDA0DD", "#B0C4DE"],
     "country": ["#8B4513", "#DAA520", "#CD853F"],
     "spooky": ["#2F4F4F", "#8B008B", "#FF8C00"],
@@ -187,6 +187,8 @@ const HomePage = () => {
 
         // briefly keep dropdown closed and clear errors
         setDropdownOpen(false);
+        // reset the question prompt back to default
+        setMood('');
         setErrorMsg('');
 
         // clear the transient newMoodId after animation duration
