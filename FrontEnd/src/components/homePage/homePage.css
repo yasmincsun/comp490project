@@ -272,7 +272,7 @@
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
     width: 100%;
-    max-width: 920px; /* keeps each box a reasonable size for 4 per row */
+    max-width: 100px; /* keeps each box a reasonable size for 4 per row */
     padding: 0 20px;
 }
 
@@ -282,6 +282,8 @@
     --mood-color2: var(--mood-color2, #7fd4b8);
     --mood-color3: var(--mood-color3, #5fc2a1);
     background: linear-gradient(45deg, var(--mood-color1) 0%, var(--mood-color2) 50%, var(--mood-color3) 100%);
+    height: 200px;
+    width: 200px;
     background-size: 400% 400%;
     animation: moodGradientShift 6s ease infinite;
     border-radius: 12px;
@@ -309,6 +311,8 @@
 /* transient incoming animation for newly added mood */
 .homepage-mood-box.new {
     animation: slideInBox 360ms cubic-bezier(.16,.84,.44,1), moodGradientShift 6s ease infinite;
+    height: 100px;
+    width: 100px;
 }
 
 .homepage-mood-text {
@@ -410,10 +414,11 @@
     display: flex;
     flex-direction: column;
     margin: auto;
-    margin-top: 200px;
+    margin-top: 90px;
     width: 800px;
     background: var(--panel-cream);
     padding-bottom: 30px;
+    overflow: hidden;
 }
 
 .header {

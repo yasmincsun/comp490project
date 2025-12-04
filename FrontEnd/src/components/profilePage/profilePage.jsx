@@ -151,7 +151,7 @@ const ProfilePage = () => {
       </div>
 
       <div className="left-panel">
-        <button className={`left-panel-btn ${view === 'account' ? 'active' : ''}`} onClick={() => setView('account')}>ACCOUNT</button>
+        {/* <button className={`left-panel-btn ${view === 'account' ? 'active' : ''}`} onClick={() => setView('account')}>ACCOUNT</button> */}
         <button className={`left-panel-btn ${view === 'profile' ? 'active' : ''}`} onClick={() => setView('profile')}>PROFILE</button>
       </div>
 

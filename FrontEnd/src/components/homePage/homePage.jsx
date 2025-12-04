@@ -327,10 +327,6 @@ const handleLogout = async () => {
             </div>
 
     
-            {/* Main Content */}
-            <div className="homepage-main">
-                {/* intentionally left blank per design: no spotify login text */}
-            </div>
 
             {/* Mood Gallery (shows after at least one generation) */}
             {generatedMoods.length > 0 && (
