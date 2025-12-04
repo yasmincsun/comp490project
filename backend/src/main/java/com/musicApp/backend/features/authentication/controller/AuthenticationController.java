@@ -1,7 +1,7 @@
 /**
  * Date: September 25, 2025
  * @author Jose Bastidas
- *
+ * 
  */
 
 package com.musicApp.backend.features.authentication.controller;
@@ -121,30 +121,36 @@ public class AuthenticationController {
      */
     @PutMapping("/validate-email-verification-token")
     public ResponseEntity<String> verifyEmail(
-            @RequestParam String token,
+           // @RequestParam String token,
+            @RequestParam(name = "token") String token,
             @RequestHeader("Authorization") String authHeader) {
-
         try {
-            // Extract the JWT from the header
+            // Node 1: Extract the JWT from the header
             String jwt = authHeader.replace("Bearer ", "");
-
-            // Get the email from the JWT
+            // Node 2: Get the email from the JWT
             String email = jsonWebToken.getEmailFromToken(jwt);
-
-            // Validate the verification code
+            // Node 3: Validate the verification code
             authenticationService.validateEmailVerificationToken(token, email);
+            // Node 3 exit (invalid/expired token -> IllegalArgumentException)
 
             // Update the user's login status after successful verification
-            AuthenticationUser user = authenticationUserRepository.findByEmail(email)
+            // Node 4: Get user by email
+            AuthenticationUser user = authenticationUserRepository
+                    .findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("User not found"));
+            // Node 4 exit (user not found)
 
+            // Node 5: Mark user as active (verified)
             user.setLoginStatus(true); // mark as "active" now
+            // Node 6: Save updated user
             authenticationUserRepository.save(user);
-
+            // Node 7: Return success response
             return ResponseEntity.ok("Email verified successfully.");
         } catch (IllegalArgumentException e) {
+            // Node 8: Handle invalid or expired verification token
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
+            // Node 9: Handle all other errors
             return ResponseEntity.internalServerError().body("Server error: " + e.getMessage());
         }
     }

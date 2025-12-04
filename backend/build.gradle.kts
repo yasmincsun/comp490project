@@ -49,6 +49,15 @@ dependencies {
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+    //new
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+
+
+    //test
+    testImplementation("com.h2database:h2")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+
 }
 
 tasks.withType<Test> {
@@ -62,4 +71,8 @@ tasks.withType<Javadoc> {
 
 tasks.javadoc {
     destinationDir = file("C:/Users/16617/Desktop/JavaDoc490/JavadocOutput")
+}
+
+tasks.withType<JavaCompile> {
+    options.compilerArgs.add("-parameters")
 }
