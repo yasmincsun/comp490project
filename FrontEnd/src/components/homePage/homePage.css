@@ -72,7 +72,8 @@
     max-width: 100%;
     border-radius: 0;
     padding: 16px 30px;
-    background: #b8cff3;
+    /* semi-transparent light gray so the animated background shows through */
+    background: rgba(211,211,211,0.75);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -259,20 +260,22 @@
 }
 
 .homepage-gallery-container {
-    margin-top: 100px;
+    margin-top: 24px;
     width: 100%;
-    padding: 40px 20px;
+    padding: 20px;
     display: flex;
-    justify-content: flex-start;
-    min-height: calc(100vh - 100px);
+    justify-content: center; /* center the whole gallery area horizontally */
+    align-items: center; /* vertically center content so single box appears centered */
+    min-height: calc(100vh - 120px); /* leave space for top bar when moved-to-top */
 }
 
 .homepage-mood-gallery {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    display: flex;
+    flex-wrap: wrap;
     gap: 20px;
+    justify-content: center; /* keep items centered as a group */
     width: 100%;
-    max-width: 100px; /* keeps each box a reasonable size for 4 per row */
+    max-width: 920px; /* constrains how many fit per row */
     padding: 0 20px;
 }
 
@@ -281,18 +284,16 @@
     --mood-color1: var(--mood-color1, #9fe6cf);
     --mood-color2: var(--mood-color2, #7fd4b8);
     --mood-color3: var(--mood-color3, #5fc2a1);
-    background: linear-gradient(45deg, var(--mood-color1) 0%, var(--mood-color2) 50%, var(--mood-color3) 100%);
-    height: 200px;
-    width: 200px;
-    background-size: 400% 400%;
-    animation: moodGradientShift 6s ease infinite;
+    background: linear-gradient(45deg, var(--mood-color1) 10%, var(--mood-color2) 50%, var(--mood-color3) 90%);
+    background-size: 600% 600%;
+    animation: moodGradientShift 8s ease infinite;
     border-radius: 12px;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
-    aspect-ratio: 1 / 1; /* keep perfect square and scale to grid column */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+    flex: 0 0 200px; /* fixed box size so centering works predictably */
+    aspect-ratio: 1 / 1; /* keep perfect square */
+    box-shadow: 0 6px 26px rgba(0, 0, 0, 0.16);
     transform-origin: center;
     transition: transform 320ms ease, opacity 320ms ease;
 }
@@ -310,13 +311,13 @@
 
 /* transient incoming animation for newly added mood */
 .homepage-mood-box.new {
-    animation: slideInBox 360ms cubic-bezier(.16,.84,.44,1), moodGradientShift 6s ease infinite;
-    height: 100px;
-    width: 100px;
+    animation: slideInBox 360ms cubic-bezier(.16,.84,.44,1), moodGradientShift 8s ease infinite;
+    /* give new item a slight scale pop so it's perceived as the focal/center item */
+    transform: translateY(-4px) scale(1.02);
 }
 
 .homepage-mood-text {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 700;
     color: #ffffff;
     text-transform: capitalize;
@@ -581,6 +582,12 @@
 }
 
 @keyframes btnGradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes moodGradientShift {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
