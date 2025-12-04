@@ -11,7 +11,7 @@ package com.musicApp.backend.features.authentication.dto;
  * requests, including registration and login actions. It encapsulates essential response
  * data such as the authentication token (JWT), confirmation message, username, email,
  * and current login status.<br>
- *
+ * 
  * This object is sent back to the frontend after a successful or failed authentication
  * operation, allowing the client to handle session storage, display feedback, and update
  * the user interface accordingly.
