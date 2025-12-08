@@ -28,7 +28,7 @@ import com.musicApp.backend.features.databasemodel.*;;
  * - Many-to-one relationship with Mood (current mood of user)<br>
  * - One-to-many relationship with Playlist (user-owned playlists)<br>
  * - One-to-many relationship with Review (reviews written by user)
- */
+ */ 
 // @Entity(name="users")
 @Entity
 @Table(name = "users")
