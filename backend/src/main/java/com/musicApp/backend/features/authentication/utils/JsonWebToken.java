@@ -30,8 +30,7 @@ import java.util.function.Function;
 
 /**
  * Utility class for generating, validating, and extracting claims from JSON Web Tokens (JWTs).
- * Handles authentication tokens for users in the MusicApp backend, as well as validation of
- * Google OAuth ID tokens using public keys fetched from Google's JWK endpoint.
+ * Handles authentication tokens for users in the MusicApp backend
  */
 @Component
 public class JsonWebToken {
@@ -123,48 +122,5 @@ public class JsonWebToken {
     }
 
 
-    /**
-     * Validates a Google OAuth ID token using JWKs from Google and returns the claims.
-     *
-     * @param idToken the Google ID token string
-     * @return {@link Claims} extracted from the validated Google ID token
-     * @throws IllegalArgumentException if token validation fails or JWK cannot be fetched
-     */
-    public Claims getClaimsFromGoogleOauthIdToken(String idToken) {
-        try {
-            ResponseEntity<Map<String, Object>> response = restTemplate.exchange("https://www.googleapis.com/oauth2/v3/certs", HttpMethod.GET, null, new ParameterizedTypeReference<>() {
-            });
 
-            if (response.getStatusCode() != HttpStatus.OK || response.getBody() == null) {
-                throw new IllegalArgumentException("Failed to fetch JWKs from Google.");
-            }
-
-            Map<String, Object> body = response.getBody();
-            List<Map<String, Object>> keys = (List<Map<String, Object>>) body.get("keys");
-
-            JwtParser jwtParser = Jwts.parser().keyLocator(header -> {
-                String kid = (String) header.get("kid");
-
-                for (Map<String, Object> key : keys) {
-                    if (kid.equals(key.get("kid"))) {
-                        try {
-                            BigInteger modulus = new BigInteger(1, Base64.getUrlDecoder().decode((String) key.get("n")));
-                            BigInteger exponent = new BigInteger(1, Base64.getUrlDecoder().decode((String) key.get("e")));
-                            RSAPublicKeySpec rsaPublicKeySpec = new RSAPublicKeySpec(modulus, exponent);
-                            return KeyFactory.getInstance(
-                                    key.get("kty").toString()
-                            ).generatePublic(rsaPublicKeySpec);
-                        } catch (Exception e) {
-                            throw new IllegalArgumentException("Failed to parse RSA public key.", e);
-                        }
-                    }
-                }
-                throw new IllegalArgumentException("Failed to locate JWK with kid: " + kid);
-            }).build();
-
-            return jwtParser.parseSignedClaims(idToken).getPayload();
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Failed to validate ID token.", e);
-        }
-    }
 }
