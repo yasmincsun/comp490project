@@ -35,6 +35,8 @@ public class BackendApplication {
         System.setProperty("JWT_SECRET", dotenv.get("JWT_SECRET"));
 				System.setProperty("SPOTIFY_CLIENT_ID", dotenv.get("SPOTIFY_CLIENT_ID"));
 				System.setProperty("SPOTIFY_CLIENT_SECRET", dotenv.get("SPOTIFY_CLIENT_SECRET"));
+				System.setProperty("EMAIL_USERNAME", dotenv.get("EMAIL_USERNAME"));
+				System.setProperty("EMAIL_PASSWORD", dotenv.get("EMAIL_PASSWORD"));
 
 		SpringApplication.run(BackendApplication.class, args);
 	}
