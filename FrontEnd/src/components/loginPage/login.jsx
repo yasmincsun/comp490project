@@ -102,12 +102,12 @@ const handleSubmit = async (event) => {
       //   ? "http://localhost:8080/api/v1/authentication/register"
       //   : "http://localhost:8080/api/v1/authentication/login";
       const endpoint =
-  mode === "signup"
-    ? "http://127.0.0.1:8080/api/v1/authentication/register"
-    : "http://127.0.0.1:8080/api/v1/authentication/login";
+          mode === "signup"
+            ? "http://127.0.0.1:8080/api/v1/authentication/register"
+            : "http://127.0.0.1:8080/api/v1/authentication/login";
 
 
-
+ 
     // 2.) Map frontend field to backend field
     const payload = mode === "signup"
       ? {
@@ -122,6 +122,8 @@ const handleSubmit = async (event) => {
           password: formData.password
         };
 
+
+  
     // 3.) Send POST request
     const response = await fetch(endpoint, {
       method: "POST",
