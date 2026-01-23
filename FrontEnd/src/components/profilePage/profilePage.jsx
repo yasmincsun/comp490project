@@ -52,7 +52,7 @@ const ProfilePage = () => {
   // ========== DATABASE VARIABLES: Save these to the database ==========
   const [nickname, setNickname] = useState("");             // User's nickname
   const [description, setDescription] = useState("");       // User's bio/description
-  const [bgColor, setBgColor] = useState("#eaf6ff9f");     // User's background color preference
+  const [bgColor, setBgColor] = useState("#eaf6ff");     // User's background color preference
   const [favorites, setFavorites] = useState([]);           // User's list of favorite artists (max 3)
   // ====================================================================
   
@@ -93,7 +93,12 @@ const ProfilePage = () => {
     }
   }, []);
 
-    // Load from backend once (so refresh keeps DB values)
+////////////////////////////////////////////////////////////////////////////////
+
+  const hexToRgbInt = (hex) => parseInt(hex.replace("#", ""), 16);
+  const rgbIntToHex = (n) => "#" + Number(n).toString(16).padStart(6, "0");
+
+  // Load from backend once (so refresh keeps DB values)
   useEffect(() => {
     const loadProfileFromBackend = async () => {
       try {
@@ -112,9 +117,9 @@ const ProfilePage = () => {
 
         const user = await response.json();
 
-        setNickname(user.name ?? "");              // adjust if backend field differs
+        setNickname(user.username ?? "");         
         setDescription(user.bio ?? "");
-        setBgColor(user.color ?? "#eaf6ff9f");
+        setBgColor(user.color != null ? rgbIntToHex(user.color) : "#eaf6ff");
       } catch (e) {
         console.error("Could not load profile from backend:", e);
       }
@@ -123,6 +128,7 @@ const ProfilePage = () => {
     loadProfileFromBackend();
   }, []);
 
+/////////////////////////////////////////////////////////////////////////////////
 
   // Persist to localStorage whenever anything important changes
   useEffect(() => {
@@ -169,6 +175,8 @@ const ProfilePage = () => {
     localStorage.removeItem("profileData");
   };
 
+
+  // This updates the bio
   const handleSaveBio = async () => {
     try{
       const token = localStorage.getItem("authToken");
@@ -194,6 +202,59 @@ const ProfilePage = () => {
       alert("Could not update bio.");
     }
   };
+
+
+
+ const handleSaveProfile = async () => {
+  try {
+    const token = localStorage.getItem("authToken");
+    const headers = { Authorization: `Bearer ${token || ""}` };
+
+    const colorInt = hexToRgbInt(bgColor);
+
+    const response1 = await fetch(
+      `http://127.0.0.1:8080/api/v1/profile/userName?userName=${encodeURIComponent(nickname)}`,
+      { method: "PUT", headers }
+    );
+
+    const response2 = await fetch(
+      `http://127.0.0.1:8080/api/v1/profile/bio?bio=${encodeURIComponent(description)}`,
+      { method: "PUT", headers }
+    );
+
+    const response3 = await fetch(
+      `http://127.0.0.1:8080/api/v1/profile/color?color=${colorInt}`,
+      { method: "PUT", headers }
+    );
+
+    for (const r of [response1, response2, response3]) {
+      if (!r.ok) {
+        const msg = await r.text();
+        console.error("Update failed:", r.status, msg);
+        throw new Error(msg || `Failed: ${r.status}`);
+      }
+    }
+
+    alert("Profile updated!");
+  } catch (e) {
+    console.error(e);
+    alert("Could not update profile.");
+  }
+
+  for (const [label, r] of [["userName", response1], ["bio", response2], ["color", response3]]) {
+  if (!r.ok) {
+    const msg = await r.text();
+    console.error(`${label} update failed:`, r.status, msg);
+    throw new Error(msg || `Failed: ${r.status}`);
+  }
+}
+
+
+};
+
+
+
+
 
 /**
  * Displays the profile information to the user
@@ -284,7 +345,7 @@ const ProfilePage = () => {
 
             <div className="profile-actions-row">
               {/* <button className="profile-save-btn" onClick={() => alert("Profile saved locally")}>Save</button> */}
-              <button className="profile-save-btn" onClick={handleSaveBio}>Save</button>
+              <button className="profile-save-btn" onClick={handleSaveProfile}>Save</button>
               <button className="profile-clear-btn gray" onClick={clearProfile}>Clear</button>
             </div>
 

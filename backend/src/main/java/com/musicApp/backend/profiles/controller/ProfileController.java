@@ -1,18 +1,7 @@
 package com.musicApp.backend.profiles.controller;
 
-import java.net.Authenticator;
-
-import org.hibernate.property.access.internal.PropertyAccessFieldImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.*;
-
-import com.musicApp.backend.profiles.dto.ProfileRequestBody;
-
-import jakarta.validation.constraints.Email;
-
-import com.musicApp.backend.features.authentication.dto.AuthenticationRequestBody;
-import com.musicApp.backend.features.authentication.dto.AuthenticationResponseBody;
 import com.musicApp.backend.features.authentication.model.AuthenticationUser;
 import com.musicApp.backend.features.authentication.service.AuthenticationService;
 import com.musicApp.backend.features.authentication.utils.EmailService;
@@ -57,6 +46,13 @@ public ProfileController(AuthenticationUserRepository authenticationUserReposito
      AuthenticationUser user = authenticationService.getUser(authenticationUser.getEmail());
     user.setLastName(lname);;
     authenticationUserRepository.save(user);
+   }
+
+   @PutMapping("/userName")
+   public void updateUserName(@RequestAttribute("authenticatedUser") AuthenticationUser authenticationUser, @RequestParam String userName){
+     AuthenticationUser user = authenticationService.getUser(authenticationUser.getEmail());
+     user.setUsername(userName);
+     authenticationUserRepository.save(user);
    }
   
   @PutMapping("/bio")
