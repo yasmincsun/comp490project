@@ -24,7 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 
-/**
+/** 
  * This controller manages all authentication-related endpoints for the MusicApp backend.
  * It handles user registration, login, logout, email verification, and password reset operations.<br>
  * 
@@ -54,7 +54,7 @@ public class AuthenticationController {
     }
 
     /**
-     * Retrieves the currently authenticated user’s information.
+     * Retrieves the current authenticated user’s information.
      * @param authenticationUser the authenticated user object retrieved from the request attribute
      * @return the full {@link AuthenticationUser} information corresponding to the user's email
      */

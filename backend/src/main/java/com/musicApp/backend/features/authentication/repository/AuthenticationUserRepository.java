@@ -36,6 +36,8 @@ public interface AuthenticationUserRepository extends JpaRepository<Authenticati
      */
     Optional<AuthenticationUser> findByUsername(String username);
 
+    Optional<AuthenticationUser> findById(long id);
+
  
     /**
      * Retrieves a list of all users who are currently marked

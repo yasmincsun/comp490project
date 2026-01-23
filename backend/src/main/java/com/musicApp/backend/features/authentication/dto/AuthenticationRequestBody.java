@@ -16,7 +16,7 @@ import jakarta.validation.constraints.NotBlank;
  *
  * The class also includes validation annotations to ensure that mandatory fields,
  * such as email and password, are provided in incoming requests.
- */
+ */ 
 public class AuthenticationRequestBody {
 
     private String fname;

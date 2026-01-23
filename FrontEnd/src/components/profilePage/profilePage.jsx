@@ -76,7 +76,7 @@ const ProfilePage = () => {
 
   // Load from localStorage once
   useEffect(() => {
-    try {
+    try { 
       const data = JSON.parse(localStorage.getItem("profileData") || "null");
       if (data) {
         setNickname(data.nickname || "");
@@ -92,6 +92,37 @@ const ProfilePage = () => {
       // ignore
     }
   }, []);
+
+    // Load from backend once (so refresh keeps DB values)
+  useEffect(() => {
+    const loadProfileFromBackend = async () => {
+      try {
+        const token = localStorage.getItem("authToken");
+
+        const response = await fetch("http://127.0.0.1:8080/api/v1/profile", {
+          headers: {
+            Authorization: `Bearer ${token || ""}`,
+          },
+        });
+
+        if (!response.ok) {
+          const msg = await response.text();
+          throw new Error(msg || `Failed: ${response.status}`);
+        }
+
+        const user = await response.json();
+
+        setNickname(user.name ?? "");              // adjust if backend field differs
+        setDescription(user.bio ?? "");
+        setBgColor(user.color ?? "#eaf6ff9f");
+      } catch (e) {
+        console.error("Could not load profile from backend:", e);
+      }
+    };
+
+    loadProfileFromBackend();
+  }, []);
+
 
   // Persist to localStorage whenever anything important changes
   useEffect(() => {
@@ -136,6 +167,32 @@ const ProfilePage = () => {
     setEmail("");
     setPassword("");
     localStorage.removeItem("profileData");
+  };
+
+  const handleSaveBio = async () => {
+    try{
+      const token = localStorage.getItem("authToken");
+      const response = await fetch(
+        `http://127.0.0.1:8080/api/v1/profile/bio?bio=${encodeURIComponent(description)}`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token || ""}`,
+          },
+        }
+      );
+
+      if(!response.ok){
+        const msg = await response.text();
+        throw new Error(msg || `Failed: ${response.status}`);
+      }
+
+      alert("Bio updated!");
+    }
+    catch(err){
+      console.error(err);
+      alert("Could not update bio.");
+    }
   };
 
 /**
@@ -226,7 +283,8 @@ const ProfilePage = () => {
             </div>
 
             <div className="profile-actions-row">
-              <button className="profile-save-btn" onClick={() => alert("Profile saved locally")}>Save</button>
+              {/* <button className="profile-save-btn" onClick={() => alert("Profile saved locally")}>Save</button> */}
+              <button className="profile-save-btn" onClick={handleSaveBio}>Save</button>
               <button className="profile-clear-btn gray" onClick={clearProfile}>Clear</button>
             </div>
 

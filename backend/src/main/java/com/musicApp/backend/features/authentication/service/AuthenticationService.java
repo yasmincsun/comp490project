@@ -172,7 +172,9 @@ public void validateEmailVerificationToken(String token, String email) {
         return authenticationUserRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
 
-
+    public AuthenticationUser getUserWithId(long id){
+        return authenticationUserRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found."));
+    }
 
     /**
      *     Registers a new user, encodes their password, generates an email verification token,

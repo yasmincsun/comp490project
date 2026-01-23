@@ -71,7 +71,8 @@ public class AuthenticationUser {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviews;
     
-    
+    @Column(length = 2000)
+    private String bio;
     
     /**
      * Constructs a new {@code AuthenticationUser} with basic identifying fields.
@@ -326,6 +327,14 @@ public class AuthenticationUser {
 
     public int getColor(){
         return color;
+    }
+
+    public void setBio(String bio){
+        this.bio = bio;
+    }
+
+    public String getBio(){
+        return bio;
     }
 
 }
