@@ -74,6 +74,28 @@ const ProfilePage = () => {
   const [tempPass2, setTempPass2] = useState("");
   const [passError, setPassError] = useState("");
 
+  const [imgRetry, setImgRetry] = useState(0); // prevents infinite retry loop
+
+
+
+  const fetchProfile = async () => {
+  const token = localStorage.getItem("authToken");
+
+  const res = await fetch("http://127.0.0.1:8080/api/v1/profile", {
+    headers: {
+      Authorization: `Bearer ${token || ""}`,
+    },
+  });
+
+  if (!res.ok) {
+    const msg = await res.text();
+    throw new Error(msg || `Failed: ${res.status}`);
+  }
+
+  return res.json();
+};
+
+
   // Load from localStorage once
   useEffect(() => {
     try { 
@@ -98,44 +120,29 @@ const ProfilePage = () => {
   const hexToRgbInt = (hex) => parseInt(hex.replace("#", ""), 16);
   const rgbIntToHex = (n) => "#" + Number(n).toString(16).padStart(6, "0");
 
-  // Load from backend once (so refresh keeps DB values)
+//Load from backend
   useEffect(() => {
-    const loadProfileFromBackend = async () => {
+    (async () => {
       try {
-        const token = localStorage.getItem("authToken");
+        const user = await fetchProfile();
 
-        const response = await fetch("http://127.0.0.1:8080/api/v1/profile", {
-          headers: {
-            Authorization: `Bearer ${token || ""}`,
-          },
-        });
-
-        if (!response.ok) {
-          const msg = await response.text();
-          throw new Error(msg || `Failed: ${response.status}`);
-        }
-
-        const user = await response.json();
-
-        setNickname(user.username ?? "");         
+        setNickname(user.username ?? "");
         setDescription(user.bio ?? "");
         setBgColor(user.color != null ? rgbIntToHex(user.color) : "#eaf6ff");
-        
-        const PUBLIC_BASE = "https://pub-08ad8f27ee1544779068ace97a41bcff.r2.dev";
 
-        if (user.imageKey) {
-          const v = user.profileImageUpdatedAt ?? Date.now();
-          setProfilePic(`${PUBLIC_BASE}/${user.imageKey}?v=${v}`);
-        }
+        // Presigned GET URL (bucket private)
+        setProfilePic(user.profileImageUrl || null);
 
-      
+        // allow retry again after a successful load
+        setImgRetry(0);
       } catch (e) {
         console.error("Could not load profile from backend:", e);
       }
-    };
-
-    loadProfileFromBackend();
+    })();
   }, []);
+
+
+
 
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -332,10 +339,10 @@ const handleUploadProfilePic = async () => {
     // If backend returns a publicUrl, it will use it. Otherwise it will build from base URL + objectKey.
     const saved = await saveRes.json().catch(() => ({}));
 
-  if (saved.publicUrl) {
-    const v = saved.updatedAt ?? Date.now();
-    setProfilePic(`${saved.publicUrl}?v=${v}`);
-  }
+    if (saved.profileImageUrl) {
+      setProfilePic(saved.profileImageUrl);
+      setImgRetry(0);
+    }
 
     alert("Profile picture uploaded!");
   } catch (err) {
@@ -374,7 +381,21 @@ const handleUploadProfilePic = async () => {
               <div className="profile-avatar-column">
                 <div className="profile-avatar">
                   {profilePic ? (
-                    <img src={profilePic} alt="profile" />
+                    <img src={profilePic} alt="profile" 
+                        onError={async () => {
+                          // retry only once to avoid infinite loops
+                          if (imgRetry >= 1) return;
+                          setImgRetry(1);
+
+                          try {
+                            const user = await fetchProfile();
+                            setProfilePic(user.profileImageUrl || null);
+                          } catch (e) {
+                            console.error("Could not refresh profile image URL:", e);
+                            setProfilePic(null);
+                          }
+                        }} 
+                      />
                   ) : (
                     <div className="profile-avatar-placeholder">No Photo</div>
                   )}
