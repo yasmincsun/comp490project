@@ -5,9 +5,12 @@ import org.springframework.web.bind.annotation.*;
 import com.musicApp.backend.features.authentication.model.AuthenticationUser;
 import com.musicApp.backend.features.authentication.service.AuthenticationService;
 import com.musicApp.backend.features.authentication.utils.EmailService;
+import com.musicApp.backend.profiles.dto.ProfileRequest;
 
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
 import com.musicApp.backend.features.authentication.repository.AuthenticationUserRepository;
@@ -46,11 +49,11 @@ public ProfileController(AuthenticationUserRepository authenticationUserReposito
                             }
 
 
-  @GetMapping
-  public AuthenticationUser getProfile(@RequestAttribute("authenticatedUser") AuthenticationUser authenticationUser){
-    return authenticationService.getUser(authenticationUser.getEmail());
-
-  }
+@GetMapping
+public ProfileRequest getProfile(@RequestAttribute("authenticatedUser") AuthenticationUser authenticationUser) {
+  AuthenticationUser user = authenticationService.getUser(authenticationUser.getEmail());
+  return toProfileRequest(user);
+}
 
    @PutMapping("/fname")
    public void updateName(@RequestAttribute("authenticatedUser") AuthenticationUser authenticationUser, @RequestParam String name){
@@ -133,35 +136,62 @@ public ProfileController(AuthenticationUserRepository authenticationUserReposito
     return new UploadUrlResponse(uploadUrl, objectKey, ttl.toSeconds());
   }
 
-  @PutMapping("/picture")
-public SavePictureResponse saveProfilePictureKey(
+@PutMapping("/picture")
+public ProfileRequest saveProfilePictureKey(
     @RequestAttribute("authenticatedUser") AuthenticationUser authUser,
     @RequestBody SavePictureRequest body
 ) {
   AuthenticationUser user = authenticationService.getUser(authUser.getEmail());
 
   String expectedKey = "avatars/" + user.getId() + "/profile.jpg";
-  if (body == null || body.objectKey() == null) {
-    throw new IllegalArgumentException("objectKey is required");
-  }
-  if (!expectedKey.equals(body.objectKey())) {
-    throw new IllegalArgumentException("Invalid objectKey for this user");
-  }
+  if (body == null || body.objectKey() == null) throw new IllegalArgumentException("objectKey is required");
+  if (!expectedKey.equals(body.objectKey())) throw new IllegalArgumentException("Invalid objectKey for this user");
 
   user.setImageKey(expectedKey);
-
-  long updatedAt = System.currentTimeMillis();
-  user.setProfileImageUpdatedAt(updatedAt);
-
+  user.setProfileImageUpdatedAt(System.currentTimeMillis());
   authenticationUserRepository.save(user);
 
-  String publicBaseUrl = "https://pub-08ad8f27ee1544779068ace97a41bcff.r2.dev";
-  String publicUrl = publicBaseUrl + "/" + expectedKey;
-
-  return new SavePictureResponse(expectedKey, publicUrl, updatedAt);
+  return toProfileRequest(user);
 }
 
 public record SavePictureRequest(String objectKey) {}
 public record SavePictureResponse(String objectKey, String publicUrl, long updatedAt) {}
+
+private ProfileRequest toProfileRequest(AuthenticationUser user) {
+  String imageKey = user.getImageKey();
+  Long updatedAt = user.getProfileImageUpdatedAt();
+
+  String presignedGetUrl = null;
+  long expires = 0;
+
+  if (imageKey != null && !imageKey.isBlank()) {
+    var getReq = GetObjectRequest.builder()
+        .bucket(bucket)
+        .key(imageKey)
+        .build();
+
+    var ttl = Duration.ofMinutes(10);
+    var presignReq = GetObjectPresignRequest.builder()
+        .signatureDuration(ttl)
+        .getObjectRequest(getReq)
+        .build();
+
+    presignedGetUrl = presigner.presignGetObject(presignReq).url().toString();
+    expires = ttl.toSeconds();
+  }
+
+  return new ProfileRequest(
+      user.getId(),
+      user.getUsername(),
+      user.getName(),
+      user.getLastName(),
+      user.getBio(),
+      user.getColor(),
+      imageKey,
+      updatedAt,
+      presignedGetUrl,
+      expires
+  );
+}
 
 }
