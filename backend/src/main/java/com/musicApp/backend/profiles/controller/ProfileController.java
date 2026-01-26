@@ -5,7 +5,16 @@ import org.springframework.web.bind.annotation.*;
 import com.musicApp.backend.features.authentication.model.AuthenticationUser;
 import com.musicApp.backend.features.authentication.service.AuthenticationService;
 import com.musicApp.backend.features.authentication.utils.EmailService;
+
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
+
 import com.musicApp.backend.features.authentication.repository.AuthenticationUserRepository;
+
+import org.springframework.beans.factory.annotation.Value;
+import java.time.Duration;
+import java.util.Set;
 
 
 
@@ -16,15 +25,24 @@ public class ProfileController {
   private final AuthenticationService authenticationService;
   private final EmailService emailService;
   private final AuthenticationUserRepository authenticationUserRepository;
+  private final S3Presigner presigner;
+  private final String bucket;
+  private final String publicBaseUrl;
 
 
 @Autowired
 public ProfileController(AuthenticationUserRepository authenticationUserRepository, 
                           AuthenticationService authenticationService,
-                            EmailService emailService){
+                            EmailService emailService,
+                              S3Presigner presigner,
+                                 @Value("${r2.bucket}") String bucket,
+                                    @Value("${r2.url}") String publicBaseUrl){
                               this.authenticationService = authenticationService;
                               this.authenticationUserRepository = authenticationUserRepository;
                               this.emailService = emailService;
+                              this.presigner = presigner;
+                              this.bucket = bucket;
+                              this.publicBaseUrl = publicBaseUrl;
                             }
 
 
@@ -68,4 +86,82 @@ public ProfileController(AuthenticationUserRepository authenticationUserReposito
     user.setColor(color);
     authenticationUserRepository.save(user);
   } 
+
+  // request body DTO (simple)
+  public record UploadUrlRequest(String contentType, Long fileSize) {}
+  public record UploadUrlResponse(String uploadUrl, String objectKey, long expiresInSeconds) {}
+
+  @PostMapping("/picture/upload-url")
+  public UploadUrlResponse getProfilePicUploadUrl(
+      @RequestAttribute("authenticatedUser") AuthenticationUser authUser,
+      @RequestBody UploadUrlRequest body
+  ) {
+    // 1) Validate inputs
+    String contentType = body.contentType();
+    if (contentType == null) throw new IllegalArgumentException("contentType is required");
+
+    Set<String> allowed = Set.of("image/jpeg", "image/png", "image/webp");
+    if (!allowed.contains(contentType)) {
+      throw new IllegalArgumentException("Unsupported contentType: " + contentType);
+    }
+
+    long maxBytes = 3 * 1024 * 1024; // 3MB example limit
+    if (body.fileSize() != null && body.fileSize() > maxBytes) {
+      throw new IllegalArgumentException("File too large");
+    }
+
+    // 2) Choose object key: avatars/<userId>/profile.jpg
+    long userId = authUser.getId(); // or look up user by email if needed
+    String objectKey = "avatars/" + userId + "/profile.jpg";
+
+    // 3) Create PutObjectRequest to be presigned
+    PutObjectRequest putReq = PutObjectRequest.builder()
+        .bucket(bucket)               // "moody-app"
+        .key(objectKey)
+        .contentType(contentType)    
+        .build();
+
+    // 4) Presign it (short-lived)
+    Duration ttl = Duration.ofMinutes(5);
+    PutObjectPresignRequest presignReq = PutObjectPresignRequest.builder()
+        .signatureDuration(ttl)
+        .putObjectRequest(putReq)
+        .build();
+
+    String uploadUrl = presigner.presignPutObject(presignReq).url().toString();
+
+    return new UploadUrlResponse(uploadUrl, objectKey, ttl.toSeconds());
+  }
+
+  @PutMapping("/picture")
+public SavePictureResponse saveProfilePictureKey(
+    @RequestAttribute("authenticatedUser") AuthenticationUser authUser,
+    @RequestBody SavePictureRequest body
+) {
+  AuthenticationUser user = authenticationService.getUser(authUser.getEmail());
+
+  String expectedKey = "avatars/" + user.getId() + "/profile.jpg";
+  if (body == null || body.objectKey() == null) {
+    throw new IllegalArgumentException("objectKey is required");
+  }
+  if (!expectedKey.equals(body.objectKey())) {
+    throw new IllegalArgumentException("Invalid objectKey for this user");
+  }
+
+  user.setImageKey(expectedKey);
+
+  long updatedAt = System.currentTimeMillis();
+  user.setProfileImageUpdatedAt(updatedAt);
+
+  authenticationUserRepository.save(user);
+
+  String publicBaseUrl = "https://pub-08ad8f27ee1544779068ace97a41bcff.r2.dev";
+  String publicUrl = publicBaseUrl + "/" + expectedKey;
+
+  return new SavePictureResponse(expectedKey, publicUrl, updatedAt);
+}
+
+public record SavePictureRequest(String objectKey) {}
+public record SavePictureResponse(String objectKey, String publicUrl, long updatedAt) {}
+
 }

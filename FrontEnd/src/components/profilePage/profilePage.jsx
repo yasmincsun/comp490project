@@ -120,6 +120,15 @@ const ProfilePage = () => {
         setNickname(user.username ?? "");         
         setDescription(user.bio ?? "");
         setBgColor(user.color != null ? rgbIntToHex(user.color) : "#eaf6ff");
+        
+        const PUBLIC_BASE = "https://pub-08ad8f27ee1544779068ace97a41bcff.r2.dev";
+
+        if (user.imageKey) {
+          const v = user.profileImageUpdatedAt ?? Date.now();
+          setProfilePic(`${PUBLIC_BASE}/${user.imageKey}?v=${v}`);
+        }
+
+      
       } catch (e) {
         console.error("Could not load profile from backend:", e);
       }
@@ -144,13 +153,31 @@ const ProfilePage = () => {
     setSearchResults(results);
   }, [artistQuery]);
 
+  const [selectedProfileFile, setSelectedProfileFile] = useState(null);
+
   const onPickProfilePic = (e) => {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => setProfilePic(reader.result);
-    reader.readAsDataURL(file);
-  };
+
+    // basic client-side validation
+  const allowed = ["image/jpeg", "image/png", "image/webp"];
+  if (!allowed.includes(file.type)) {
+    alert("Please upload a JPG, PNG, or WEBP image.");
+    return;
+  }
+
+  const maxBytes = 3 * 1024 * 1024; // 3MB (match backend)
+  if (file.size > maxBytes) {
+    alert("Image is too large (max 3MB).");
+    return;
+  }
+
+  setSelectedProfileFile(file);
+
+    //show preview
+  const localPreviewUrl = URL.createObjectURL(file);
+  setProfilePic(localPreviewUrl);
+};
 
   const removeProfilePic = () => setProfilePic(null);
 
@@ -241,15 +268,80 @@ const ProfilePage = () => {
     alert("Could not update profile.");
   }
 
-  for (const [label, r] of [["userName", response1], ["bio", response2], ["color", response3]]) {
-  if (!r.ok) {
-    const msg = await r.text();
-    console.error(`${label} update failed:`, r.status, msg);
-    throw new Error(msg || `Failed: ${r.status}`);
+};
+
+// call this when user clicks an "Upload" button
+const handleUploadProfilePic = async () => {
+  try {
+    if (!selectedProfileFile) {
+      alert("Pick an image first.");
+      return;
+    }
+
+    const token = localStorage.getItem("authToken");
+
+    // 1) ask backend for presigned upload URL
+    const res = await fetch("http://127.0.0.1:8080/api/v1/profile/picture/upload-url", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token || ""}`,
+      },
+      body: JSON.stringify({
+        contentType: selectedProfileFile.type,
+        fileSize: selectedProfileFile.size,
+      }),
+    });
+
+    if (!res.ok) {
+      const msg = await res.text();
+      throw new Error(msg || `Failed to get upload URL: ${res.status}`);
+    }
+
+    const { uploadUrl, objectKey } = await res.json();
+
+    // 2) upload directly to R2
+    const putRes = await fetch(uploadUrl, {
+      method: "PUT",
+      headers: {
+        "Content-Type": selectedProfileFile.type, // MUST match what backend signed
+      },
+      body: selectedProfileFile,
+    });
+
+    if (!putRes.ok) {
+      const msg = await putRes.text();
+      throw new Error(msg || `Upload failed: ${putRes.status}`);
+    }
+
+    // 3) tell backend to save objectKey to the user 
+    const saveRes = await fetch("http://127.0.0.1:8080/api/v1/profile/picture", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token || ""}`,
+      },
+      body: JSON.stringify({ objectKey }),
+    });
+
+    if (!saveRes.ok) {
+      const msg = await saveRes.text();
+      throw new Error(msg || `Failed to save profile image: ${saveRes.status}`);
+    }
+
+    // If backend returns a publicUrl, it will use it. Otherwise it will build from base URL + objectKey.
+    const saved = await saveRes.json().catch(() => ({}));
+
+  if (saved.publicUrl) {
+    const v = saved.updatedAt ?? Date.now();
+    setProfilePic(`${saved.publicUrl}?v=${v}`);
   }
-}
 
-
+    alert("Profile picture uploaded!");
+  } catch (err) {
+    console.error(err);
+    alert("Could not upload profile picture.");
+  }
 };
 
 
@@ -296,8 +388,16 @@ const ProfilePage = () => {
                     onChange={onPickProfilePic}
                     style={{ display: "none" }}
                   />
-                  <button onClick={() => fileInputRef.current && fileInputRef.current.click()} className="profile-btn">Upload</button>
-                  <button onClick={removeProfilePic} className="profile-btn gray">Remove</button>
+                  {/* Image Upload Buttons */}
+                  <button onClick={() => fileInputRef.current && fileInputRef.current.click()}className="profile-btn"> 
+                    Choose Image
+                    </button>
+                  <button onClick={handleUploadProfilePic} className="profile-btn" disabled={!selectedProfileFile}>
+                    Upload Photo
+                    </button>
+                  <button onClick={removeProfilePic} className="profile-btn gray">
+                    Remove
+                    </button>
                 </div>
               </div>
 

@@ -58,6 +58,11 @@ dependencies {
     testImplementation("com.h2database:h2")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
+    //Amazon / Cloudflare R2
+    implementation("software.amazon.awssdk:s3:2.41.13")
+    implementation("software.amazon.awssdk:url-connection-client:2.41.13")
+
+
 }
 
 tasks.withType<Test> {

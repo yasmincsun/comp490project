@@ -74,6 +74,12 @@ public class AuthenticationUser {
     @Column(length = 2000)
     private String bio;
     
+    private String profile_image_key;
+
+    private Long profileImageUpdatedAt;
+
+    
+
     /**
      * Constructs a new {@code AuthenticationUser} with basic identifying fields.
      *
@@ -337,4 +343,19 @@ public class AuthenticationUser {
         return bio;
     }
 
+    public void setImageKey(String profile_image_key){
+        this.profile_image_key = profile_image_key;
+    }
+
+    public String getImageKey(){
+        return profile_image_key;
+    }
+
+    public void setProfileImageUpdatedAt(Long profileImageUpdatedAt){
+        this.profileImageUpdatedAt = profileImageUpdatedAt;
+    }
+
+    public Long getProfileImageUpdatedAt(){
+        return profileImageUpdatedAt;
+    }
 }

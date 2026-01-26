@@ -37,6 +37,11 @@ public class BackendApplication {
 				System.setProperty("SPOTIFY_CLIENT_SECRET", dotenv.get("SPOTIFY_CLIENT_SECRET"));
 				System.setProperty("EMAIL_USERNAME", dotenv.get("EMAIL_USERNAME"));
 				System.setProperty("EMAIL_PASSWORD", dotenv.get("EMAIL_PASSWORD"));
+				System.setProperty("CLOUDFLARE_ACCESS_KEY", dotenv.get("CLOUDFLARE_ACCESS_KEY"));
+				System.setProperty("CLOUDFLARE_SECRET_KEY", dotenv.get("CLOUDFLARE_SECRET_KEY"));
+				System.setProperty("CLOUDFLARE_ACCOUNT_ID", dotenv.get("CLOUDFLARE_ACCOUNT_ID"));
+				System.setProperty("CLOUDFLARE_BUCKET", dotenv.get("CLOUDFLARE_BUCKET"));
+				System.setProperty("CLOUDFLARE_PUBLIC_URL", dotenv.get("CLOUDFLARE_PUBLIC_URL"));
 
 		SpringApplication.run(BackendApplication.class, args);
 	}
