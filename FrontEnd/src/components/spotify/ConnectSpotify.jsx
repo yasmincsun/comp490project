@@ -19,13 +19,15 @@ const ConnectSpotify = () => {
       <div className="connect-spotify-box">
         <button
           className="connect-spotify-btn"
-          onClick={() => navigate('/home')}
-        >
-          Connect your Spotify
+            onClick={() => {
+               window.location.href = 'http://127.0.0.1:8080/login';
+              }}
+              >
+                Connect your Spotify
         </button>
       </div>
     </div>
   );
 };
-
+ 
 export default ConnectSpotify;
