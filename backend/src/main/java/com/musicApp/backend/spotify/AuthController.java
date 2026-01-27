@@ -129,8 +129,10 @@ public ResponseEntity<?> callback(
         session.setAttribute("userId", result.userId());
         log.info("User session updated with userId: {}", result.userId());
 
-        // Redirect to /me/top
-        return ResponseEntity.status(302).location(URI.create("/me/top")).build();
+        // Redirect back to home
+       // return ResponseEntity.status(302).location(URI.create("/me/top")).build();
+        return ResponseEntity.status(302).location(URI.create("http://127.0.0.1:5173/home")).build();
+
 
     } catch (Exception e) {
         log.error("Unexpected callback error", e);
