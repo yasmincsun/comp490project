@@ -2,7 +2,7 @@
  * Date: September 25, 2025
  * @author Jose Bastidas
  *
- */ 
+ */  
 
 package com.musicApp.backend.features.authentication.model;
 
@@ -15,7 +15,8 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.musicApp.backend.features.databasemodel.*;;
+import com.musicApp.backend.features.databasemodel.*;
+import com.musicApp.backend.features.feed.model.Post;;
 
 /** 
  * This class represents the user entity for the MusicApp backend and maps to the
@@ -39,6 +40,8 @@ public class AuthenticationUser {
     private Long id;
     private String fname;
     private String lname;
+    private String position = null;
+    private String location = null;
 
     @NotNull
     @Column(unique = true)
@@ -77,6 +80,17 @@ public class AuthenticationUser {
     private String profile_image_key;
 
     private Long profileImageUpdatedAt;
+
+    private Boolean profileComplete = false;
+
+    private String profilePicture = null;
+
+    @JsonIgnore
+    @OneToMany(
+        mappedBy =  "author",
+        cascade = CascadeType.ALL, orphanRemoval = true
+    )
+    private List<Post> posts;
 
     
 
@@ -206,6 +220,16 @@ public class AuthenticationUser {
     public String getPassword() {
         return password;
     }
+
+
+    public void updateProfileCompletionStatus() {
+        this.profileComplete = (this.fname != null && this.lname != null
+                && this.position != null && this.location != null);
+    }
+
+
+
+
 
     /**
      * Sets the user's ID (used internally by JPA).
@@ -357,5 +381,29 @@ public class AuthenticationUser {
 
     public Long getProfileImageUpdatedAt(){
         return profileImageUpdatedAt;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
+    public String getPosition(){
+        return position;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+    
+    public void getLocation(String location) {
+        this.location = location;
+    }
+
+    public List<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
     }
 }
