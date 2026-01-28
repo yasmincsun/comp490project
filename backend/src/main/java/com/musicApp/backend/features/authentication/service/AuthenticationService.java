@@ -13,6 +13,11 @@ import com.musicApp.backend.features.authentication.repository.AuthenticationUse
 import com.musicApp.backend.features.authentication.utils.EmailService;
 import com.musicApp.backend.features.authentication.utils.Encoder;
 import com.musicApp.backend.features.authentication.utils.JsonWebToken;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -43,6 +48,9 @@ public class AuthenticationService {
     private final Encoder encoder;
     //private final AuthenticationUserRepository authenticationUserRepository;
     private final EmailService emailService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public AuthenticationService(JsonWebToken jsonWebToken, Encoder encoder, AuthenticationUserRepository authenticationUserRepository, EmailService emailService){
         this.jsonWebToken = jsonWebToken;
@@ -340,6 +348,28 @@ public void logout(String token) {
      */
 public List<AuthenticationUser> getOnlineUsers() {
     return authenticationUserRepository.findByLoginStatusTrue();
+}
+
+public AuthenticationUser updateUserProfile(Long userId, String firstName, String lastName, String position, String location){
+    AuthenticationUser user = authenticationUserRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+
+    if(firstName != null) user.setName(firstName);
+    if(lastName != null) user.setLastName(lastName);
+    if(position != null) user.setPosition(position);
+    if(location != null) user.setLocation(location);
+
+    return authenticationUserRepository.save(user);
+}
+
+@Transactional
+public void deleteUser(Long userId) {
+    AuthenticationUser user = entityManager.find(AuthenticationUser.class, userId);
+    if (user != null) {
+        entityManager.createNativeQuery("DELETE FROM posts_likes WHERE user_id = :userId")
+                .setParameter("userId", userId)
+                .executeUpdate();
+        authenticationUserRepository.deleteById(userId);
+    }
 }
 
 

@@ -18,8 +18,11 @@ import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
@@ -72,6 +75,22 @@ public class AuthenticationController {
     public AuthenticationResponseBody loginPage(@Valid @RequestBody AuthenticationRequestBody loginRequestBody) {
         return authenticationService.login(loginRequestBody);
     }
+
+
+
+    @DeleteMapping("/delete")
+    public String deleteUser(@RequestAttribute("authenticatedUser") AuthenticationUser user){
+        authenticationService.deleteUser(user.getId());
+        return "User deleted successfully.";
+    }
+
+
+
+
+
+
+
+
 
     /**
      * Handles new user registration and sends a verification email.
@@ -217,6 +236,22 @@ public class AuthenticationController {
     }
 
 
+    @PutMapping("/profile/{id}")
+    public AuthenticationUser updateUserProfile(
+        @RequestAttribute("authenticatedUser") AuthenticationUser user,
+        @PathVariable Long id,
+        @RequestParam(required = false) String firstName,
+        @RequestParam(required = false) String lastName, 
+        @RequestParam(required = false) String position, 
+        @RequestParam(required = false) String location 
 
+    ){
+        if(!user.getId().equals(id)){
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not have permisiion to update profile.");
+    }
+
+    return authenticationService.updateUserProfile(id, firstName, lastName, position, location);
+
+    }
 
 }
