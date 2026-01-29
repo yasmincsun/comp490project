@@ -271,6 +271,18 @@ const handleLogout = async () => {
                 '--btn-bg2': btnSecondary,
             }}
         >
+            {/* 🔹 Top-left Feed Button */}
+            {isLoggedIn && (
+                <div className="homepage-feed-btn-topleft">
+                    <button
+                        className="homepage-login-btn"
+                        onClick={() => navigate("/friends")}
+                    >
+                        FEED
+                    </button>
+                </div>
+            )}
+
             {/* 🔹 Top-right Buttons */}
             <div className="homepage-login-btn-topright">
                 <button

@@ -2,12 +2,12 @@
     min-height: 100vh;
     padding: 40px 60px;
     box-sizing: border-box;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .profilepage-login-btn-topright {
     position: fixed;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Montserrat', sans-serif;
     top: 20px;
     right: 30px;
     z-index: 100;
@@ -15,7 +15,7 @@
 
 .profilepage-back-btn {
     padding: 10px 20px;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Montserrat', sans-serif;
     background: #0b4828;
     color: white;
     border: none;
@@ -24,69 +24,61 @@
 }
 
 .profilepage-card {
-    max-width: 1000px;
+    max-width: 100%;
     margin: 20px auto;
     background: rgba(255,255,255,0.9);
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Montserrat', sans-serif;
 }
 
-.left-panel {
-    position: fixed;
-    left: 20px;
-    top: 120px;
-    width: 120px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    z-index: 60;
-    font-family: 'Times New Roman', Times, serif;
+.profilepage-card h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 30px;
 }
 
-.left-panel-btn {
-    padding: 10px 12px;
-    border-radius: 8px;
-    border: none;
-    background: #f3f3f3;
-    cursor: pointer;
-    text-transform: uppercase;
-    font-family: 'Times New Roman', Times, serif;
+.profilepage-card h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    text-align: center;
 }
 
-.left-panel-btn.active {
-    background: #556B2F;
-    color: #fff;
-    font-family: 'Times New Roman', Times, serif;
-}
 
 /* Profile View Styles */
 .profile-content {
     margin: 0 auto;
-    max-width: 800px;
-    font-family: 'Times New Roman', Times, serif;
+    max-width: 100%;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .profile-row {
     display: flex;
-    gap: 30px;
+    gap: 80px;
     align-items: flex-start;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Montserrat', sans-serif;
+    justify-content: center;
+    margin-right: 60px;
 }
 
 .profile-avatar-column {
-    width: 260px;
+    width: 280px;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 12px;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Montserrat', sans-serif;
+    flex-shrink: 0;
+    margin-right: 40px;
 }
 
 .profile-avatar {
-    width: 220px;
-    height: 220px;
+    width: 280px;
+    height: 280px;
     border-radius: 12px;
     overflow: hidden;
     background: #fff;
@@ -94,25 +86,27 @@
     align-items: center;
     justify-content: center;
     border: 1px solid #ddd;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .profile-avatar img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .profile-avatar-placeholder {
     color: #666;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .profile-avatar-actions {
     display: flex;
     gap: 10px;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Montserrat', sans-serif;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .profile-btn {
@@ -122,27 +116,31 @@
     border: none;
     border-radius: 6px;
     cursor: pointer;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    white-space: nowrap;
 }
 
 .profile-btn.gray {
     background: #eaeaea;
     color: #4a4a4a;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .profile-details-column {
-    flex: 1;
+    flex: 0 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    font-family: 'Times New Roman', Times, serif;
+    gap: 8px;
+    font-family: 'Montserrat', sans-serif;
+    width: 300px;
 }
 
 .label {
     font-weight: 700;
     color: #333;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
 }
 
 .input {
@@ -150,25 +148,27 @@
     border-radius: 6px;
     border: 1px solid #cfcfcf;
     background: #fff;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
 }
 
 .nickname-input {
-    width: 60%;
-    font-family: 'Times New Roman', Times, serif;
+    width: 100%;
+    font-family: 'Montserrat', sans-serif;
+    height: 24px;
 }
 
 .description-input {
-    height: 110px;
+    height: 80px;
     resize: vertical;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .bgcolor-row {
     display: flex;
     gap: 12px;
     align-items: center;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .color-input {
@@ -177,145 +177,49 @@
     border: none;
     padding: 0;
     background: transparent;
-    font-family: 'Times New Roman', Times, serif;
-}
-
-.favorites-section {
-    margin-top: 30px;
-    font-family: 'Times New Roman', Times, serif;
-}
-
-.artist-search {
-    display: flex;
-    gap: 20px;
-    align-items: flex-start;
-    font-family: 'Times New Roman', Times, serif;
-}
-
-.artist-search-input {
-    width: 320px;
-    font-family: 'Times New Roman', Times, serif;
-}
-
-.search-results {
-    max-height: 280px;
-    overflow: auto;
-    background: #fff;
-    border: 1px solid #ddd;
-    padding: 12px;
-    border-radius: 6px;
-    font-family: 'Times New Roman', Times, serif;
-}
-
-.search-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px;
-    border-bottom: 1px solid #f0f0f0;
+    font-family: 'Montserrat', sans-serif;
     cursor: pointer;
-    font-family: 'Times New Roman', Times, serif;
 }
 
-.search-item:last-child {
-    border-bottom: none;
-    font-family: 'Times New Roman', Times, serif;
-}
 
-.small-btn {
-    padding: 6px 10px;
-    border-radius: 6px;
-    border: none;
-    background: #556B2F;
-    color: #fff;
-    cursor: pointer;
-    font-family: 'Times New Roman', Times, serif;
-}
-
-.small-btn.selected {
-    background: #1DB954;
-}
-
-.favorites-list {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-top: 12px;
-    font-family: 'Times New Roman', Times, serif;
-}
-
-.fav-item {
-    background: #fff;
-    padding: 8px 12px;
+/* Profile Preview Section - Larger */
+.profile-preview {
+    margin-top: 40px;
+    padding: 20px;
+    background: #f9f9f9;
     border-radius: 12px;
-    border: 1px solid #ddd;
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Montserrat', sans-serif;
 }
 
-.remove-small {
-    background: transparent;
-    border: none;
-    color: #c33;
-    cursor: pointer;
-    font-family: 'Times New Roman', Times, serif;
-}
-
-.no-fav {
-    color: #777;
-}
-
-.profile-actions-row {
-    display: flex;
-    gap: 12px;
-    margin-top: 24px;
-    font-family: 'Times New Roman', Times, serif;
-}
-
-.profile-save-btn {
-    padding: 10px 16px;
-    background: #4c00b4;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-family: 'Times New Roman', Times, serif;
-}
-
-.profile-clear-btn {
-    padding: 10px 16px;
-    background: #e0e0e0;
-    color: #333;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-family: 'Times New Roman', Times, serif;
+.profile-preview h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 20px;
 }
 
 .preview-card {
     display: flex;
-    gap: 16px;
-    align-items: center;
-    background: #fff;
-    padding: 16px;
+    gap: 24px;
+    align-items: flex-start;
+    background: var(--profile-preview-bg);
+    padding: 24px;
     border-radius: 10px;
-    margin-top: 16px;
     border: 1px solid #eee;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .preview-avatar {
-    width: 80px;
-    height: 80px;
+    width: 280px;
+    height: 280px;
     border-radius: 8px;
     overflow: hidden;
     background: #f6f6f6;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Montserrat', sans-serif;
+    flex-shrink: 0;
 }
 
 .preview-avatar img {
@@ -324,47 +228,62 @@
     object-fit: cover;
 }
 
+.preview-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
 .preview-nickname {
     font-weight: 700;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 18px;
 }
 
 .preview-desc {
     color: #555;
     margin-top: 6px;
-    font-family: 'Times New Roman', Times, serif;
-}
-
-.preview-favs {
-    color: #333;
-    margin-top: 6px;
+    font-family: 'Montserrat', sans-serif;
     font-size: 14px;
+    line-height: 1.5;
 }
 
-/* Account View Styles */
-.account-content {
-    margin: 0 auto;
-    max-width: 600px;
+/* Account Section - New */
+.account-section {
+    margin-top: 40px;
     padding: 20px;
-    font-family: 'Times New Roman', Times, serif;
+    background: #f9f9f9;
+    border-radius: 12px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.account-section h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 20px;
 }
 
 .account-field-row {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    margin-bottom: 20px;
-    padding: 12px;
-    background: #f9f9f9;
+    margin-bottom: 16px;
+    padding: 16px;
+    background: #fff;
     border-radius: 8px;
-    font-family: 'Times New Roman', Times, serif;
+    border: 1px solid #eee;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .account-label {
-    width: 80px;
-    font-weight: 700;
-    color: #444;
-    font-family: 'Times New Roman', Times, serif;
+    width: 100px;
+    font-weight: 600;
+    color: #333;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    flex-shrink: 0;
 }
 
 .account-value {
@@ -372,24 +291,30 @@
     align-items: center;
     gap: 12px;
     flex: 1;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .account-text {
-    max-width: 300px;
+    max-width: 400px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+    color: #333;
 }
 
 .pencil-btn {
     background: transparent;
     border: none;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 18px;
     padding: 6px;
     opacity: 0.7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s;
 }
 
 .pencil-btn:hover {
@@ -402,22 +327,134 @@
     gap: 12px;
     width: 100%;
     max-width: 400px;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .account-edit .input {
     width: 100%;
     box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .password-edit .input {
     width: 100%;
-    margin-bottom: 8px;
+    margin-bottom: 0;
 }
 
 .error {
     color: #d32f2f;
+    font-size: 13px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* Account Save Button */
+.account-save-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    justify-content: flex-start;
+}
+
+.account-save-btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
     font-size: 14px;
-    font-family: 'Times New Roman', Times, serif;
+    transition: background-color 0.3s, cursor 0.3s;
+}
+
+.account-save-btn.inactive {
+    background: #c0c0c0;
+    color: #666;
+    cursor: not-allowed;
+}
+
+.account-save-btn.active {
+    background: #556B2F;
+    color: #fff;
+    cursor: pointer;
+}
+
+.account-save-btn.active:hover {
+    background: #45561f;
+}
+
+/* Profile Actions Row */
+.profile-actions-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.profile-save-btn {
+    padding: 10px 16px;
+    background: #4c00b4;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.profile-save-btn:hover {
+    background: #3a0088;
+}
+
+.profile-save-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.profile-clear-btn {
+    padding: 10px 16px;
+    background: #e0e0e0;
+    color: #333;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.profile-clear-btn:hover {
+    background: #d0d0d0;
+}
+
+.profile-clear-btn.gray {
+    background: #e0e0e0;
+    color: #333;
+}
+
+/* Responsive for smaller screens */
+@media (max-width: 1024px) {
+    .profilepage-container {
+        padding: 40px 20px;
+    }
+
+    .profile-row {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .profile-avatar-column {
+        width: 100%;
+    }
+
+    .preview-card {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .preview-avatar {
+        width: 100%;
+        max-width: 280px;
+    }
 }
 
