@@ -47,7 +47,6 @@ const MOCK_ARTISTS = [
  */
 const ProfilePage = () => {
   const navigate = useNavigate();
-  const [view, setView] = useState("profile"); // 'profile' or 'account'
   
   // ========== DATABASE VARIABLES: Save these to the database ==========
   const [nickname, setNickname] = useState("");             // User's nickname
@@ -59,20 +58,32 @@ const ProfilePage = () => {
   const [profilePic, setProfilePic] = useState(null);
   const [artistQuery, setArtistQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   
-  const fileInputRef = useRef(null);
-  // editing states for account panel
-  const [editingName, setEditingName] = useState(false);
+  // Editing states for account fields
+  const [editingFirstName, setEditingFirstName] = useState(false);
+  const [editingLastName, setEditingLastName] = useState(false);
   const [editingEmail, setEditingEmail] = useState(false);
+  const [editingUsername, setEditingUsername] = useState(false);
   const [editingPassword, setEditingPassword] = useState(false);
-  const [tempName, setTempName] = useState("");
+  
+  // Temp values for editing
+  const [tempFirstName, setTempFirstName] = useState("");
+  const [tempLastName, setTempLastName] = useState("");
   const [tempEmail, setTempEmail] = useState("");
+  const [tempUsername, setTempUsername] = useState("");
   const [tempPass1, setTempPass1] = useState("");
   const [tempPass2, setTempPass2] = useState("");
   const [passError, setPassError] = useState("");
+  
+  // Track if any account fields have been changed
+  const [hasChanges, setHasChanges] = useState(false);
+  
+  const fileInputRef = useRef(null);
 
   const [imgRetry, setImgRetry] = useState(0); // prevents infinite retry loop
 
@@ -105,9 +116,10 @@ const ProfilePage = () => {
         setDescription(data.description || "");
         setBgColor(data.bgColor || "#eaf6ff");
         setProfilePic(data.profilePic || null);
-        setFavorites(data.favorites || []);
-        setName(data.name || "");
+        setFirstName(data.firstName || "");
+        setLastName(data.lastName || "");
         setEmail(data.email || "");
+        setUsername(data.username || "");
         setPassword(data.password || "");
       }
     } catch (e) {
@@ -133,6 +145,13 @@ const ProfilePage = () => {
         // Presigned GET URL (bucket private)
         setProfilePic(user.profileImageUrl || null);
 
+        // Fetch account information from user object
+        setFirstName(user.firstName || "");
+        setLastName(user.lastName || "");
+        setEmail(user.email || "");
+        setUsername(user.username || "");
+        // Password is never returned from backend for security
+
         // allow retry again after a successful load
         setImgRetry(0);
       } catch (e) {
@@ -140,17 +159,10 @@ const ProfilePage = () => {
       }
     })();
   }, []);
-
-
-
-
-/////////////////////////////////////////////////////////////////////////////////
-
-  // Persist to localStorage whenever anything important changes
   useEffect(() => {
-    const data = { nickname, description, bgColor, profilePic, favorites, name, email, password };
+    const data = { nickname, description, bgColor, profilePic, favorites, firstName, lastName, email, username, password };
     localStorage.setItem("profileData", JSON.stringify(data));
-  }, [nickname, description, bgColor, profilePic, favorites, name, email, password]);
+  }, [nickname, description, bgColor, profilePic, favorites, firstName, lastName, email, username, password]);
 
   // artist search
   useEffect(() => {
@@ -203,8 +215,10 @@ const ProfilePage = () => {
     setBgColor("#eaf6ff");
     setProfilePic(null);
     setFavorites([]);
-    setName("");
+    setFirstName("");
+    setLastName("");
     setEmail("");
+    setUsername("");
     setPassword("");
     localStorage.removeItem("profileData");
   };
@@ -236,8 +250,6 @@ const ProfilePage = () => {
       alert("Could not update bio.");
     }
   };
-
-
 
  const handleSaveProfile = async () => {
   try {
@@ -277,7 +289,7 @@ const ProfilePage = () => {
 
 };
 
-// call this when user clicks an "Upload" button
+  // call this when user clicks an "Upload" button
 const handleUploadProfilePic = async () => {
   try {
     if (!selectedProfileFile) {
@@ -351,6 +363,49 @@ const handleUploadProfilePic = async () => {
   }
 };
 
+// Save account information to the database
+const handleSaveAccountInfo = async () => {
+  try {
+    const token = localStorage.getItem("authToken");
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token || ""}`,
+    };
+
+    // Prepare the request body with the fields that have been changed
+    const updates = {};
+    if (tempFirstName !== firstName) updates.firstName = tempFirstName;
+    if (tempLastName !== lastName) updates.lastName = tempLastName;
+    if (tempEmail !== email) updates.email = tempEmail;
+    if (tempUsername !== username) updates.username = tempUsername;
+    if (tempPass1) updates.password = tempPass1;
+
+    const response = await fetch("http://127.0.0.1:8080/api/v1/profile/account", {
+      method: "PUT",
+      headers,
+      body: JSON.stringify(updates),
+    });
+
+    if (!response.ok) {
+      const msg = await response.text();
+      throw new Error(msg || `Failed: ${response.status}`);
+    }
+
+    // Update the state with the new values
+    setFirstName(tempFirstName);
+    setLastName(tempLastName);
+    setEmail(tempEmail);
+    setUsername(tempUsername);
+    if (tempPass1) setPassword(tempPass1);
+    setHasChanges(false);
+    
+    alert("Account information updated!");
+  } catch (e) {
+    console.error(e);
+    alert("Could not update account information.");
+  }
+};
+
 
 
 
@@ -361,145 +416,134 @@ const handleUploadProfilePic = async () => {
  * This statement displays the profile information to the user, including all of the necessary styling and API information. 
 * @return ProfilePage interface to the Webpage
  */
+
+  // Helper function to convert hex to rgba with 50% opacity
+  const hexToRgba50 = (hex) => {
+    const h = hex.replace("#", "");
+    const r = parseInt(h.substr(0, 2), 16);
+    const g = parseInt(h.substr(2, 2), 16);
+    const b = parseInt(h.substr(4, 2), 16);
+    return `rgba(${r}, ${g}, ${b}, 0.5)`;
+  };
+
   return (
-    <div className="profilepage-container" style={{ background: bgColor }}>
+    <div className="profilepage-container" style={{ background: bgColor, "--profile-preview-bg": hexToRgba50(bgColor) }}>
       <div className="profilepage-login-btn-topright">
         <button className="profilepage-back-btn" onClick={() => navigate("/home")}>Home</button>
       </div>
 
-      <div className="left-panel">
-        {/* <button className={`left-panel-btn ${view === 'account' ? 'active' : ''}`} onClick={() => setView('account')}>ACCOUNT</button> */}
-        <button className={`left-panel-btn ${view === 'profile' ? 'active' : ''}`} onClick={() => setView('profile')}>PROFILE</button>
-      </div>
-
       <div className="profilepage-card">
-        <h1>{view === 'profile' ? 'Your Profile' : 'Account'}</h1>
+        <h1>Your Profile</h1>
         
-        {view === 'profile' ? (
-          <div className="profile-content">
-            <div className="profile-row">
-              <div className="profile-avatar-column">
-                <div className="profile-avatar">
-                  {profilePic ? (
-                    <img src={profilePic} alt="profile" 
-                        onError={async () => {
-                          // retry only once to avoid infinite loops
-                          if (imgRetry >= 1) return;
-                          setImgRetry(1);
+        <div className="profile-content">
+          <div className="profile-row">
+            <div className="profile-avatar-column">
+              <div className="profile-avatar">
+                {profilePic ? (
+                  <img src={profilePic} alt="profile" 
+                      onError={async () => {
+                        // retry only once to avoid infinite loops
+                        if (imgRetry >= 1) return;
+                        setImgRetry(1);
 
-                          try {
-                            const user = await fetchProfile();
-                            setProfilePic(user.profileImageUrl || null);
-                          } catch (e) {
-                            console.error("Could not refresh profile image URL:", e);
-                            setProfilePic(null);
-                          }
-                        }} 
-                      />
-                  ) : (
-                    <div className="profile-avatar-placeholder">No Photo</div>
-                  )}
-                </div>
-                <div className="profile-avatar-actions">
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    id="profile-pic-input"
-                    onChange={onPickProfilePic}
-                    style={{ display: "none" }}
-                  />
-                  {/* Image Upload Buttons */}
-                  <button onClick={() => fileInputRef.current && fileInputRef.current.click()}className="profile-btn"> 
-                    Choose Image
-                    </button>
-                  <button onClick={handleUploadProfilePic} className="profile-btn" disabled={!selectedProfileFile}>
-                    Upload Photo
-                    </button>
-                  <button onClick={removeProfilePic} className="profile-btn gray">
-                    Remove
-                    </button>
-                </div>
-              </div>
-
-              <div className="profile-details-column">
-                <label className="label">Nickname</label>
-                <input className="input nickname-input" value={nickname} onChange={(e) => setNickname(e.target.value)} placeholder="Add a nickname" />
-
-                <label className="label">Description</label>
-                <textarea className="input description-input" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Write something about yourself..." />
-
-                <label className="label">Background Color</label>
-                <div className="bgcolor-row">
-                  <input type="color" value={bgColor} onChange={(e) => setBgColor(e.target.value)} className="color-input" />
-                </div>
-              </div>
-            </div>
-
-            <div className="favorites-section">
-              <h3>Favorite Artists (up to 3)</h3>
-              <div className="artist-search">
-                <input className="input artist-search-input" placeholder="Search artists..." value={artistQuery} onChange={(e) => setArtistQuery(e.target.value)} />
-                <div className="search-results">
-                  {searchResults.map((a) => (
-                    <div key={a} className="search-item" onClick={() => toggleFavorite(a)}>
-                      <span>{a}</span>
-                      <button className={`small-btn ${favorites.includes(a) ? "selected" : ""}`}>{favorites.includes(a) ? "Selected" : "Add"}</button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="favorites-list">
-                {favorites.length === 0 ? (
-                  <div className="no-fav">No favorites selected</div>
+                        try {
+                          const user = await fetchProfile();
+                          setProfilePic(user.profileImageUrl || null);
+                        } catch (e) {
+                          console.error("Could not refresh profile image URL:", e);
+                          setProfilePic(null);
+                        }
+                      }} 
+                    />
                 ) : (
-                  favorites.map((f) => (
-                    <div key={f} className="fav-item">
-                      {f}
-                      <button className="remove-small" onClick={() => toggleFavorite(f)}>Remove</button>
-                    </div>
-                  ))
+                  <div className="profile-avatar-placeholder">No Photo</div>
                 )}
               </div>
+              <div className="profile-avatar-actions">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  id="profile-pic-input"
+                  onChange={onPickProfilePic}
+                  style={{ display: "none" }}
+                />
+                {/* Image Upload Buttons */}
+                <button onClick={() => fileInputRef.current && fileInputRef.current.click()}className="profile-btn"> 
+                  Choose Image
+                  </button>
+                <button onClick={handleUploadProfilePic} className="profile-btn" disabled={!selectedProfileFile}>
+                  Upload Photo
+                  </button>
+                <button onClick={removeProfilePic} className="profile-btn gray">
+                  Remove
+                  </button>
+              </div>
             </div>
 
-            <div className="profile-actions-row">
-              {/* <button className="profile-save-btn" onClick={() => alert("Profile saved locally")}>Save</button> */}
-              <button className="profile-save-btn" onClick={handleSaveProfile}>Save</button>
-              <button className="profile-clear-btn gray" onClick={clearProfile}>Clear</button>
-            </div>
+            <div className="profile-details-column">
+              <label className="label">Nickname</label>
+              <input className="input nickname-input" value={nickname} onChange={(e) => setNickname(e.target.value)} placeholder="Add a nickname" />
 
-            <div className="profile-preview">
-              <h3>Preview</h3>
-              <div className="preview-card">
-                <div className="preview-avatar">
-                  {profilePic ? <img src={profilePic} alt="preview" /> : <div className="profile-avatar-placeholder">No Photo</div>}
-                </div>
-                <div className="preview-info">
-                  <div className="preview-nickname">{nickname || "Your nickname"}</div>
-                  <div className="preview-desc">{description || "Your description will appear here."}</div>
-                  <div className="preview-favs">Favorites: {favorites.length ? favorites.join(", ") : "None"}</div>
-                </div>
+              <label className="label">Description</label>
+              <textarea className="input description-input" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Write something about yourself..." />
+
+              <label className="label">Background Color</label>
+              <div className="bgcolor-row">
+                <input type="color" value={bgColor} onChange={(e) => setBgColor(e.target.value)} className="color-input" />
               </div>
             </div>
           </div>
-        ) : (
-          <div className="account-content">
-            <h2>Account Information</h2>
+
+          {/* Profile Preview Section */}
+          <div className="profile-preview">
+            <h3>Profile Preview</h3>
+            <div className="preview-card">
+              <div className="preview-avatar">
+                {profilePic ? <img src={profilePic} alt="preview" /> : <div className="profile-avatar-placeholder">No Photo</div>}
+              </div>
+              <div className="preview-info">
+                <div className="preview-nickname">{nickname || "Your nickname"}</div>
+                <div className="preview-desc">{description || "Your description will appear here."}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Your Account Section */}
+          <div className="account-section">
+            <h3>Your Account</h3>
+            
             <div className="account-field-row">
-              <div className="account-label">Name</div>
-              {!editingName ? (
+              <div className="account-label">First Name</div>
+              {!editingFirstName ? (
                 <div className="account-value">
-                  <span className="account-text">{name || "(no name)"}</span>
-                  <button className="pencil-btn" title="Edit name" onClick={() => { setTempName(name); setEditingName(true); }}>✏️</button>
+                  <span className="account-text">{firstName || "(not set)"}</span>
+                  <button className="pencil-btn" title="Edit first name" onClick={() => { setTempFirstName(firstName); setEditingFirstName(true); }}>✏️</button>
                 </div>
               ) : (
                 <div className="account-edit">
-                  <input className="input" value={tempName} onChange={(e) => setTempName(e.target.value)} />
+                  <input className="input" value={tempFirstName} onChange={(e) => { setTempFirstName(e.target.value); setHasChanges(true); }} />
                   <div style={{display:'flex',gap:8}}>
-                    <button className="profile-save-btn" onClick={() => { setName(tempName); setEditingName(false); }}>Save</button>
-                    <button className="profile-clear-btn gray" onClick={() => setEditingName(false)}>Cancel</button>
+                    <button className="profile-save-btn" onClick={() => setEditingFirstName(false)}>Done</button>
+                    <button className="profile-clear-btn gray" onClick={() => { setTempFirstName(firstName); setEditingFirstName(false); }}>Cancel</button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="account-field-row">
+              <div className="account-label">Last Name</div>
+              {!editingLastName ? (
+                <div className="account-value">
+                  <span className="account-text">{lastName || "(not set)"}</span>
+                  <button className="pencil-btn" title="Edit last name" onClick={() => { setTempLastName(lastName); setEditingLastName(true); }}>✏️</button>
+                </div>
+              ) : (
+                <div className="account-edit">
+                  <input className="input" value={tempLastName} onChange={(e) => { setTempLastName(e.target.value); setHasChanges(true); }} />
+                  <div style={{display:'flex',gap:8}}>
+                    <button className="profile-save-btn" onClick={() => setEditingLastName(false)}>Done</button>
+                    <button className="profile-clear-btn gray" onClick={() => { setTempLastName(lastName); setEditingLastName(false); }}>Cancel</button>
                   </div>
                 </div>
               )}
@@ -509,15 +553,33 @@ const handleUploadProfilePic = async () => {
               <div className="account-label">Email</div>
               {!editingEmail ? (
                 <div className="account-value">
-                  <span className="account-text">{email || "(no email)"}</span>
+                  <span className="account-text">{email || "(not set)"}</span>
                   <button className="pencil-btn" title="Edit email" onClick={() => { setTempEmail(email); setEditingEmail(true); }}>✏️</button>
                 </div>
               ) : (
                 <div className="account-edit">
-                  <input className="input" value={tempEmail} onChange={(e) => setTempEmail(e.target.value)} />
+                  <input className="input" value={tempEmail} onChange={(e) => { setTempEmail(e.target.value); setHasChanges(true); }} />
                   <div style={{display:'flex',gap:8}}>
-                    <button className="profile-save-btn" onClick={() => { setEmail(tempEmail); setEditingEmail(false); }}>Save</button>
-                    <button className="profile-clear-btn gray" onClick={() => setEditingEmail(false)}>Cancel</button>
+                    <button className="profile-save-btn" onClick={() => setEditingEmail(false)}>Done</button>
+                    <button className="profile-clear-btn gray" onClick={() => { setTempEmail(email); setEditingEmail(false); }}>Cancel</button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="account-field-row">
+              <div className="account-label">Username</div>
+              {!editingUsername ? (
+                <div className="account-value">
+                  <span className="account-text">{username || "(not set)"}</span>
+                  <button className="pencil-btn" title="Edit username" onClick={() => { setTempUsername(username); setEditingUsername(true); }}>✏️</button>
+                </div>
+              ) : (
+                <div className="account-edit">
+                  <input className="input" value={tempUsername} onChange={(e) => { setTempUsername(e.target.value); setHasChanges(true); }} />
+                  <div style={{display:'flex',gap:8}}>
+                    <button className="profile-save-btn" onClick={() => setEditingUsername(false)}>Done</button>
+                    <button className="profile-clear-btn gray" onClick={() => { setTempUsername(username); setEditingUsername(false); }}>Cancel</button>
                   </div>
                 </div>
               )}
@@ -532,21 +594,34 @@ const handleUploadProfilePic = async () => {
                 </div>
               ) : (
                 <div className="account-edit password-edit">
-                  <input className="input" type="password" placeholder="New password" value={tempPass1} onChange={(e) => setTempPass1(e.target.value)} />
+                  <input className="input" type="password" placeholder="New password" value={tempPass1} onChange={(e) => { setTempPass1(e.target.value); setHasChanges(true); }} />
                   <input className="input" type="password" placeholder="Retype new password" value={tempPass2} onChange={(e) => setTempPass2(e.target.value)} />
                   {passError && <div className="error" style={{marginTop:6}}>{passError}</div>}
                   <div style={{marginTop:8, display:'flex', gap:8}}>
-                    <button className="profile-save-btn" onClick={() => {
-                      if (!tempPass1 || tempPass1 !== tempPass2) { setPassError("Passwords must match"); return; }
-                      setPassword(tempPass1); setEditingPassword(false); setPassError("");
-                    }} disabled={!tempPass1 || tempPass1 !== tempPass2}>Save</button>
-                    <button className="profile-clear-btn gray" onClick={() => setEditingPassword(false)}>Cancel</button>
+                    <button className="profile-save-btn" onClick={() => setEditingPassword(false)}>Done</button>
+                    <button className="profile-clear-btn gray" onClick={() => { setEditingPassword(false); setPassError(""); }}>Cancel</button>
                   </div>
                 </div>
               )}
             </div>
+
+            {/* Account Save Button */}
+            <div className="account-save-row">
+              <button 
+                className={`account-save-btn ${hasChanges ? 'active' : 'inactive'}`}
+                disabled={!hasChanges}
+                onClick={handleSaveAccountInfo}
+              >
+                Save Changes
+              </button>
+            </div>
           </div>
-        )}
+
+          <div className="profile-actions-row">
+            <button className="profile-save-btn" onClick={handleSaveProfile}>Save Profile</button>
+            <button className="profile-clear-btn gray" onClick={clearProfile}>Clear</button>
+          </div>
+        </div>
       </div>
 
     </div>

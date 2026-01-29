@@ -1,5 +1,17 @@
 /* Homepage styles updated to match the site's light green / cream theme */
 
+.homepage-feed-btn-topleft {
+    position: fixed;
+    top: 20px;
+    left: 30px;
+    z-index: 200;
+    /* higher so it appears above other panels */
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    background: #c7dbef;
+}
+
 .homepage-login-btn-topright {
     position: fixed;
     top: 20px;
