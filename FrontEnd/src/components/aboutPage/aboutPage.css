@@ -9,7 +9,7 @@
   min-height: 100vh;
   position: relative;
   padding-bottom: 40px;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: 'Montserrat', sans-serif;
   background: linear-gradient(45deg, #064e3b 0%, #0ea5a4 30%, #0369a1 60%, #073b4c 100%);
   background-size: 300% 300%;
   animation: gradientShift 10s linear infinite;

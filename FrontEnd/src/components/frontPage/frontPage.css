@@ -13,7 +13,7 @@
   animation: gradientShiftFront 12s linear infinite;
   position: relative;
   padding-bottom: 40px;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: 'Montserrat', sans-serif;
   overflow: hidden; /* disable page scroll on front page */
 }
 

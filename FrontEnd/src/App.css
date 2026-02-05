@@ -62,12 +62,13 @@ html, body, #root {
   height: 100%;
   margin: 0;
   padding: 0;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: 'Montserrat', sans-serif;
   background: linear-gradient(135deg, #5b9fd6 0%, #6fa3d8 50%, #4a9fb8 100%);
   color: #1a4d7a;
 }
 
-/* Unified button and input styles used across components */
+/* Unified button and input styles used across components *
+/
 .btn, button, .nav-btn, .login-btn, .submitLogin, .login-mode-btn {
   padding: 10px 18px;
   background: var(--btn-bg);
