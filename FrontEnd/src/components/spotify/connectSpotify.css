@@ -34,7 +34,7 @@
   /* subtle outer shadow and a slightly darker base shadow to match the screenshot */
   box-shadow: 0 6px 0 rgba(0,0,0,0.08), 0 10px 30px rgba(16,185,129,0.12);
   transition: transform 120ms ease, box-shadow 120ms ease;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: 'Montserrat', sans-serif;
   display: inline-flex;
   align-items: center;
   justify-content: center;

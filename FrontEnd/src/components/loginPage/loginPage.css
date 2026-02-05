@@ -13,7 +13,7 @@
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .login-mode-btns {
@@ -23,7 +23,7 @@
 .login-mode-btn {
     padding: 6.8px 16px; 
     margin: 0 5px;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Montserrat', sans-serif;
     background: #bad5ce;
     color: #111;
     border: 1px solid #d995bdff;
@@ -243,7 +243,7 @@
     cursor: pointer;
     font-size: 20px;
     font-weight: 700;
-    font-family: 'Times New Roman', Times, serif; 
+    font-family: 'Montserrat', sans-serif;
     transition: background-color 150ms ease, transform 80ms ease;
 }
 
