@@ -52,7 +52,7 @@
     font-size: 16px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     text-transform: uppercase;
-    font-family: "Times New Roman", Times, serif;
+    font-family: 'Montserrat', sans-serif;
     animation: btnGradientShift 6s ease infinite;
 }
 
