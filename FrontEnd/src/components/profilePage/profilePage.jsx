@@ -482,7 +482,7 @@ const handleSaveAccountInfo = async () => {
             </div>
 
             <div className="profile-details-column">
-              <label className="label">Nickname</label>
+              <label className="label">Username</label>
               <input className="input nickname-input" value={nickname} onChange={(e) => setNickname(e.target.value)} placeholder="Add a nickname" />
 
               <label className="label">Description</label>
