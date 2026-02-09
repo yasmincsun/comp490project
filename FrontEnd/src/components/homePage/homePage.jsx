@@ -278,7 +278,7 @@ const handleLogout = async () => {
                         className="homepage-login-btn"
                         onClick={() => navigate("/friends")}
                     >
-                        FEED
+                        FRIENDS
                     </button>
                 </div>
             )}
