@@ -18,6 +18,8 @@ import com.musicApp.backend.features.authentication.repository.AuthenticationUse
 import org.springframework.beans.factory.annotation.Value;
 import java.time.Duration;
 import java.util.Set;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 
@@ -192,6 +194,22 @@ private ProfileRequest toProfileRequest(AuthenticationUser user) {
       presignedGetUrl,
       expires
   );
+}
+
+@GetMapping("/search")
+public List<ProfileRequest> searchUsers(@RequestParam String query) {
+  if (query == null || query.trim().isEmpty()) {
+    return List.of();
+  }
+  
+  String lowerQuery = query.toLowerCase().trim();
+  
+  // Get all users and filter by username containing the search query (case-insensitive)
+  List<AuthenticationUser> allUsers = authenticationUserRepository.findAll();
+  return allUsers.stream()
+      .filter(user -> user.getUsername() != null && user.getUsername().toLowerCase().contains(lowerQuery))
+      .map(this::toProfileRequest)
+      .collect(Collectors.toList());
 }
 
 }

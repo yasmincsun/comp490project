@@ -83,6 +83,197 @@
     padding-top: 80px;
 }
 
+/* Search bar styles */
+.friendpage-search-bar-container {
+    position: fixed;
+    top: 80px;
+    left: 0;
+    right: 0;
+    z-index: 150;
+    background: rgba(199, 219, 239, 0.92);
+    padding: 16px 30px;
+    display: flex;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.friendpage-search-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    max-width: 500px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 12px 18px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    font-family: 'Montserrat', sans-serif;
+}
+
+.friendpage-search-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 16px;
+    font-family: 'Montserrat', sans-serif;
+    outline: none;
+    color: #333;
+}
+
+.friendpage-search-input::placeholder {
+    color: #999;
+}
+
+.friendpage-search-btn {
+    background: #000;
+    color: white;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.friendpage-search-btn:hover:not(:disabled) {
+    background: #333;
+}
+
+.friendpage-search-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Results gallery */
+.friendpage-gallery-container {
+    position: fixed;
+    top: 160px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+    z-index: 100;
+}
+
+.friendpage-results-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    justify-content: center;
+    width: 100%;
+    max-width: 1000px;
+    padding: 0 20px;
+}
+
+.friendpage-user-card {
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    width: 240px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    font-family: 'Montserrat', sans-serif;
+    cursor: pointer;
+}
+
+.friendpage-user-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.15);
+}
+
+/* Animation for new results */
+@keyframes slideInUser {
+    from {
+        opacity: 0;
+        transform: scale(0.94) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.friendpage-user-card.new {
+    animation: slideInUser 0.36s cubic-bezier(0.16, 0.84, 0.44, 1);
+}
+
+.friendpage-user-avatar {
+    width: 160px;
+    height: 160px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #f6f6f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.friendpage-user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.friendpage-avatar-placeholder {
+    color: #999;
+    font-size: 14px;
+    text-align: center;
+}
+
+.friendpage-user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+.friendpage-user-username {
+    font-weight: 700;
+    font-size: 16px;
+    color: #333;
+    word-break: break-word;
+}
+
+.friendpage-user-bio {
+    color: #666;
+    font-size: 13px;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+/* Scrollbar styling for gallery */
+.friendpage-gallery-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.friendpage-gallery-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.friendpage-gallery-container::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+.friendpage-gallery-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.4);
+}
+
 .friendpage-left {
     flex: 1;
     width: 50%;
