@@ -94,9 +94,8 @@
  * @version 1.0 
  */
 .login-btn {
-  /* half the previous size */
   padding: 10px 18px;
-  background: #001f3f; /* navy blue */
+  background: #d0d4dc; 
   color: var(--btn-text);
   border: none;
   border-radius: 8px;
@@ -104,7 +103,7 @@
   font-size: 16px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   text-transform: uppercase;
-  position: absolute; /* keep login button fixed to the right */
+  position: absolute; 
   right: 16px;
   top: 50%;
   transform: translateY(-50%);
@@ -159,13 +158,12 @@
   height: 256px;
   object-fit: contain;
   cursor: pointer;
-  position: absolute; /* center logo vertically relative to header */
+  position: absolute; 
   left: 16px;
-  top: calc(50% - 98px); /* moved 30px lower so center aligns with buttons */
+  top: calc(50% - 98px); 
   z-index: 200;
 }
 
-/* Responsive: reduce logo size and offset on small screens to avoid large overlap */
 @media (max-width: 800px) {
   .logo-btn { width: 160px; height: 160px; top: calc(50% - 50px); }
   .frontpage-nav { height: 71px; }
@@ -190,7 +188,6 @@
   margin-bottom: 28px;
 }
 
-/* moving text gradient from white to black applied to the two main lines */
 .frontpage-content h1,
 .frontpage-content p {
   background: linear-gradient(90deg, #ffffff 0%, #6a6363 100%);
