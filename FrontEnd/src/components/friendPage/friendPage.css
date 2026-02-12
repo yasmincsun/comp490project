@@ -337,7 +337,6 @@
     box-shadow: 0 3px 12px rgba(76, 175, 80, 0.6);
 }
 
-/* Active tooltip */
 .friendpage-active-tooltip {
     position: absolute;
     background: rgba(76, 175, 80, 0.95);
@@ -360,7 +359,6 @@
     transform: translateY(-35px) scale(1);
 }
 
-/* Inactive indicator (red circle) */
 .friendpage-inactive-indicator {
     width: 16px;
     height: 16px;
@@ -377,7 +375,6 @@
     box-shadow: 0 3px 12px rgba(244, 67, 54, 0.6);
 }
 
-/* Inactive tooltip */
 .friendpage-inactive-tooltip {
     position: absolute;
     background: rgba(244, 67, 54, 0.95);
