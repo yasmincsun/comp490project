@@ -104,37 +104,27 @@ const CreatePostPage = () => {
         )}
       </div>
 
-        //Asks user to type in a category for their post
-        
-      <div className="w-full">
-        <Label htmlFor="category">Category</Label>
-        <Textarea
-        id ="content"
-        placeholder= "Add your category"
-        {...register("content", {
-            required: "Post category is required"
+       <div>
+  <Label htmlFor="category">Category</Label>
+  <Input
+    type="text"
+    id="category"
+    placeholder="Add your category"
+    {...register("category", {
+      required: "Post category is required",
+      minLength: {
+        value: 3,
+        message: "Category must be at least 3 characters",
+      },
+    })}
+    className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px] w-[400px] max-sm:w-[300px]"
+  />
 
-        })}
-        className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[180px]  w-[400px] text-justify max-sm:w-[300px] max-sm:text-[14px]"
-        />
-        </div>
+  {errors?.category?.message && (
+    <InputError error={errors.category.message} />
+  )}
+</div>
 
-       
-      <div className="w-full">
-        <Label htmlFor="featured_image">Featured Image</Label>
-        <Input
-          type="file"
-          id="picture"
-          {...register("featured_image", {
-            required: "Blog's featured image is required",
-          })}
-          className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px] w-full max-sm:w-[300px] max-sm:text-[14px]"
-        />
-
-        {errors?.featured_image?.message && (
-          <InputError error={errors.featured_image.message} />
-        )}
-      </div>
 
       <div className="w-full flex items-center justify-center flex-col my-4">
         <button disabled={mutation.isPending} className="bg-[#4B6BFB] text-white w-full py-3 px-2 rounded-md flex items-center justify-center gap-2">
