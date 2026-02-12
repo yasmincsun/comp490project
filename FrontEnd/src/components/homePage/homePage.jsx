@@ -135,6 +135,10 @@ const HomePage = () => {
             let r = 255 - (num >> 16);
             let g = 255 - ((num >> 8) & 0x00FF);
             let b = 255 - (num & 0x0000FF);
+            // lighten the inverted color so it's not too dark (only half as dark)
+            r = Math.min(255, Math.floor(r * 0.7 + 76));
+            g = Math.min(255, Math.floor(g * 0.7 + 76));
+            b = Math.min(255, Math.floor(b * 0.7 + 76));
             return '#'+( (1<<24) + (r<<16) + (g<<8) + b ).toString(16).slice(1);
         } catch(e){
             return hex;
@@ -279,6 +283,20 @@ const handleLogout = async () => {
                         onClick={() => navigate("/friends")}
                     >
                         FRIENDS
+                    </button>
+                    <button
+                        className="homepage-login-btn"
+                        style={{ marginLeft: 12 }}
+                        onClick={() => { /* intentionally no-op for now */ }}
+                    >
+                        SOCIAL
+                    </button>
+                    <button
+                        className="homepage-login-btn"
+                        style={{ marginLeft: 12 }}
+                        onClick={() => { /* intentionally no-op for now */ }}
+                    >
+                        MAP
                     </button>
                 </div>
             )}
