@@ -83,31 +83,144 @@
     padding-top: 80px;
 }
 
-/* Search bar styles */
-.friendpage-search-bar-container {
+/* Animated search bar container */
+.friendpage-search-bar-top {
     position: fixed;
-    top: 80px;
+    top: 0;
     left: 0;
-    right: 0;
-    z-index: 150;
-    background: rgba(199, 219, 239, 0.92);
-    padding: 16px 30px;
+    width: 100vw;
+    z-index: 10;
+    background: transparent;
+    padding: 0;
+    transition: all 0.6s ease-in-out;
     display: flex;
+    flex-direction: column;
     justify-content: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    align-items: center;
+    min-height: 100vh;
 }
 
-.friendpage-search-bar {
+.friendpage-search-bar-top.centered {
+    top: 50%;
+    transform: translateY(-50%);
+    gap: 30px;
+}
+
+.friendpage-search-bar-top.moved-to-top {
+    top: 0;
+    transform: translateY(0);
+    min-height: auto;
+    padding-top: 15px;
+    background: transparent;
+    justify-content: flex-start;
+    gap: 0;
+}
+
+.friendpage-search-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: rgba(0, 0, 0, 0.8);
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.friendpage-search-bar-top.centered .friendpage-search-title {
+    font-size: 32px;
+}
+
+.friendpage-search-bar-top.moved-to-top .friendpage-search-title {
+    font-size: 18px;
+    padding-left: 30px;
+    padding-top: 8px;
+}
+
+.friendpage-search-tagline {
+    font-size: 16px;
+    color: rgba(0, 0, 0, 0.6);
+    margin: 0;
+    max-width: 400px;
+    line-height: 1.6;
+    font-family: 'Montserrat', sans-serif;
+    text-align: center;
+}
+
+.friendpage-empty-glass {
+    width: 80px;
+    height: 80px;
+    opacity: 0.8;
+    animation: float 3s ease-in-out infinite;
+}
+
+.friendpage-search-form {
     display: flex;
     align-items: center;
     gap: 12px;
     width: 100%;
     max-width: 500px;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.95);
     padding: 12px 18px;
     border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
     font-family: 'Montserrat', sans-serif;
+}
+
+.friendpage-search-bar-top.moved-to-top .friendpage-search-form {
+    position: fixed;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 60px);
+    max-width: 500px;
+    background: rgba(255, 255, 255, 0.95);
+    z-index: 150;
+}
+
+.friendpage-search-input-centered {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 16px;
+    font-family: 'Montserrat', sans-serif;
+    outline: none;
+    color: #333;
+}
+
+.friendpage-search-input-centered::placeholder {
+    color: #999;
+}
+
+.friendpage-search-btn-centered {
+    background: #000;
+    color: white;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.friendpage-search-btn-centered:hover:not(:disabled) {
+    background: #333;
+}
+
+.friendpage-search-btn-centered:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-15px);
+    }
 }
 
 .friendpage-search-input {
@@ -149,19 +262,21 @@
     cursor: not-allowed;
 }
 
-/* Results gallery */
-.friendpage-gallery-container {
+/* Results gallery container positioned at center screen */
+.friendpage-results-container {
     position: fixed;
-    top: 160px;
+    top: 50%;
     left: 0;
     right: 0;
     bottom: 0;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 40px 20px;
     display: flex;
     justify-content: center;
+    align-items: flex-start;
+    padding: 40px 20px;
     z-index: 100;
+    transform: translateY(-50%);
 }
 
 .friendpage-results-gallery {
@@ -171,7 +286,7 @@
     justify-content: center;
     width: 100%;
     max-width: 1000px;
-    padding: 0 20px;
+    padding: 20px;
 }
 
 .friendpage-user-card {
@@ -188,11 +303,101 @@
     transition: transform 0.3s ease, opacity 0.3s ease;
     font-family: 'Montserrat', sans-serif;
     cursor: pointer;
+    position: relative;
 }
 
 .friendpage-user-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.15);
+}
+
+/* Active indicator wrapper with tooltip */
+.friendpage-active-indicator-wrapper {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.friendpage-active-indicator {
+    width: 16px;
+    height: 16px;
+    background: #4CAF50;
+    border: 3px solid white;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.friendpage-active-indicator-wrapper:hover .friendpage-active-indicator {
+    transform: scale(1.2);
+    box-shadow: 0 3px 12px rgba(76, 175, 80, 0.6);
+}
+
+/* Active tooltip */
+.friendpage-active-tooltip {
+    position: absolute;
+    background: rgba(76, 175, 80, 0.95);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-35px) scale(0.8);
+    transition: all 0.3s cubic-bezier(0.16, 0.84, 0.44, 1);
+    font-family: 'Montserrat', sans-serif;
+    z-index: 1000;
+}
+
+.friendpage-active-indicator-wrapper:hover .friendpage-active-tooltip {
+    opacity: 1;
+    transform: translateY(-35px) scale(1);
+}
+
+/* Inactive indicator (red circle) */
+.friendpage-inactive-indicator {
+    width: 16px;
+    height: 16px;
+    background: #F44336;
+    border: 3px solid white;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(244, 67, 54, 0.4);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.friendpage-active-indicator-wrapper:hover .friendpage-inactive-indicator {
+    transform: scale(1.2);
+    box-shadow: 0 3px 12px rgba(244, 67, 54, 0.6);
+}
+
+/* Inactive tooltip */
+.friendpage-inactive-tooltip {
+    position: absolute;
+    background: rgba(244, 67, 54, 0.95);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-35px) scale(0.8);
+    transition: all 0.3s cubic-bezier(0.16, 0.84, 0.44, 1);
+    font-family: 'Montserrat', sans-serif;
+    z-index: 1000;
+}
+
+.friendpage-active-indicator-wrapper:hover .friendpage-inactive-tooltip {
+    opacity: 1;
+    transform: translateY(-35px) scale(1);
 }
 
 /* Animation for new results */
@@ -256,21 +461,21 @@
     word-break: break-word;
 }
 
-/* Scrollbar styling for gallery */
-.friendpage-gallery-container::-webkit-scrollbar {
+/* Scrollbar styling for results container */
+.friendpage-results-container::-webkit-scrollbar {
     width: 8px;
 }
 
-.friendpage-gallery-container::-webkit-scrollbar-track {
+.friendpage-results-container::-webkit-scrollbar-track {
     background: transparent;
 }
 
-.friendpage-gallery-container::-webkit-scrollbar-thumb {
+.friendpage-results-container::-webkit-scrollbar-thumb {
     background: rgba(0, 0, 0, 0.2);
     border-radius: 4px;
 }
 
-.friendpage-gallery-container::-webkit-scrollbar-thumb:hover {
+.friendpage-results-container::-webkit-scrollbar-thumb:hover {
     background: rgba(0, 0, 0, 0.4);
 }
 

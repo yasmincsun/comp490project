@@ -146,7 +146,7 @@ const ProfilePage = () => {
         setProfilePic(user.profileImageUrl || null);
 
         // Fetch account information from user object
-        setFirstName(user.firstName || "");
+        setFirstName(user.name || "");
         setLastName(user.lastName || "");
         setEmail(user.email || "");
         setUsername(user.username || "");
@@ -376,9 +376,13 @@ const handleSaveAccountInfo = async () => {
     const updates = {};
     if (tempFirstName !== firstName) updates.firstName = tempFirstName;
     if (tempLastName !== lastName) updates.lastName = tempLastName;
-    if (tempEmail !== email) updates.email = tempEmail;
-    if (tempUsername !== username) updates.username = tempUsername;
-    if (tempPass1) updates.password = tempPass1;
+    if (tempPass1) {
+      if (tempPass1 !== tempPass2) {
+        setPassError("Passwords do not match");
+        return;
+      }
+      updates.password = tempPass1;
+    }
 
     const response = await fetch("http://127.0.0.1:8080/api/v1/profile/account", {
       method: "PUT",
@@ -394,10 +398,14 @@ const handleSaveAccountInfo = async () => {
     // Update the state with the new values
     setFirstName(tempFirstName);
     setLastName(tempLastName);
-    setEmail(tempEmail);
-    setUsername(tempUsername);
     if (tempPass1) setPassword(tempPass1);
     setHasChanges(false);
+    setEditingFirstName(false);
+    setEditingLastName(false);
+    setEditingPassword(false);
+    setTempPass1("");
+    setTempPass2("");
+    setPassError("");
     
     alert("Account information updated!");
   } catch (e) {
@@ -551,20 +559,9 @@ const handleSaveAccountInfo = async () => {
 
             <div className="account-field-row">
               <div className="account-label">Email</div>
-              {!editingEmail ? (
-                <div className="account-value">
-                  <span className="account-text">{email || "(not set)"}</span>
-                  <button className="pencil-btn" title="Edit email" onClick={() => { setTempEmail(email); setEditingEmail(true); }}>✏️</button>
-                </div>
-              ) : (
-                <div className="account-edit">
-                  <input className="input" value={tempEmail} onChange={(e) => { setTempEmail(e.target.value); setHasChanges(true); }} />
-                  <div style={{display:'flex',gap:8}}>
-                    <button className="profile-save-btn" onClick={() => setEditingEmail(false)}>Done</button>
-                    <button className="profile-clear-btn gray" onClick={() => { setTempEmail(email); setEditingEmail(false); }}>Cancel</button>
-                  </div>
-                </div>
-              )}
+              <div className="account-value">
+                <span className="account-text">{email || "(not set)"}</span>
+              </div>
             </div>
 
             <div className="account-field-row">

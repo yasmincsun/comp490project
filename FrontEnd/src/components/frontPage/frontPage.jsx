@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import projectLogo from '../assets/projectLogo.png';
 import teamPic from '../assets/teamMembers.png';
@@ -38,6 +38,25 @@ const TEAM_MEMBERS = [
  */
 const FrontPage = () => {
   const navigate = useNavigate();
+  const [showScrollButton, setShowScrollButton] = useState(false);
+
+  // Track scroll position to show/hide back-to-top button
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollButton(window.scrollY > 600);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Smooth scroll to top
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
 
   return (
     <div className="frontpage-container">
@@ -80,6 +99,17 @@ const FrontPage = () => {
           ))}
         </div>
       </div>
+
+      {/* Back to Top Button */}
+      {showScrollButton && (
+        <button 
+          className="back-to-top-btn" 
+          onClick={scrollToTop}
+          aria-label="Back to top"
+        >
+          ▲
+        </button>
+      )}
     </div>
   );
 };
