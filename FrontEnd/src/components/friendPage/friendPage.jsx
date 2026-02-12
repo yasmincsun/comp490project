@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./friendPage.css";
+import magGlass from "../assets/magGlass.png";
 
-/**
- * FriendPage Component
- * <p>
- * This page displays a user search feature where users can look up other users
- * and view their profile information in a card-based gallery layout.
- */
+
 const FriendPage = () => {
     const navigate = useNavigate();
     const [bgColor, setBgColor] = useState("");
@@ -16,6 +12,7 @@ const FriendPage = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [loading, setLoading] = useState(false);
     const [newResultIds, setNewResultIds] = useState(new Set());
+    const [hasSearched, setHasSearched] = useState(false);
 
     // Check if user is logged in
     useEffect(() => {
@@ -118,6 +115,7 @@ const FriendPage = () => {
 
             const results = await response.json();
             setSearchResults(results);
+            setHasSearched(true);
             
             // Mark all results as new for animation
             setNewResultIds(new Set(results.map((r) => r.id)));
@@ -142,9 +140,8 @@ const FriendPage = () => {
     // Determine gradient colors
     const defaultPrimary = "#c4dbefff";
     const defaultSecondary = "#8ab4f8";
-    const primary = bgColor || defaultPrimary;
-    const brightSecondary = brightenHex(primary);
-    const secondary = bgColor ? brightSecondary : defaultSecondary;
+    const primary = defaultPrimary;
+    const secondary = defaultSecondary;
     const btnPrimary = complementaryHex(primary);
     const btnSecondary = complementaryHex(secondary);
 
@@ -168,37 +165,61 @@ const FriendPage = () => {
                 </button>
             </div>
 
-            {/* Search bar at top */}
-            <div className="friendpage-search-bar-container">
-                <div className="friendpage-search-bar">
+            {/* Animated search bar container */}
+            <div
+                className={`friendpage-search-bar-top ${hasSearched ? "moved-to-top" : "centered"}`}
+            >
+                <h2 className="friendpage-search-title">Search for Friends</h2>
+                {!hasSearched && (
+                    <p className="friendpage-search-tagline">Find and connect with your friends by searching their usernames</p>
+                )}
+                {!hasSearched && (
+                    <img src={magGlass} alt="Search" className="friendpage-empty-glass" />
+                )}
+                <div className="friendpage-search-form">
                     <input
                         type="text"
-                        placeholder="Search for a user..."
+                        placeholder={hasSearched ? "Search for a user..." : "Enter a username..."}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         onKeyPress={handleKeyPress}
-                        className="friendpage-search-input"
+                        className="friendpage-search-input-centered"
                     />
                     <button
                         onClick={handleSearch}
-                        className="friendpage-search-btn"
+                        className="friendpage-search-btn-centered"
                         disabled={loading}
                         title="Search"
                     >
-                        →
+                        {loading ? "..." : "→"}
                     </button>
                 </div>
             </div>
 
             {/* Search results gallery */}
-            {searchResults.length > 0 && (
-                <div className="friendpage-gallery-container">
+            {hasSearched && searchResults.length > 0 && (
+                <div className="friendpage-results-container">
                     <div className="friendpage-results-gallery">
                         {searchResults.map((user) => (
                             <div
                                 key={user.id}
                                 className={`friendpage-user-card ${newResultIds.has(user.id) ? 'new' : ''}`}
+                                style={{
+                                    backgroundColor: user.bgColor ? intToHex(user.bgColor) : "rgba(255, 255, 255, 0.92)"
+                                }}
                             >
+                                {user.login_status === 1 && (
+                                    <div className="friendpage-active-indicator-wrapper">
+                                        <div className="friendpage-active-indicator"></div>
+                                        <span className="friendpage-active-tooltip">Active</span>
+                                    </div>
+                                )}
+                                {user.login_status === 0 && (
+                                    <div className="friendpage-active-indicator-wrapper">
+                                        <div className="friendpage-inactive-indicator"></div>
+                                        <span className="friendpage-inactive-tooltip">Inactive</span>
+                                    </div>
+                                )}
                                 <div className="friendpage-user-avatar">
                                     {user.profileImageUrl ? (
                                         <img src={user.profileImageUrl} alt={user.username} onError={(e) => { e.target.style.display = 'none'; }} />
@@ -215,15 +236,6 @@ const FriendPage = () => {
                     </div>
                 </div>
             )}
-
-            {/* Two-column layout (kept for future use) */}
-            <div className="friendpage-content">
-                {/* Left column: Blank for now */}
-                <div className="friendpage-left"></div>
-
-                {/* Right column: Blank for now */}
-                <div className="friendpage-right"></div>
-            </div>
         </div>
     );
 };
