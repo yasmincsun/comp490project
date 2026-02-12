@@ -1,70 +1,152 @@
 /* Refer to any other .css to match styling/logic 
 Update colors from video's .css to match our UI (color, font, etc) 
-First section is the template for the whole application, change only if the template is changed from homePage
 */
 
-/* Homepage styles updated to match the site's light green / cream theme */
 
-.homepage-feed-btn-topleft {
-    position: fixed;
-    top: 20px;
-    left: 30px;
-    z-index: 200;
-    /* higher so it appears above other panels */
+/* Container holds the entire create post page, centers the panel using justify-content */
+.create-post-container {
     display: flex;
-    gap: 8px;
-    align-items: center;
-    background: #c7dbef;
+    justify-content: center;
+    margin-top: 20px;
+    width: 100%;
 }
 
-.homepage-login-btn-topright {
-    position: fixed;
-    top: 20px;
-    right: 30px;
-    z-index: 200;
-    /* higher so it appears above other panels */
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    background: #c7dbef;
-}
-
-.homepage-login-btn {
-    padding: 10px 18px;
-    background: linear-gradient(90deg, var(--btn-bg1, #789c90), var(--btn-bg2, #9bb1cd));
-    background-size: 200% 200%;
-    color: black;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    text-transform: uppercase;
-    font-family: 'Times New Roman', Times, serif;
-    animation: btnGradientShift 6s ease infinite;
-}
-
-.homepage-login-btn:hover {
-    background: var(--btn-hover);
-    transform: translateY(-1px);
-}
-
-.homepage-searchbar-top {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    z-index: 10;
-    background: transparent;
-    padding: 0;
-    transition: all 0.6s ease-in-out;
+/* Main panel */
+.create-post-panel {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+    width: 650px;
+    background: #bad5ce;
+    padding-bottom: 30px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    max-width: 100%;
 }
-/* End of homePage template */
 
-/*Create unique elements for the post page, make sure it aligns with the rest of the application*/
+/* Header */
+.create-post-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+}
 
+.create-post-title {
+    font-size: 48px;
+    font-weight: 700;
+    color: #111;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.create-post-underline {
+    width: 61px;
+    height: 6px;
+    background: #111;
+    border-radius: 9px;
+    margin-bottom: 15px;
+}
+
+.create-post-subtitle {
+    font-size: 16px;
+    color: #444;
+    text-align: center;
+}
+
+/* Input grouping */
+.create-post-inputs {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Row style (same as login rowInput) */
+.create-post-row {
+    display: flex;
+    align-items: center;
+    margin: 0 auto;
+    width: 480px;
+    background: #fff;
+    border-radius: 6px;
+    padding: 18px 14px;
+    box-sizing: border-box;
+    position: relative;
+}
+
+/* Label + field alignment */
+.create-post-label-field {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 12px;
+}
+
+.create-post-label {
+    font-size: 16px;
+    color: #111;
+    width: 90px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* Text input */
+.create-post-input {
+    height: 44px;
+    width: calc(100% - 100px - 12px);
+    padding: 6px 12px;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    color: #333;
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* Textarea (content field) */
+.create-post-textarea {
+    min-height: 140px;
+    resize: vertical;
+}
+
+/* Error message (same positioning as login) */
+.create-post-error {
+    position: absolute;
+    right: 18px;
+    color: #c0392b;
+    font-size: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    white-space: nowrap;
+}
+
+/* Submit section */
+.create-post-submit-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 28px;
+}
+
+.create-post-submit {
+    width: 220px;
+    height: 72px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: 700;
+    font-family: 'Montserrat', sans-serif;
+    background: #bdbdbd;
+    color: #111;
+    transition: background-color 150ms ease, transform 80ms ease;
+}
+
+.create-post-submit:hover {
+    background: #a9a9a9;
+    transform: translateY(-2px);
+}
+
+.create-post-submit:disabled {
+    background: #d7d7d7;
+    color: #666;
+    cursor: not-allowed;
+}
