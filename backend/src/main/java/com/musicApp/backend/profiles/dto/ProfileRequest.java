@@ -5,6 +5,7 @@ package com.musicApp.backend.profiles.dto;
     String username,
     String name,
     String lastName,
+    String email,
     String bio,
     Integer color,
     String imageKey,

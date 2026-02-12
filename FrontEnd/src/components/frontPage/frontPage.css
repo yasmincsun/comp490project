@@ -235,11 +235,11 @@
 
 /* About Section Styles */
 .frontpage-about-section {
-  min-height: 110vh;
+  min-height: 60vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 100px 40px;
+  padding: 60px 40px;
 }
 
 .about-animated-center {
@@ -252,10 +252,15 @@
   width: fit-content;
   max-width: 1000px;
   margin: 0 auto;
-  animation: aboutPop 900ms ease-out forwards;
+  animation: aboutPop 900ms ease-out forwards, aboutFloat 4s ease-in-out infinite 1s;
   transform: translateY(12px) scale(0.98);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   line-height: 1.6;
+}
+
+@keyframes aboutFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
 }
 
 @keyframes aboutPop {
@@ -331,7 +336,7 @@
 
 @media (max-width: 800px) {
   .frontpage-about-section {
-    padding: 60px 20px;
+    padding: 40px 20px;
   }
 
   .about-animated-center {
@@ -364,5 +369,44 @@
 
   .team-card p {
     font-size: 14px;
+  }
+}
+
+/* Back to Top Button Styles */
+.back-to-top-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #0ea5a4 0%, #0369a1 100%);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  animation: bounceArrow 1.5s ease-in-out infinite;
+  opacity: 0.9;
+  transition: opacity 0.3s ease, background 0.3s ease;
+  z-index: 999;
+}
+
+.back-to-top-btn:hover {
+  opacity: 1;
+  background: linear-gradient(135deg, #0d9494 0%, #0558a1 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+@keyframes bounceArrow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
   }
 }
