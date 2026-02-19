@@ -169,7 +169,7 @@ const FriendPage = () => {
             <div
                 className={`friendpage-search-bar-top ${hasSearched ? "moved-to-top" : "centered"}`}
             >
-                <h2 className="friendpage-search-title">Search for Friends</h2>
+                <h3 className="friendpage-search-title">Search for Friends</h3>
                 {!hasSearched && (
                     <p className="friendpage-search-tagline">Find and connect with your friends by searching their usernames</p>
                 )}

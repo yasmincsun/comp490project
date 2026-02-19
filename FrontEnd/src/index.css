@@ -26,6 +26,11 @@ h2 {
   margin-bottom: 20px;
 }
 
+h3 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
 /* Styling the question text */
 .question {
   font-size: 1.2em;
