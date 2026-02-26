@@ -60,7 +60,7 @@ public class AuthenticationUser {
     private Boolean loginStatus = false; //find a way to change when someone is online
     private int playlist_count;
     private int friends_count;
-    private int color;
+    private int color = 12901359;
 
     @ManyToOne
     @JoinColumn(name = "mood_id")
@@ -109,7 +109,7 @@ public class AuthenticationUser {
         this.username = username;
         this.email = email;
         this.password = password;
-        
+        this.color = 12901359;
     }
 
     /** Default constructor required by JPA. */

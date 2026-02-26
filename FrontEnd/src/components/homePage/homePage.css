@@ -370,8 +370,8 @@
 
 .homepage-container {
     /* animated background between two colors provided by CSS variables (set from JSX) */
-    --home-bg1: #c4dbefff; /* default primary */
-    --home-bg2: #8ab4f8; /* default secondary (bright contrast) */
+        --home-bg1: #c4dbef; /* default primary */
+        --home-bg2: #8ab4f8; /* default secondary (bright contrast) */
     background: linear-gradient(45deg, var(--home-bg1) 0%, var(--home-bg2) 100%);
     background-size: 400% 400%;
     animation: gradientShift 6s ease infinite;
@@ -603,4 +603,94 @@
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
+}
+
+/* Notifications Button and Dropdown */
+.homepage-notifications-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.homepage-notifications-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.homepage-notifications-btn:hover {
+    background-color: rgba(0, 0, 0, 0.08);
+}
+
+.homepage-notif-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+.homepage-notifications-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    min-width: 300px;
+    max-width: 400px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.homepage-no-notifications {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    gap: 16px;
+}
+
+.homepage-no-notif-icon {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    opacity: 0.6;
+}
+
+.homepage-no-notifications p {
+    color: #999;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.homepage-notifications-list {
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+}
+
+.homepage-notification-item {
+    padding: 12px 16px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+    color: #333;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.homepage-notification-item:last-child {
+    border-bottom: none;
+}
+
+.homepage-notification-item:hover {
+    background-color: #f5f5f5;
 }

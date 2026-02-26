@@ -191,16 +191,15 @@ public void validateEmailVerificationToken(String token, String email) {
      * @return an {@link AuthenticationResponseBody} containing the JWT and a confirmation message
      */
 public AuthenticationResponseBody register(AuthenticationRequestBody registerRequestBody) {
-    // Save new user with name, email, and encoded password
-    AuthenticationUser user = authenticationUserRepository.save(
-            new AuthenticationUser(
-                    registerRequestBody.getName(), // 👈 added name
-                    registerRequestBody.getLastName(),
-                    registerRequestBody.getUsername(),
-                    registerRequestBody.getEmail(),
-                    encoder.encode(registerRequestBody.getPassword())
-            )
+    AuthenticationUser user = new AuthenticationUser(
+        registerRequestBody.getName(),
+        registerRequestBody.getLastName(),
+        registerRequestBody.getUsername(),
+        registerRequestBody.getEmail(),
+        encoder.encode(registerRequestBody.getPassword())
     );
+    user.setColor(12901359);
+    user = authenticationUserRepository.save(user);
 
     // Generate email verification token
     String emailVerificationToken = generateEmailVerificationToken();

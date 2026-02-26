@@ -23,14 +23,30 @@ const FriendPage = () => {
         }
     }, [navigate]);
 
-    // Apply background color from profile (localStorage)
-    useEffect(() => {
+    // Fetch current user's profile color from backend (no localStorage)
+    const fetchProfile = async () => {
         try {
-            const data = JSON.parse(localStorage.getItem("profileData") || "null");
-            if (data && data.bgColor) setBgColor(data.bgColor);
+            const token = localStorage.getItem("authToken");
+            if (!token) return null;
+            const res = await fetch("http://127.0.0.1:8080/api/v1/profile", {
+                headers: { Authorization: `Bearer ${token || ""}` },
+            });
+            if (!res.ok) return null;
+            return await res.json();
         } catch (e) {
-            console.error("Error parsing profile data:", e);
+            console.error("Could not load profile from backend:", e);
+            return null;
         }
+    };
+
+    useEffect(() => {
+        (async () => {
+            const user = await fetchProfile();
+            if (user && user.color != null) {
+                const hex = "#" + Number(user.color).toString(16).padStart(6, "0");
+                setBgColor(hex);
+            }
+        })();
     }, []);
 
     // Utility: adjust hex color by amount (-255..255)
@@ -137,11 +153,11 @@ const FriendPage = () => {
         }
     };
 
-    // Determine gradient colors
-    const defaultPrimary = "#c4dbefff";
+    // Determine gradient colors (use user's selected color if available)
+    const defaultPrimary = "#c4dbef";
     const defaultSecondary = "#8ab4f8";
-    const primary = defaultPrimary;
-    const secondary = defaultSecondary;
+    const primary = bgColor || defaultPrimary;
+    const secondary = bgColor ? brightenHex(primary) : defaultSecondary;
     const btnPrimary = complementaryHex(primary);
     const btnSecondary = complementaryHex(secondary);
 
@@ -173,8 +189,14 @@ const FriendPage = () => {
                 {!hasSearched && (
                     <p className="friendpage-search-tagline">Find and connect with your friends by searching their usernames</p>
                 )}
-                {!hasSearched && (
-                    <img src={magGlass} alt="Search" className="friendpage-empty-glass" />
+                {/* Show center magnifier when initially on page OR when a search returned no results */}
+                {(!hasSearched || (hasSearched && searchResults.length === 0)) && (
+                    <>
+                        <img src={magGlass} alt="Search" className="friendpage-empty-glass" />
+                        {hasSearched && searchResults.length === 0 && (
+                            <p style={{ marginTop: 8, color: '#333', fontWeight: 600 }}>No users found. Try searching using a different search term!</p>
+                        )}
+                    </>
                 )}
                 <div className="friendpage-search-form">
                     <input
@@ -205,21 +227,26 @@ const FriendPage = () => {
                                 key={user.id}
                                 className={`friendpage-user-card ${newResultIds.has(user.id) ? 'new' : ''}`}
                                 style={{
-                                    backgroundColor: user.bgColor ? intToHex(user.bgColor) : "rgba(255, 255, 255, 0.92)"
+                                    // use user's stored color if present AND not the default account color (12901359)
+                                    backgroundColor: (() => {
+                                        const stored = user.bgColor ?? user.color ?? null;
+                                        const intVal = stored != null ? Number(stored) : null;
+                                        if (intVal && intVal !== 12901359) return intToHex(intVal);
+                                        // fallback profile preview background
+                                        return "rgba(255, 255, 255, 0.92)";
+                                    })()
                                 }}
                             >
-                                {user.login_status === 1 && (
-                                    <div className="friendpage-active-indicator-wrapper">
-                                        <div className="friendpage-active-indicator"></div>
-                                        <span className="friendpage-active-tooltip">Active</span>
-                                    </div>
-                                )}
-                                {user.login_status === 0 && (
-                                    <div className="friendpage-active-indicator-wrapper">
-                                        <div className="friendpage-inactive-indicator"></div>
-                                        <span className="friendpage-inactive-tooltip">Inactive</span>
-                                    </div>
-                                )}
+                                {/* Support multiple possible backend formats for online status */}
+                                {(() => {
+                                    const isActive = user.loginStatus === 1 || user.loginStatus === true || user.login_status === 1 || user.login_status === true || user.online === true || user.loggedIn === true;
+                                    return (
+                                        <div className="friendpage-active-indicator-wrapper">
+                                            <div className={isActive ? 'friendpage-active-indicator' : 'friendpage-inactive-indicator'}></div>
+                                            <span className={isActive ? 'friendpage-active-tooltip' : 'friendpage-inactive-tooltip'}>{isActive ? 'Active' : 'Inactive'}</span>
+                                        </div>
+                                    );
+                                })()}
                                 <div className="friendpage-user-avatar">
                                     {user.profileImageUrl ? (
                                         <img src={user.profileImageUrl} alt={user.username} onError={(e) => { e.target.style.display = 'none'; }} />

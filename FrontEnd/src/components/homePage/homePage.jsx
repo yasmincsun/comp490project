@@ -1,6 +1,8 @@
 ﻿import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./homePage.css";
+import notifIcon from "../assets/notif.png";
+import noNotifsIcon from "../assets/nonotifs.png";
 
 // list of moods used by the dropdown
 const MOODS = [
@@ -70,6 +72,8 @@ const HomePage = () => {
     const [newMoodId, setNewMoodId] = useState(null); // for entry animation
     const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
     const [openDropdown, setDropdownOpen] = useState(false);
+    const [notificationsOpen, setNotificationsOpen] = useState(false);
+    const [notifications, setNotifications] = useState([]); // empty array for default "No Notifications" state
     const navigate = useNavigate();
 
 /**
@@ -82,14 +86,30 @@ const HomePage = () => {
         setIsLoggedIn(!!token);
     }, []);
 
-    // apply background color from profile (localStorage)
-    useEffect(() => {
+    // fetch current user's profile color from backend (do not use localStorage)
+    const fetchProfile = async () => {
         try {
-            const data = JSON.parse(localStorage.getItem('profileData') || 'null');
-            if (data && data.bgColor) setBgColor(data.bgColor);
+            const token = localStorage.getItem("authToken");
+            if (!token) return null;
+            const res = await fetch("http://127.0.0.1:8080/api/v1/profile", {
+                headers: { Authorization: `Bearer ${token || ""}` },
+            });
+            if (!res.ok) return null;
+            return await res.json();
         } catch (e) {
-            console.error("Error parsing profile data:", e);
+            console.error("Could not load profile from backend:", e);
+            return null;
         }
+    };
+
+    useEffect(() => {
+        (async () => {
+            const user = await fetchProfile();
+            if (user && user.color != null) {
+                const hex = "#" + Number(user.color).toString(16).padStart(6, "0");
+                setBgColor(hex);
+            }
+        })();
     }, []);
 
     // utility: adjust hex color by amount (-255..255)
@@ -257,7 +277,7 @@ const handleLogout = async () => {
  */
 
     // determine gradient colors (defaults if no profile color)
-    const defaultPrimary = '#c4dbefff';
+    const defaultPrimary = '#c4dbef';
     const defaultSecondary = '#8ab4f8'; // changed to a notably different blue to create visible gradient movement
     const primary = bgColor || defaultPrimary;
     const brightSecondary = brightenHex(primary); // always brighten the primary for gradient contrast
@@ -317,13 +337,43 @@ const handleLogout = async () => {
                 </button>
 
                 {isLoggedIn && (
-                    <button
-                        className="homepage-login-btn"
-                        style={{ marginLeft: 12 }}
-                        onClick={() => navigate("/profile")}
-                    >
-                        PROFILE
-                    </button>
+                    <>
+                        <div className="homepage-notifications-wrapper">
+                            <button
+                                className="homepage-notifications-btn"
+                                onClick={() => setNotificationsOpen(!notificationsOpen)}
+                                title="Notifications"
+                            >
+                                <img src={notifIcon} alt="Notifications" className="homepage-notif-icon" />
+                            </button>
+                            {notificationsOpen && (
+                                <div className="homepage-notifications-dropdown">
+                                    {notifications.length === 0 ? (
+                                        <div className="homepage-no-notifications">
+                                            <img src={noNotifsIcon} alt="No Notifications" className="homepage-no-notif-icon" />
+                                            <p>No Notifications</p>
+                                        </div>
+                                    ) : (
+                                        <div className="homepage-notifications-list">
+                                            {notifications.map((notif, idx) => (
+                                                <div key={idx} className="homepage-notification-item">
+                                                    {notif}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+
+                        <button
+                            className="homepage-login-btn"
+                            style={{ marginLeft: 12 }}
+                            onClick={() => navigate("/profile")}
+                        >
+                            PROFILE
+                        </button>
+                    </>
                 )}
             </div>
 
