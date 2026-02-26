@@ -35,6 +35,12 @@ public class Post {
 
     @Column(nullable = false) //Creates column for post date, cannot be null
     private LocalDateTime postCreated = LocalDateTime.now();
+ 
+    //Foreign key for userID 
+    @ManyToOne
+    @JoinColumn(name = "userID", referencedColumnName = "id", nullable = true)
+    private AuthenticationUser user;
+
 
     @Column(nullable = true) //Location placeholder, can be null
     private String postLocation;
