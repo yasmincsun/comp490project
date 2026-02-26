@@ -9,9 +9,9 @@
     overflow: hidden;
     background: linear-gradient(
         135deg,
-        var(--home-bg1, #c4dbefff) 0%,
+        var(--home-bg1, #c4dbef) 0%,
         var(--home-bg2, #8ab4f8) 50%,
-        var(--home-bg1, #c4dbefff) 100%
+        var(--home-bg1, #c4dbef) 100%
     );
     background-size: 400% 400%;
     animation: gradientShift 15s ease infinite;
@@ -151,6 +151,12 @@
     animation: float 3s ease-in-out infinite;
 }
 
+/* Hide the central magnifying glass image when the search bar
+   moves to the top of the screen (pinned/sticky state) */
+.friendpage-search-bar-top.moved-to-top .friendpage-empty-glass {
+    display: none;
+}
+
 .friendpage-search-form {
     display: flex;
     align-items: center;
@@ -265,7 +271,7 @@
 /* Results gallery container positioned at center screen */
 .friendpage-results-container {
     position: fixed;
-    top: 50%;
+    top: 160px;
     left: 0;
     right: 0;
     bottom: 0;
@@ -276,16 +282,15 @@
     align-items: flex-start;
     padding: 40px 20px;
     z-index: 100;
-    transform: translateY(-50%);
 }
 
 .friendpage-results-gallery {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 240px);
+    gap: 40px;
     justify-content: center;
     width: 100%;
-    max-width: 1000px;
+    max-width: 1200px;
     padding: 20px;
 }
 
@@ -362,17 +367,17 @@
 .friendpage-inactive-indicator {
     width: 16px;
     height: 16px;
-    background: #F44336;
+    background: #B71C1C; /* darker red */
     border: 3px solid white;
     border-radius: 50%;
-    box-shadow: 0 2px 8px rgba(244, 67, 54, 0.4);
+    box-shadow: 0 2px 8px rgba(183, 28, 28, 0.4);
     transition: all 0.3s ease;
     cursor: pointer;
 }
 
 .friendpage-active-indicator-wrapper:hover .friendpage-inactive-indicator {
     transform: scale(1.2);
-    box-shadow: 0 3px 12px rgba(244, 67, 54, 0.6);
+    box-shadow: 0 3px 12px rgba(183, 28, 28, 0.6);
 }
 
 .friendpage-inactive-tooltip {

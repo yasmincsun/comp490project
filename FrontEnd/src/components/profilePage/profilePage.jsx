@@ -108,24 +108,8 @@ const ProfilePage = () => {
 
 
   // Load from localStorage once
-  useEffect(() => {
-    try { 
-      const data = JSON.parse(localStorage.getItem("profileData") || "null");
-      if (data) {
-        setNickname(data.nickname || "");
-        setDescription(data.description || "");
-        setBgColor(data.bgColor || "#eaf6ff");
-        setProfilePic(data.profilePic || null);
-        setFirstName(data.firstName || "");
-        setLastName(data.lastName || "");
-        setEmail(data.email || "");
-        setUsername(data.username || "");
-        setPassword(data.password || "");
-      }
-    } catch (e) {
-      // ignore
-    }
-  }, []);
+  // Note: do not load profile data from localStorage anymore.
+  // Profile is loaded from the backend in the next effect.
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -159,10 +143,7 @@ const ProfilePage = () => {
       }
     })();
   }, []);
-  useEffect(() => {
-    const data = { nickname, description, bgColor, profilePic, favorites, firstName, lastName, email, username, password };
-    localStorage.setItem("profileData", JSON.stringify(data));
-  }, [nickname, description, bgColor, profilePic, favorites, firstName, lastName, email, username, password]);
+  // Do not persist profile to localStorage anymore — backend is the source of truth.
 
   // artist search
   useEffect(() => {
