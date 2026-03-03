@@ -23,7 +23,6 @@ const FriendPage = () => {
         }
     }, [navigate]);
 
-    // Fetch current user's profile color from backend (no localStorage)
     const fetchProfile = async () => {
         try {
             const token = localStorage.getItem("authToken");
@@ -49,7 +48,6 @@ const FriendPage = () => {
         })();
     }, []);
 
-    // Utility: adjust hex color by amount (-255..255)
     const adjustHex = (hex, amt) => {
         try {
             const h = hex.replace("#", "");
@@ -66,7 +64,6 @@ const FriendPage = () => {
         }
     };
 
-    // Utility: get a lighter/brighter version of the color for gradient
     const brightenHex = (hex) => {
         try {
             const h = hex.replace("#", "");
@@ -74,7 +71,6 @@ const FriendPage = () => {
             let r = num >> 16;
             let g = (num >> 8) & 0x00ff;
             let b = num & 0x0000ff;
-            // lighten by moving toward white
             r = Math.min(255, Math.floor(r * 1.4 + 60));
             g = Math.min(255, Math.floor(g * 1.4 + 60));
             b = Math.min(255, Math.floor(b * 1.4 + 60));
@@ -84,7 +80,6 @@ const FriendPage = () => {
         }
     };
 
-    // Utility: get complementary color
     const complementaryHex = (hex) => {
         try {
             const h = hex.replace("#", "");
@@ -98,14 +93,12 @@ const FriendPage = () => {
         }
     };
 
-    // Utility: convert int color to hex
     const intToHex = (colorInt) => {
         if (colorInt === null || colorInt === undefined) return "#c4dbef";
         const hex = Number(colorInt).toString(16).padStart(6, "0");
         return "#" + hex;
     };
 
-    // Search for users
     const handleSearch = async () => {
         if (!searchQuery.trim()) {
             setSearchResults([]);
@@ -146,14 +139,12 @@ const FriendPage = () => {
         }
     };
 
-    // Handle Enter key in search input
     const handleKeyPress = (e) => {
         if (e.key === "Enter") {
             handleSearch();
         }
     };
 
-    // Determine gradient colors (use user's selected color if available)
     const defaultPrimary = "#c4dbef";
     const defaultSecondary = "#8ab4f8";
     const primary = bgColor || defaultPrimary;
@@ -194,7 +185,7 @@ const FriendPage = () => {
                     <>
                         <img src={magGlass} alt="Search" className="friendpage-empty-glass" />
                         {hasSearched && searchResults.length === 0 && (
-                            <p style={{ marginTop: 8, color: '#333', fontWeight: 600 }}>No users found. Try searching using a different search term!</p>
+                            <p style={{ marginTop: 100, color: '#333', fontWeight: 600 }}>No users found. Try searching using a different search term!</p>
                         )}
                     </>
                 )}
@@ -237,9 +228,9 @@ const FriendPage = () => {
                                     })()
                                 }}
                             >
-                                {/* Support multiple possible backend formats for online status */}
+                                { }
                                 {(() => {
-                                    const isActive = user.loginStatus === 1 || user.loginStatus === true || user.login_status === 1 || user.login_status === true || user.online === true || user.loggedIn === true;
+                                    const isActive = user.login_status === true;
                                     return (
                                         <div className="friendpage-active-indicator-wrapper">
                                             <div className={isActive ? 'friendpage-active-indicator' : 'friendpage-inactive-indicator'}></div>
