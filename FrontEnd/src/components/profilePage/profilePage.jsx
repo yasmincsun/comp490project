@@ -47,14 +47,14 @@ const MOCK_ARTISTS = [
  */
 const ProfilePage = () => {
   const navigate = useNavigate();
-  
+
   // ========== DATABASE VARIABLES: Save these to the database ==========
   const [nickname, setNickname] = useState("");             // User's nickname
   const [description, setDescription] = useState("");       // User's bio/description
   const [bgColor, setBgColor] = useState("#eaf6ff");     // User's background color preference
   const [favorites, setFavorites] = useState([]);           // User's list of favorite artists (max 3)
   // ====================================================================
-  
+
   const [profilePic, setProfilePic] = useState(null);
   const [artistQuery, setArtistQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -63,14 +63,14 @@ const ProfilePage = () => {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  
+
   // Editing states for account fields
   const [editingFirstName, setEditingFirstName] = useState(false);
   const [editingLastName, setEditingLastName] = useState(false);
   const [editingEmail, setEditingEmail] = useState(false);
   const [editingUsername, setEditingUsername] = useState(false);
   const [editingPassword, setEditingPassword] = useState(false);
-  
+
   // Temp values for editing
   const [tempFirstName, setTempFirstName] = useState("");
   const [tempLastName, setTempLastName] = useState("");
@@ -79,10 +79,10 @@ const ProfilePage = () => {
   const [tempPass1, setTempPass1] = useState("");
   const [tempPass2, setTempPass2] = useState("");
   const [passError, setPassError] = useState("");
-  
+
   // Track if any account fields have been changed
   const [hasChanges, setHasChanges] = useState(false);
-  
+
   const fileInputRef = useRef(null);
 
   const [imgRetry, setImgRetry] = useState(0); // prevents infinite retry loop
@@ -90,33 +90,33 @@ const ProfilePage = () => {
 
 
   const fetchProfile = async () => {
-  const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("authToken");
 
-  const res = await fetch("http://127.0.0.1:8080/api/v1/profile", {
-    headers: {
-      Authorization: `Bearer ${token || ""}`,
-    },
-  });
+    const res = await fetch("http://127.0.0.1:8080/api/v1/profile", {
+      headers: {
+        Authorization: `Bearer ${token || ""}`,
+      },
+    });
 
-  if (!res.ok) {
-    const msg = await res.text();
-    throw new Error(msg || `Failed: ${res.status}`);
-  }
+    if (!res.ok) {
+      const msg = await res.text();
+      throw new Error(msg || `Failed: ${res.status}`);
+    }
 
-  return res.json();
-};
+    return res.json();
+  };
 
 
   // Load from localStorage once
   // Note: do not load profile data from localStorage anymore.
   // Profile is loaded from the backend in the next effect.
 
-////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////
 
   const hexToRgbInt = (hex) => parseInt(hex.replace("#", ""), 16);
   const rgbIntToHex = (n) => "#" + Number(n).toString(16).padStart(6, "0");
 
-//Load from backend
+  //Load from backend
   useEffect(() => {
     (async () => {
       try {
@@ -143,9 +143,7 @@ const ProfilePage = () => {
       }
     })();
   }, []);
-  // Do not persist profile to localStorage anymore — backend is the source of truth.
 
-  // artist search
   useEffect(() => {
     if (!artistQuery) return setSearchResults([]);
     const q = artistQuery.toLowerCase();
@@ -160,24 +158,24 @@ const ProfilePage = () => {
     if (!file) return;
 
     // basic client-side validation
-  const allowed = ["image/jpeg", "image/png", "image/webp"];
-  if (!allowed.includes(file.type)) {
-    alert("Please upload a JPG, PNG, or WEBP image.");
-    return;
-  }
+    const allowed = ["image/jpeg", "image/png", "image/webp"];
+    if (!allowed.includes(file.type)) {
+      alert("Please upload a JPG, PNG, or WEBP image.");
+      return;
+    }
 
-  const maxBytes = 3 * 1024 * 1024; // 3MB (match backend)
-  if (file.size > maxBytes) {
-    alert("Image is too large (max 3MB).");
-    return;
-  }
+    const maxBytes = 3 * 1024 * 1024; // 3MB (match backend)
+    if (file.size > maxBytes) {
+      alert("Image is too large (max 3MB).");
+      return;
+    }
 
-  setSelectedProfileFile(file);
+    setSelectedProfileFile(file);
 
     //show preview
-  const localPreviewUrl = URL.createObjectURL(file);
-  setProfilePic(localPreviewUrl);
-};
+    const localPreviewUrl = URL.createObjectURL(file);
+    setProfilePic(localPreviewUrl);
+  };
 
   const removeProfilePic = () => setProfilePic(null);
 
@@ -207,7 +205,7 @@ const ProfilePage = () => {
 
   // This updates the bio
   const handleSaveBio = async () => {
-    try{
+    try {
       const token = localStorage.getItem("authToken");
       const response = await fetch(
         `http://127.0.0.1:8080/api/v1/profile/bio?bio=${encodeURIComponent(description)}`,
@@ -219,192 +217,192 @@ const ProfilePage = () => {
         }
       );
 
-      if(!response.ok){
+      if (!response.ok) {
         const msg = await response.text();
         throw new Error(msg || `Failed: ${response.status}`);
       }
 
       alert("Bio updated!");
     }
-    catch(err){
+    catch (err) {
       console.error(err);
       alert("Could not update bio.");
     }
   };
 
- const handleSaveProfile = async () => {
-  try {
-    const token = localStorage.getItem("authToken");
-    const headers = { Authorization: `Bearer ${token || ""}` };
+  const handleSaveProfile = async () => {
+    try {
+      const token = localStorage.getItem("authToken");
+      const headers = { Authorization: `Bearer ${token || ""}` };
 
-    const colorInt = hexToRgbInt(bgColor);
+      const colorInt = hexToRgbInt(bgColor);
 
-    const response1 = await fetch(
-      `http://127.0.0.1:8080/api/v1/profile/userName?userName=${encodeURIComponent(nickname)}`,
-      { method: "PUT", headers }
-    );
+      const response1 = await fetch(
+        `http://127.0.0.1:8080/api/v1/profile/userName?userName=${encodeURIComponent(nickname)}`,
+        { method: "PUT", headers }
+      );
 
-    const response2 = await fetch(
-      `http://127.0.0.1:8080/api/v1/profile/bio?bio=${encodeURIComponent(description)}`,
-      { method: "PUT", headers }
-    );
+      const response2 = await fetch(
+        `http://127.0.0.1:8080/api/v1/profile/bio?bio=${encodeURIComponent(description)}`,
+        { method: "PUT", headers }
+      );
 
-    const response3 = await fetch(
-      `http://127.0.0.1:8080/api/v1/profile/color?color=${colorInt}`,
-      { method: "PUT", headers }
-    );
+      const response3 = await fetch(
+        `http://127.0.0.1:8080/api/v1/profile/color?color=${colorInt}`,
+        { method: "PUT", headers }
+      );
 
-    for (const r of [response1, response2, response3]) {
-      if (!r.ok) {
-        const msg = await r.text();
-        console.error("Update failed:", r.status, msg);
-        throw new Error(msg || `Failed: ${r.status}`);
+      for (const r of [response1, response2, response3]) {
+        if (!r.ok) {
+          const msg = await r.text();
+          console.error("Update failed:", r.status, msg);
+          throw new Error(msg || `Failed: ${r.status}`);
+        }
       }
+
+      alert("Profile updated!");
+    } catch (e) {
+      console.error(e);
+      alert("Could not update profile.");
     }
 
-    alert("Profile updated!");
-  } catch (e) {
-    console.error(e);
-    alert("Could not update profile.");
-  }
-
-};
+  };
 
   // call this when user clicks an "Upload" button
-const handleUploadProfilePic = async () => {
-  try {
-    if (!selectedProfileFile) {
-      alert("Pick an image first.");
-      return;
-    }
-
-    const token = localStorage.getItem("authToken");
-
-    // 1) ask backend for presigned upload URL
-    const res = await fetch("http://127.0.0.1:8080/api/v1/profile/picture/upload-url", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token || ""}`,
-      },
-      body: JSON.stringify({
-        contentType: selectedProfileFile.type,
-        fileSize: selectedProfileFile.size,
-      }),
-    });
-
-    if (!res.ok) {
-      const msg = await res.text();
-      throw new Error(msg || `Failed to get upload URL: ${res.status}`);
-    }
-
-    const { uploadUrl, objectKey } = await res.json();
-
-    // 2) upload directly to R2
-    const putRes = await fetch(uploadUrl, {
-      method: "PUT",
-      headers: {
-        "Content-Type": selectedProfileFile.type, // MUST match what backend signed
-      },
-      body: selectedProfileFile,
-    });
-
-    if (!putRes.ok) {
-      const msg = await putRes.text();
-      throw new Error(msg || `Upload failed: ${putRes.status}`);
-    }
-
-    // 3) tell backend to save objectKey to the user 
-    const saveRes = await fetch("http://127.0.0.1:8080/api/v1/profile/picture", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token || ""}`,
-      },
-      body: JSON.stringify({ objectKey }),
-    });
-
-    if (!saveRes.ok) {
-      const msg = await saveRes.text();
-      throw new Error(msg || `Failed to save profile image: ${saveRes.status}`);
-    }
-
-    // If backend returns a publicUrl, it will use it. Otherwise it will build from base URL + objectKey.
-    const saved = await saveRes.json().catch(() => ({}));
-
-    if (saved.profileImageUrl) {
-      setProfilePic(saved.profileImageUrl);
-      setImgRetry(0);
-    }
-
-    alert("Profile picture uploaded!");
-  } catch (err) {
-    console.error(err);
-    alert("Could not upload profile picture.");
-  }
-};
-
-// Save account information to the database
-const handleSaveAccountInfo = async () => {
-  try {
-    const token = localStorage.getItem("authToken");
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token || ""}`,
-    };
-
-    // Prepare the request body with the fields that have been changed
-    const updates = {};
-    if (tempFirstName !== firstName) updates.firstName = tempFirstName;
-    if (tempLastName !== lastName) updates.lastName = tempLastName;
-    if (tempPass1) {
-      if (tempPass1 !== tempPass2) {
-        setPassError("Passwords do not match");
+  const handleUploadProfilePic = async () => {
+    try {
+      if (!selectedProfileFile) {
+        alert("Pick an image first.");
         return;
       }
-      updates.password = tempPass1;
+
+      const token = localStorage.getItem("authToken");
+
+      // 1) ask backend for presigned upload URL
+      const res = await fetch("http://127.0.0.1:8080/api/v1/profile/picture/upload-url", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token || ""}`,
+        },
+        body: JSON.stringify({
+          contentType: selectedProfileFile.type,
+          fileSize: selectedProfileFile.size,
+        }),
+      });
+
+      if (!res.ok) {
+        const msg = await res.text();
+        throw new Error(msg || `Failed to get upload URL: ${res.status}`);
+      }
+
+      const { uploadUrl, objectKey } = await res.json();
+
+      // 2) upload directly to R2
+      const putRes = await fetch(uploadUrl, {
+        method: "PUT",
+        headers: {
+          "Content-Type": selectedProfileFile.type, // MUST match what backend signed
+        },
+        body: selectedProfileFile,
+      });
+
+      if (!putRes.ok) {
+        const msg = await putRes.text();
+        throw new Error(msg || `Upload failed: ${putRes.status}`);
+      }
+
+      // 3) tell backend to save objectKey to the user 
+      const saveRes = await fetch("http://127.0.0.1:8080/api/v1/profile/picture", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token || ""}`,
+        },
+        body: JSON.stringify({ objectKey }),
+      });
+
+      if (!saveRes.ok) {
+        const msg = await saveRes.text();
+        throw new Error(msg || `Failed to save profile image: ${saveRes.status}`);
+      }
+
+      // If backend returns a publicUrl, it will use it. Otherwise it will build from base URL + objectKey.
+      const saved = await saveRes.json().catch(() => ({}));
+
+      if (saved.profileImageUrl) {
+        setProfilePic(saved.profileImageUrl);
+        setImgRetry(0);
+      }
+
+      alert("Profile picture uploaded!");
+    } catch (err) {
+      console.error(err);
+      alert("Could not upload profile picture.");
     }
+  };
 
-    const response = await fetch("http://127.0.0.1:8080/api/v1/profile/account", {
-      method: "PUT",
-      headers,
-      body: JSON.stringify(updates),
-    });
+  // Save account information to the database
+  const handleSaveAccountInfo = async () => {
+    try {
+      const token = localStorage.getItem("authToken");
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token || ""}`,
+      };
 
-    if (!response.ok) {
-      const msg = await response.text();
-      throw new Error(msg || `Failed: ${response.status}`);
+      // Prepare the request body with the fields that have been changed
+      const updates = {};
+      if (tempFirstName !== firstName) updates.firstName = tempFirstName;
+      if (tempLastName !== lastName) updates.lastName = tempLastName;
+      if (tempPass1) {
+        if (tempPass1 !== tempPass2) {
+          setPassError("Passwords do not match");
+          return;
+        }
+        updates.password = tempPass1;
+      }
+
+      const response = await fetch("http://127.0.0.1:8080/api/v1/profile/account", {
+        method: "PUT",
+        headers,
+        body: JSON.stringify(updates),
+      });
+
+      if (!response.ok) {
+        const msg = await response.text();
+        throw new Error(msg || `Failed: ${response.status}`);
+      }
+
+      // Update the state with the new values
+      setFirstName(tempFirstName);
+      setLastName(tempLastName);
+      if (tempPass1) setPassword(tempPass1);
+      setHasChanges(false);
+      setEditingFirstName(false);
+      setEditingLastName(false);
+      setEditingPassword(false);
+      setTempPass1("");
+      setTempPass2("");
+      setPassError("");
+
+      alert("Account information updated!");
+    } catch (e) {
+      console.error(e);
+      alert("Could not update account information.");
     }
-
-    // Update the state with the new values
-    setFirstName(tempFirstName);
-    setLastName(tempLastName);
-    if (tempPass1) setPassword(tempPass1);
-    setHasChanges(false);
-    setEditingFirstName(false);
-    setEditingLastName(false);
-    setEditingPassword(false);
-    setTempPass1("");
-    setTempPass2("");
-    setPassError("");
-    
-    alert("Account information updated!");
-  } catch (e) {
-    console.error(e);
-    alert("Could not update account information.");
-  }
-};
+  };
 
 
 
 
 
-/**
- * Displays the profile information to the user
- * <p>
- * This statement displays the profile information to the user, including all of the necessary styling and API information. 
-* @return ProfilePage interface to the Webpage
- */
+  /**
+   * Displays the profile information to the user
+   * <p>
+   * This statement displays the profile information to the user, including all of the necessary styling and API information. 
+  * @return ProfilePage interface to the Webpage
+   */
 
   // Helper function to convert hex to rgba with 50% opacity
   const hexToRgba50 = (hex) => {
@@ -423,27 +421,27 @@ const handleSaveAccountInfo = async () => {
 
       <div className="profilepage-card">
         <h1>Your Profile</h1>
-        
+
         <div className="profile-content">
           <div className="profile-row">
             <div className="profile-avatar-column">
               <div className="profile-avatar">
                 {profilePic ? (
-                  <img src={profilePic} alt="profile" 
-                      onError={async () => {
-                        // retry only once to avoid infinite loops
-                        if (imgRetry >= 1) return;
-                        setImgRetry(1);
+                  <img src={profilePic} alt="profile"
+                    onError={async () => {
+                      // retry only once to avoid infinite loops
+                      if (imgRetry >= 1) return;
+                      setImgRetry(1);
 
-                        try {
-                          const user = await fetchProfile();
-                          setProfilePic(user.profileImageUrl || null);
-                        } catch (e) {
-                          console.error("Could not refresh profile image URL:", e);
-                          setProfilePic(null);
-                        }
-                      }} 
-                    />
+                      try {
+                        const user = await fetchProfile();
+                        setProfilePic(user.profileImageUrl || null);
+                      } catch (e) {
+                        console.error("Could not refresh profile image URL:", e);
+                        setProfilePic(null);
+                      }
+                    }}
+                  />
                 ) : (
                   <div className="profile-avatar-placeholder">No Photo</div>
                 )}
@@ -458,15 +456,15 @@ const handleSaveAccountInfo = async () => {
                   style={{ display: "none" }}
                 />
                 {/* Image Upload Buttons */}
-                <button onClick={() => fileInputRef.current && fileInputRef.current.click()}className="profile-btn"> 
+                <button onClick={() => fileInputRef.current && fileInputRef.current.click()} className="profile-btn">
                   Choose Image
-                  </button>
+                </button>
                 <button onClick={handleUploadProfilePic} className="profile-btn" disabled={!selectedProfileFile}>
                   Upload Photo
-                  </button>
+                </button>
                 <button onClick={removeProfilePic} className="profile-btn gray">
                   Remove
-                  </button>
+                </button>
               </div>
             </div>
 
@@ -501,7 +499,7 @@ const handleSaveAccountInfo = async () => {
           {/* Your Account Section */}
           <div className="account-section">
             <h3>Your Account</h3>
-            
+
             <div className="account-field-row">
               <div className="account-label">First Name</div>
               {!editingFirstName ? (
@@ -512,7 +510,7 @@ const handleSaveAccountInfo = async () => {
               ) : (
                 <div className="account-edit">
                   <input className="input" value={tempFirstName} onChange={(e) => { setTempFirstName(e.target.value); setHasChanges(true); }} />
-                  <div style={{display:'flex',gap:8}}>
+                  <div style={{ display: 'flex', gap: 8 }}>
                     <button className="profile-save-btn" onClick={() => setEditingFirstName(false)}>Done</button>
                     <button className="profile-clear-btn gray" onClick={() => { setTempFirstName(firstName); setEditingFirstName(false); }}>Cancel</button>
                   </div>
@@ -530,7 +528,7 @@ const handleSaveAccountInfo = async () => {
               ) : (
                 <div className="account-edit">
                   <input className="input" value={tempLastName} onChange={(e) => { setTempLastName(e.target.value); setHasChanges(true); }} />
-                  <div style={{display:'flex',gap:8}}>
+                  <div style={{ display: 'flex', gap: 8 }}>
                     <button className="profile-save-btn" onClick={() => setEditingLastName(false)}>Done</button>
                     <button className="profile-clear-btn gray" onClick={() => { setTempLastName(lastName); setEditingLastName(false); }}>Cancel</button>
                   </div>
@@ -555,7 +553,7 @@ const handleSaveAccountInfo = async () => {
               ) : (
                 <div className="account-edit">
                   <input className="input" value={tempUsername} onChange={(e) => { setTempUsername(e.target.value); setHasChanges(true); }} />
-                  <div style={{display:'flex',gap:8}}>
+                  <div style={{ display: 'flex', gap: 8 }}>
                     <button className="profile-save-btn" onClick={() => setEditingUsername(false)}>Done</button>
                     <button className="profile-clear-btn gray" onClick={() => { setTempUsername(username); setEditingUsername(false); }}>Cancel</button>
                   </div>
@@ -574,8 +572,8 @@ const handleSaveAccountInfo = async () => {
                 <div className="account-edit password-edit">
                   <input className="input" type="password" placeholder="New password" value={tempPass1} onChange={(e) => { setTempPass1(e.target.value); setHasChanges(true); }} />
                   <input className="input" type="password" placeholder="Retype new password" value={tempPass2} onChange={(e) => setTempPass2(e.target.value)} />
-                  {passError && <div className="error" style={{marginTop:6}}>{passError}</div>}
-                  <div style={{marginTop:8, display:'flex', gap:8}}>
+                  {passError && <div className="error" style={{ marginTop: 6 }}>{passError}</div>}
+                  <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
                     <button className="profile-save-btn" onClick={() => setEditingPassword(false)}>Done</button>
                     <button className="profile-clear-btn gray" onClick={() => { setEditingPassword(false); setPassError(""); }}>Cancel</button>
                   </div>
@@ -585,7 +583,7 @@ const handleSaveAccountInfo = async () => {
 
             {/* Account Save Button */}
             <div className="account-save-row">
-              <button 
+              <button
                 className={`account-save-btn ${hasChanges ? 'active' : 'inactive'}`}
                 disabled={!hasChanges}
                 onClick={handleSaveAccountInfo}
@@ -602,6 +600,16 @@ const handleSaveAccountInfo = async () => {
         </div>
       </div>
 
+      <div className="connect-spotify-box">
+        <button
+          className="connect-spotify-btn"
+          onClick={() => {
+            window.location.href = 'http://127.0.0.1:8080/login';
+          }}
+        >
+          Refresh your Spotify Token
+        </button>
+      </div>
     </div>
   );
 };

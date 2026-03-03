@@ -458,3 +458,42 @@
     }
 }
 
+.connect-spotify-container{
+  position: fixed;
+  inset: 0; 
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background: var(--panel-cream);
+  z-index: 9999;
+}
+
+.connect-spotify-box{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  width:50%;
+}
+
+.connect-spotify-btn{
+  background: #10b981; 
+  color: #000;
+  border: none;
+  height: 36px;
+  width: 140px;
+  border-radius: 9999px;
+  font-size: 28px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 6px 0 rgba(0,0,0,0.08), 0 10px 30px rgba(16,185,129,0.12);
+  transition: transform 120ms ease, box-shadow 120ms ease;
+  font-family: 'Montserrat', sans-serif;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.connect-spotify-btn:hover{
+  transform: translateY(-3px);
+  box-shadow: 0 10px 0 rgba(0,0,0,0.10), 0 16px 40px rgba(16,185,129,0.16);
+}
