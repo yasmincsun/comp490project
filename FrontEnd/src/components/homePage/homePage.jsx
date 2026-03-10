@@ -318,6 +318,13 @@ const handleLogout = async () => {
                     >
                         MAP
                     </button>
+                    <button
+                        className="homepage-login-btn"
+                        style={{ marginLeft: 12 }}
+                        onClick={() => navigate("/reviews")}
+                    >
+                        REVIEWS
+                    </button>
                 </div>
             )}
 
