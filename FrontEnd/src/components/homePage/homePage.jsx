@@ -102,6 +102,25 @@ const HomePage = () => {
         }
     };
 
+    // Fetch notifications from backend
+    const fetchNotifications = async () => {
+        try {
+            const token = localStorage.getItem("authToken");
+            if (!token) return;
+            const res = await fetch("http://127.0.0.1:8080/api/v1/notifications", {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (!res.ok) {
+                console.error("Failed to fetch notifications:", res.status);
+                return;
+            }
+            const data = await res.json();
+            setNotifications(data || []);
+        } catch (e) {
+            console.error("Error fetching notifications:", e);
+        }
+    };
+
     useEffect(() => {
         (async () => {
             const user = await fetchProfile();
@@ -111,6 +130,13 @@ const HomePage = () => {
             }
         })();
     }, []);
+
+    // Fetch notifications when component mounts or when dropdown is opened
+    useEffect(() => {
+        if (isLoggedIn && notificationsOpen) {
+            fetchNotifications();
+        }
+    }, [isLoggedIn, notificationsOpen]);
 
     // utility: adjust hex color by amount (-255..255)
     const adjustHex = (hex, amt) => {
@@ -364,7 +390,7 @@ const handleLogout = async () => {
                                         <div className="homepage-notifications-list">
                                             {notifications.map((notif, idx) => (
                                                 <div key={idx} className="homepage-notification-item">
-                                                    {notif}
+                                                    {notif.message || notif}
                                                 </div>
                                             ))}
                                         </div>

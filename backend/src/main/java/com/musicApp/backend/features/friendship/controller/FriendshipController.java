@@ -5,6 +5,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.musicApp.backend.features.friendship.model.Friendship;
 import com.musicApp.backend.features.friendship.service.FriendshipService;
+import com.musicApp.backend.features.notification.service.NotificationService;
+import com.musicApp.backend.features.authentication.model.AuthenticationUser;
+import com.musicApp.backend.features.authentication.repository.AuthenticationUserRepository;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +18,12 @@ public class FriendshipController {
 
     @Autowired
     private FriendshipService friendshipService;
+
+    @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
+    private AuthenticationUserRepository userRepository;
 
     /**
      * Add a user as a friend.
@@ -33,6 +42,21 @@ public class FriendshipController {
             }
 
             Friendship friendship = friendshipService.addFriend(user1Id, user2Id);
+            
+            // Create a notification for the second user
+            try {
+                AuthenticationUser user1 = userRepository.findById(user1Id).orElse(null);
+                AuthenticationUser user2 = userRepository.findById(user2Id).orElse(null);
+                
+                if (user1 != null && user2 != null) {
+                    String message = user1.getUsername() + " added you as a friend!";
+                    notificationService.createNotification(user2, user1, "friend_request", message);
+                }
+            } catch (Exception notificationError) {
+                // Log notification error but don't fail the friendship creation
+                System.err.println("Error creating notification: " + notificationError.getMessage());
+            }
+            
             return ResponseEntity.ok(friendship);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
