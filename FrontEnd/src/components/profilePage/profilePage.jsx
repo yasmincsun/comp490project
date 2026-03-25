@@ -53,6 +53,9 @@ const ProfilePage = () => {
   const [description, setDescription] = useState("");       // User's bio/description
   const [bgColor, setBgColor] = useState("#eaf6ff");     // User's background color preference
   const [favorites, setFavorites] = useState([]);           // User's list of favorite artists (max 3)
+  const [currentlyListeningTo, setCurrentlyListeningTo] = useState(""); // What user is listening to now
+  const [displayReviewsOnProfile, setDisplayReviewsOnProfile] = useState(false); // Show reviews on profile
+  const [userReviews, setUserReviews] = useState([]);       // User's reviews
   // ====================================================================
 
   const [profilePic, setProfilePic] = useState(null);
@@ -116,7 +119,6 @@ const ProfilePage = () => {
   const hexToRgbInt = (hex) => parseInt(hex.replace("#", ""), 16);
   const rgbIntToHex = (n) => "#" + Number(n).toString(16).padStart(6, "0");
 
-  //Load from backend
   useEffect(() => {
     (async () => {
       try {
@@ -138,6 +140,22 @@ const ProfilePage = () => {
 
         // allow retry again after a successful load
         setImgRetry(0);
+
+        // Fetch user reviews
+        const token = localStorage.getItem("authToken");
+        if (token) {
+          try {
+            const reviewRes = await fetch(`http://127.0.0.1:8080/api/v1/reviews/user/${user.id}`, {
+              headers: { Authorization: `Bearer ${token}` },
+            });
+            if (reviewRes.ok) {
+              const reviews = await reviewRes.json();
+              setUserReviews(Array.isArray(reviews) ? reviews : []);
+            }
+          } catch (e) {
+            console.error("Could not load reviews:", e);
+          }
+        }
       } catch (e) {
         console.error("Could not load profile from backend:", e);
       }
@@ -146,9 +164,38 @@ const ProfilePage = () => {
 
   useEffect(() => {
     if (!artistQuery) return setSearchResults([]);
-    const q = artistQuery.toLowerCase();
-    const results = MOCK_ARTISTS.filter((a) => a.toLowerCase().includes(q));
-    setSearchResults(results);
+    
+    const searchSpotify = async () => {
+      try {
+        const token = localStorage.getItem("authToken");
+        const response = await fetch(
+          `http://127.0.0.1:8080/api/v1/spotify/search?q=${encodeURIComponent(artistQuery)}&type=artist`,
+          {
+            headers: {
+              Authorization: `Bearer ${token || ""}`,
+            },
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          const artists = data.artists?.items?.map((artist) => artist.name) || [];
+          setSearchResults(artists);
+        } else {
+          // Fallback to mock artists
+          const q = artistQuery.toLowerCase();
+          const results = MOCK_ARTISTS.filter((a) => a.toLowerCase().includes(q));
+          setSearchResults(results);
+        }
+      } catch (e) {
+        // Fallback to mock artists on error
+        const q = artistQuery.toLowerCase();
+        const results = MOCK_ARTISTS.filter((a) => a.toLowerCase().includes(q));
+        setSearchResults(results);
+      }
+    };
+
+    searchSpotify();
   }, [artistQuery]);
 
   const [selectedProfileFile, setSelectedProfileFile] = useState(null);
@@ -479,6 +526,69 @@ const ProfilePage = () => {
               <div className="bgcolor-row">
                 <input type="color" value={bgColor} onChange={(e) => setBgColor(e.target.value)} className="color-input" />
               </div>
+
+              <label className="label">Top 3 Artists</label>
+              <div className="artists-section">
+                <input
+                  type="text"
+                  placeholder="Search for an artist..."
+                  value={artistQuery}
+                  onChange={(e) => setArtistQuery(e.target.value)}
+                  className="input artist-search-input"
+                />
+                {searchResults.length > 0 && (
+                  <div className="artist-search-results">
+                    {searchResults.slice(0, 5).map((artist, idx) => (
+                      <div
+                        key={idx}
+                        className={`artist-option ${favorites.includes(artist) ? 'selected' : ''}`}
+                        onClick={() => toggleFavorite(artist)}
+                      >
+                        {artist} {favorites.includes(artist) ? '✓' : ''}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <div className="favorite-artists">
+                  <h4>Selected Artists ({favorites.length}/3)</h4>
+                  {favorites.length > 0 ? (
+                    <div className="favorite-list">
+                      {favorites.map((artist, idx) => (
+                        <div key={idx} className="favorite-artist-tag">
+                          {artist}
+                          <button className="remove-favorite" onClick={() => toggleFavorite(artist)}>×</button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="empty-message">No artists selected yet</p>
+                  )}
+                </div>
+              </div>
+
+              <label className="label">What Are You Listening To?</label>
+              <input
+                type="text"
+                placeholder="e.g., 'Blinding Lights - The Weeknd' or 'Abbey Road - The Beatles'"
+                value={currentlyListeningTo}
+                onChange={(e) => setCurrentlyListeningTo(e.target.value)}
+                className="input listening-input"
+              />
+
+              <label className="label" style={{ marginTop: 20 }}>Display Reviews on Profile</label>
+              <div className="toggle-switch-container">
+                <label className="toggle-switch">
+                  <input
+                    type="checkbox"
+                    checked={displayReviewsOnProfile}
+                    onChange={(e) => setDisplayReviewsOnProfile(e.target.checked)}
+                  />
+                  <span className="toggle-slider"></span>
+                </label>
+                <span className="toggle-label">
+                  {displayReviewsOnProfile ? "Visible" : "Hidden"}
+                </span>
+              </div>
             </div>
           </div>
 
@@ -492,6 +602,26 @@ const ProfilePage = () => {
               <div className="preview-info">
                 <div className="preview-nickname">{nickname || "Your nickname"}</div>
                 <div className="preview-desc">{description || "Your description will appear here."}</div>
+                {currentlyListeningTo && (
+                  <div className="preview-listening">🎵 Currently: {currentlyListeningTo}</div>
+                )}
+                {favorites.length > 0 && (
+                  <div className="preview-artists">
+                    ⭐ Top Artists: {favorites.join(", ")}
+                  </div>
+                )}
+                {displayReviewsOnProfile && userReviews.length > 0 && (
+                  <div className="preview-reviews">
+                    <div className="preview-reviews-title">Latest Reviews</div>
+                    {userReviews.slice(0, 2).map((review, idx) => (
+                      <div key={idx} className="preview-review-item">
+                        <div className="review-rating">{'★'.repeat(review.rating)}{'☆'.repeat(5-review.rating)}</div>
+                        <div className="review-song">{review.songTitle || 'Song'}</div>
+                        {review.comment && <div className="review-comment">{review.comment.substring(0, 50)}...</div>}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
