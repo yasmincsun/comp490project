@@ -158,6 +158,23 @@ public class SpotifyAuthService {
 
     return api;
   }
+
+  /**
+   * Creates a Spotify API client via client credentials flow (app-level search access).
+   * This does not require a logged-in user and works for public search queries.
+   */
+  public SpotifyApi apiForClientCredentials() throws Exception {
+    SpotifyApi clientApi = new SpotifyApi.Builder()
+        .setClientId(clientId)
+        .setClientSecret(clientSecret)
+        .build();
+
+    var credentialsRequest = clientApi.clientCredentials().build();
+    var creds = credentialsRequest.execute();
+    clientApi.setAccessToken(creds.getAccessToken());
+    return clientApi;
+  }
+
   /**
    * Generates the state for requests to prevent CSRF attacks
    * @return a random string
