@@ -209,7 +209,39 @@ public final class MoodMatchers {
             Pattern.compile("reggae"), Pattern.compile("ska"), Pattern.compile("indie folk"),
             Pattern.compile("jam"), Pattern.compile("alternative"), Pattern.compile("acoustic"),
             Pattern.compile("wanderlust")
-        ))
+        )),
+
+        //new moods
+
+        Map.entry("anxious", List.of(
+        Pattern.compile("ambient"), Pattern.compile("lofi"), Pattern.compile("dark"),
+        Pattern.compile("minimal"), Pattern.compile("electronic"), Pattern.compile("trip hop"),
+        Pattern.compile("downtempo"), Pattern.compile("experimental"), Pattern.compile("soundtrack"),
+        Pattern.compile("piano"), Pattern.compile("instrumental"), Pattern.compile("melancholic"),
+        Pattern.compile("tense"), Pattern.compile("cinematic")
+        )),
+        Map.entry("yearning", List.of(
+        Pattern.compile("indie"), Pattern.compile("dream pop"), Pattern.compile("shoegaze"),
+        Pattern.compile("alternative"), Pattern.compile("ambient"), Pattern.compile("acoustic"),
+        Pattern.compile("folk"), Pattern.compile("slow"), Pattern.compile("melancholic"),
+        Pattern.compile("nostalgia"), Pattern.compile("emotional"), Pattern.compile("ethereal"),
+        Pattern.compile("piano"), Pattern.compile("cinematic"), Pattern.compile("longing")
+    )),
+    Map.entry("tired", List.of(
+        Pattern.compile("ambient"), Pattern.compile("lofi"), Pattern.compile("chill"),
+        Pattern.compile("downtempo"), Pattern.compile("slow"), Pattern.compile("soft"),
+        Pattern.compile("acoustic"), Pattern.compile("piano"), Pattern.compile("instrumental"),
+        Pattern.compile("minimal"), Pattern.compile("sleep"), Pattern.compile("calm"),
+        Pattern.compile("dreamy"), Pattern.compile("relax")
+    )),
+
+    Map.entry("cool", List.of(
+        Pattern.compile("hip hop"), Pattern.compile("rap"), Pattern.compile("r&b"),
+        Pattern.compile("neo soul"), Pattern.compile("jazz"), Pattern.compile("funk"),
+        Pattern.compile("chill"), Pattern.compile("lofi"), Pattern.compile("groove"),
+        Pattern.compile("smooth"), Pattern.compile("bass"), Pattern.compile("beats"),
+        Pattern.compile("indie"), Pattern.compile("alternative"), Pattern.compile("vibe")
+    ))
     );
 
     private MoodMatchers() {}
