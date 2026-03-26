@@ -208,6 +208,8 @@ public class MoodService {
        long startTime2 = System.currentTimeMillis();
        long endTime2;
 
+       Collections.shuffle(y);
+
     for (Song prioritySongs : y) {
           SearchTracksRequest searchReq = api.searchTracks("track:" + prioritySongs.title + " artist:" + prioritySongs.artist).limit(1).build();
           
@@ -277,6 +279,8 @@ public class MoodService {
        System.out.println("MEthode songCompiler triggered");
        long startTime2 = System.currentTimeMillis();
        long endTime2;
+
+       Collections.shuffle(y);
 
     for (Song s : y) {
           SearchTracksRequest searchReq = api.searchTracks("track:" + s.title + " artist:" + s.artist).limit(1).build();
