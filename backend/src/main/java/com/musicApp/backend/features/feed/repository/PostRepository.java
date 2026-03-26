@@ -1,5 +1,6 @@
 package com.musicApp.backend.features.feed.repository;
 import com.musicApp.backend.features.feed.model.Post;
+import com.musicApp.backend.features.authentication.dto.CreatePostRequest;
 
 import java.util.List;
 

@@ -6,6 +6,7 @@ import HomePage from "./components/homePage/homePage";
 import FrontPage from "./components/frontPage/frontPage";
 import ConnectSpotify from "./components/spotify/ConnectSpotify";
 import FriendPage from "./components/friendPage/friendPage";
+import PostPage from "./components/postPage/postPage";
 import ReviewPage from "./components/reviewPage/reviewPage";
 
 function App() {
@@ -19,6 +20,8 @@ function App() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/friends" element={<FriendPage />} />
           <Route path="/reviews" element={<ReviewPage />} />
+          <Route path="/post" element={<PostPage />} />
+          
         </Routes>
       </BrowserRouter>
   );

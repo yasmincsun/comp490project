@@ -1,0 +1,50 @@
+/* Container */
+.postpage-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 40px;
+}
+
+.postpage-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 480px;
+    max-width: 100%;
+}
+
+/* Labels */
+.postpage-form label {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+/* Inputs + textarea */
+.postpage-form input,
+.postpage-form textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+/* Textarea specific */
+.postpage-form textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+/* Error  message styling*/
+.postpage-error {
+    color: #c0392b;
+    font-size: 14px;
+}
+
+/* Submit post button*/
+.postpage-form button {
+    margin-top: 10px;
+    padding: 12px;
+    font-size: 18px;
+    cursor: pointer;
+}
