@@ -1,0 +1,111 @@
+/* Global reset and styling */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Times New Roman', Times, serif;
+  height: 100vh;
+  background: #c7dbef;
+  color: #333;
+}
+
+/* Container styling for the app */
+.app-container {
+  max-width: 600px;
+  margin: 50px auto;
+  background: #f8fbff; /* pale panel color */
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* Header styling */
+h1,
+h2 {
+  background: #9fc594; 
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Styling the question text */
+.question {
+  font-size: 1.2em;
+  margin-bottom: 20px;
+}
+
+/* Option button styling */
+.option {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s, border 0.2s;
+}
+
+.option:hover {
+  background: #d6dde5;
+}
+
+.option.selected {
+  background: #4ab3c6; /* accent for selected option */
+  border: 2px solid #3aa1b4;
+  color: #fff;
+}
+
+/* Navigation button styles */
+.nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.nav-buttons button {
+  padding: 10px 20px;
+  border: none;
+  background: #9fd6a5; /* accent green */
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background 0.2s, transform 0.12s;
+}
+
+.nav-buttons button:hover {
+  background: #85bf8f;
+  transform: translateY(-1px);
+}
+
+.nav-buttons button:disabled {
+  background: #a0c4e3;
+  cursor: not-allowed;
+}
+
+/* Restart button styling */
+.restart-button {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  border: none;
+  background: #4ab3c6; /* accent color */
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background 0.2s, transform 0.12s;
+}
+
+.restart-button:hover {
+  background: #3aa1b4;
+  transform: translateY(-1px);
+}
+
+/* Score display styling */
+.score {
+  font-size: 1.4em;
+  text-align: center;
+  margin: 20px 0;
+}

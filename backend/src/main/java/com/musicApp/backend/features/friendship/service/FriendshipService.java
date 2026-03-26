@@ -37,7 +37,7 @@ public class FriendshipService {
                 .orElseThrow(() -> new IllegalArgumentException("User 2 not found"));
 
         // Check if friendship already exists in either direction
-        if (friendshipRepository.existsByUser1AndUser2OrUser2AndUser1(user1, user2, user2, user1)) {
+        if (friendshipRepository.existsByUser1AndUser2OrUser2AndUser1(user1Id, user2Id)) {
             throw new IllegalArgumentException("Friendship already exists between these users");
         }
 
@@ -71,12 +71,12 @@ public class FriendshipService {
      * @return true if they are friends, false otherwise
      */
     public boolean areFriends(Long user1Id, Long user2Id) {
-        AuthenticationUser user1 = userRepository.findById(user1Id)
+        userRepository.findById(user1Id)
                 .orElseThrow(() -> new IllegalArgumentException("User 1 not found"));
-        AuthenticationUser user2 = userRepository.findById(user2Id)
+        userRepository.findById(user2Id)
                 .orElseThrow(() -> new IllegalArgumentException("User 2 not found"));
 
-        return friendshipRepository.existsByUser1AndUser2OrUser2AndUser1(user1, user2, user2, user1);
+        return friendshipRepository.existsByUser1AndUser2OrUser2AndUser1(user1Id, user2Id);
     }
 
     /**
