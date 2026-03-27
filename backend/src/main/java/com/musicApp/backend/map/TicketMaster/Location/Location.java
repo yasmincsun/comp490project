@@ -2,14 +2,14 @@ package com.musicApp.backend.map.TicketMaster.Location;
 
 public class Location {
 
-  private double longitude;
-  private double latitude;
+  private Double longitude;
+  private Double latitude;
 
-  public double getLongitude(){
+  public Double getLongitude(){
     return longitude;
   }
 
-  public double getLatitude(){
+  public Double getLatitude(){
     return latitude;
   }
   

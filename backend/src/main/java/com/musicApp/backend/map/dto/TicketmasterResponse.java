@@ -20,4 +20,4 @@ public class TicketmasterResponse {
     @JsonProperty("page")
     private PagesDTO pages;
 
-}
+} 
