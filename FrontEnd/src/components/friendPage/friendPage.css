@@ -1,0 +1,595 @@
+/* Friend Page Styles */
+
+.friendpage-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: linear-gradient(
+        135deg,
+        var(--home-bg1, #c4dbef) 0%,
+        var(--home-bg2, #8ab4f8) 50%,
+        var(--home-bg1, #c4dbef) 100%
+    );
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    z-index: 1;
+}
+
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.friendpage-back-btn {
+    position: fixed;
+    top: 20px;
+    left: 30px;
+    z-index: 200;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    background: #c7dbef;
+}
+
+.friendpage-btn {
+    padding: 10px 18px;
+    background: linear-gradient(90deg, var(--btn-bg1, #789c90), var(--btn-bg2, #9bb1cd));
+    background-size: 200% 200%;
+    color: black;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    text-transform: uppercase;
+    font-family: 'Montserrat', sans-serif;
+    animation: btnGradientShift 6s ease infinite;
+}
+
+.friendpage-btn:hover {
+    transform: translateY(-1px);
+}
+
+@keyframes btnGradientShift {
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+/* Two-column layout */
+.friendpage-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    gap: 0;
+    overflow: hidden;
+    padding-top: 80px;
+}
+
+/* Animated search bar container */
+.friendpage-search-bar-top {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    z-index: 10;
+    background: transparent;
+    padding: 0;
+    transition: all 0.6s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.friendpage-search-bar-top.centered {
+    top: 50%;
+    transform: translateY(-50%);
+    gap: 30px;
+}
+
+.friendpage-search-bar-top.moved-to-top {
+    top: 0;
+    transform: translateY(0);
+    min-height: auto;
+    padding-top: 15px;
+    background: transparent;
+    justify-content: flex-start;
+    gap: 0;
+}
+
+.friendpage-search-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: rgba(0, 0, 0, 0.8);
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.friendpage-search-bar-top.centered .friendpage-search-title {
+    font-size: 32px;
+}
+
+.friendpage-search-bar-top.moved-to-top .friendpage-search-title {
+    font-size: 18px;
+    padding-left: 30px;
+    padding-top: 8px;
+}
+
+.friendpage-search-tagline {
+    font-size: 16px;
+    color: rgba(0, 0, 0, 0.6);
+    margin: 0;
+    max-width: 400px;
+    line-height: 1.6;
+    font-family: 'Montserrat', sans-serif;
+    text-align: center;
+}
+
+.friendpage-empty-glass {
+    width: 80px;
+    height: 80px;
+    opacity: 0.8;
+    animation: float 3s ease-in-out infinite;
+}
+
+/* Hide the central magnifying glass image when the search bar
+   moves to the top of the screen (pinned/sticky state) */
+.friendpage-search-bar-top.moved-to-top .friendpage-empty-glass {
+    display: none;
+}
+
+.friendpage-search-form {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    max-width: 500px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 12px 18px;
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    font-family: 'Montserrat', sans-serif;
+}
+
+.friendpage-search-bar-top.moved-to-top .friendpage-search-form {
+    position: fixed;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 60px);
+    max-width: 500px;
+    background: rgba(255, 255, 255, 0.95);
+    z-index: 150;
+}
+
+.friendpage-search-input-centered {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 16px;
+    font-family: 'Montserrat', sans-serif;
+    outline: none;
+    color: #333;
+}
+
+.friendpage-search-input-centered::placeholder {
+    color: #999;
+}
+
+.friendpage-search-btn-centered {
+    background: #000;
+    color: white;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.friendpage-search-btn-centered:hover:not(:disabled) {
+    background: #333;
+}
+
+.friendpage-search-btn-centered:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+.friendpage-search-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 16px;
+    font-family: 'Montserrat', sans-serif;
+    outline: none;
+    color: #333;
+}
+
+.friendpage-search-input::placeholder {
+    color: #999;
+}
+
+.friendpage-search-btn {
+    background: #000;
+    color: white;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.friendpage-search-btn:hover:not(:disabled) {
+    background: #333;
+}
+
+.friendpage-search-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Results gallery container positioned at center screen */
+.friendpage-results-container {
+    position: fixed;
+    top: 160px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 20px;
+    z-index: 100;
+}
+
+.friendpage-results-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 240px);
+    gap: 40px;
+    justify-content: center;
+    width: 100%;
+    max-width: 1200px;
+    padding: 20px;
+}
+
+.friendpage-user-card {
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    width: 240px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    font-family: 'Montserrat', sans-serif;
+    cursor: pointer;
+    position: relative;
+}
+
+.friendpage-user-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.15);
+}
+
+/* Active indicator wrapper with tooltip */
+.friendpage-active-indicator-wrapper {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.friendpage-active-indicator {
+    width: 16px;
+    height: 16px;
+    background: #4CAF50;
+    border: 3px solid white;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.friendpage-active-indicator-wrapper:hover .friendpage-active-indicator {
+    transform: scale(1.2);
+    box-shadow: 0 3px 12px rgba(76, 175, 80, 0.6);
+}
+
+.friendpage-active-tooltip {
+    position: absolute;
+    background: rgba(76, 175, 80, 0.95);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-35px) scale(0.8);
+    transition: all 0.3s cubic-bezier(0.16, 0.84, 0.44, 1);
+    font-family: 'Montserrat', sans-serif;
+    z-index: 1000;
+}
+
+.friendpage-active-indicator-wrapper:hover .friendpage-active-tooltip {
+    opacity: 1;
+    transform: translateY(-35px) scale(1);
+}
+
+.friendpage-inactive-indicator {
+    width: 16px;
+    height: 16px;
+    background: #B71C1C; /* darker red */
+    border: 3px solid white;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(183, 28, 28, 0.4);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.friendpage-active-indicator-wrapper:hover .friendpage-inactive-indicator {
+    transform: scale(1.2);
+    box-shadow: 0 3px 12px rgba(183, 28, 28, 0.6);
+}
+
+.friendpage-inactive-tooltip {
+    position: absolute;
+    background: rgba(244, 67, 54, 0.95);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-35px) scale(0.8);
+    transition: all 0.3s cubic-bezier(0.16, 0.84, 0.44, 1);
+    font-family: 'Montserrat', sans-serif;
+    z-index: 1000;
+}
+
+.friendpage-active-indicator-wrapper:hover .friendpage-inactive-tooltip {
+    opacity: 1;
+    transform: translateY(-35px) scale(1);
+}
+
+/* Animation for new results */
+@keyframes slideInUser {
+    from {
+        opacity: 0;
+        transform: scale(0.94) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.friendpage-user-card.new {
+    animation: slideInUser 0.36s cubic-bezier(0.16, 0.84, 0.44, 1);
+}
+
+.friendpage-user-avatar {
+    width: 160px;
+    height: 160px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #f6f6f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.friendpage-user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.friendpage-avatar-placeholder {
+    color: #999;
+    font-size: 14px;
+    text-align: center;
+}
+
+.friendpage-user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+.friendpage-user-username {
+    font-weight: 700;
+    font-size: 16px;
+    color: #333;
+    word-break: break-word;
+}
+
+.friendpage-user-bio {
+    color: #666;
+    font-size: 13px;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+/* Scrollbar styling for results container */
+.friendpage-results-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.friendpage-results-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.friendpage-results-container::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+.friendpage-results-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.friendpage-left {
+    flex: 1;
+    width: 50%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.friendpage-right {
+    flex: 1;
+    width: 50%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Scrollbar styling */
+.friendpage-left::-webkit-scrollbar,
+.friendpage-right::-webkit-scrollbar {
+    width: 8px;
+}
+
+.friendpage-left::-webkit-scrollbar-track,
+.friendpage-right::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.friendpage-left::-webkit-scrollbar-thumb,
+.friendpage-right::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+.friendpage-left::-webkit-scrollbar-thumb:hover,
+.friendpage-right::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.4);
+}
+
+/* Responsive for smaller screens */
+@media (max-width: 768px) {
+    .friendpage-content {
+        flex-direction: column;
+    }
+
+    .friendpage-left,
+    .friendpage-right {
+        width: 100%;
+        flex: none;
+        height: 50%;
+    }
+}
+/* Notification Banner */
+.friendpage-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    z-index: 300;
+    animation: slideIn 0.3s ease;
+    max-width: 300px;
+}
+
+.friendpage-notification-success {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.friendpage-notification-error {
+    background-color: #f44336;
+    color: white;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Add Friend Button */
+.friendpage-add-friend-btn {
+    width: 100%;
+    padding: 8px 12px;
+    background: var(--btn-bg1);
+    color: black;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 8px;
+    transition: all 0.3s ease;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.friendpage-add-friend-btn:hover:not(:disabled) {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.friendpage-add-friend-btn:disabled {
+    opacity: 0.7;
+    cursor: default;
+}

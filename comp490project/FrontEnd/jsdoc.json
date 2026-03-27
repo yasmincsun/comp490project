@@ -1,0 +1,11 @@
+{
+  "source": {
+    "include": ["src"],
+    "includePattern": ".jsx?$",
+    "excludePattern": "(node_modules)"
+  },
+  "opts": {
+    "destination": "C:\\Users\\16617\\Desktop\\JavaDoc490\\JavascriptDoc",
+    "recurse": true
+  }
+}
