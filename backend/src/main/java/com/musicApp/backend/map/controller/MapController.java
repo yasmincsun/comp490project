@@ -25,12 +25,6 @@ public class MapController {
     this.mapService = mapService;
   }
 
-// @GetMapping(value="/search", produces="application/json")
-// public String getEventsOnLine() {
-//   String url = "https://app.ticketmaster.com/discovery/v2/events?apikey=EkmMRqHAI1q3f2ORhH2nquAEqe82cuHi&keyword=netflix&locale=*";
-//   return new RestTemplate().getForObject(url, String.class);
-// }
-
 @GetMapping("/search")
 public Flux<EventDTO> listOfEvents(@RequestParam String keyword){
   return mapService.getEventDTOs(keyword);

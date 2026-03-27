@@ -21,7 +21,9 @@ public class TicketMasterAPI {
 
   public TicketMasterAPI(WebClient.Builder builder, @Value("${ticketmaster.apiKey}") String apiKey){
     this.apiKey = apiKey;
-    this.webclient = builder.baseUrl("https://app.ticketmaster.com/discovery/v2").build();
+    this.webclient = builder.baseUrl("https://app.ticketmaster.com/discovery/v2")
+    .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(2 * 1024 * 1024))
+    .build();
   }
 
 public Flux<EventDTO> getAllEvents(String keyword) {
@@ -35,6 +37,7 @@ public Flux<EventDTO> getAllEvents(String keyword) {
             int totalPages = firstResponse.getPages().getTotalPages();
 
             return Flux.range(0, totalPages)
+                .delayElements(java.time.Duration.ofMillis(600))
                 .concatMap(page -> getEvents(keyword, page));
         });
 }
