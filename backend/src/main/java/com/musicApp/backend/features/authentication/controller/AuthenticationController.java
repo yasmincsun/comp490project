@@ -39,7 +39,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/authentication")
 public class AuthenticationController {
-
+ 
     private final AuthenticationService authenticationService;
     private final JsonWebToken jsonWebToken;
     private final EmailService emailService;
@@ -255,3 +255,4 @@ public class AuthenticationController {
     }
 
 }
+ 
