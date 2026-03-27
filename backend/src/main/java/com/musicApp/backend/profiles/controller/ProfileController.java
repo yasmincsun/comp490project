@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import com.musicApp.backend.features.authentication.model.AuthenticationUser;
 import com.musicApp.backend.features.authentication.service.AuthenticationService;
 import com.musicApp.backend.features.authentication.utils.EmailService;
+import com.musicApp.backend.features.authentication.utils.Encoder;
 import com.musicApp.backend.profiles.dto.ProfileRequest;
 
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
@@ -18,6 +19,8 @@ import com.musicApp.backend.features.authentication.repository.AuthenticationUse
 import org.springframework.beans.factory.annotation.Value;
 import java.time.Duration;
 import java.util.Set;
+import java.util.List;
+import java.util.stream.Collectors;
 
  
 
@@ -29,6 +32,7 @@ public class ProfileController {
   private final EmailService emailService;
   private final AuthenticationUserRepository authenticationUserRepository;
   private final S3Presigner presigner;
+  private final Encoder encoder;
   private final String bucket;
   private final String publicBaseUrl;
 
@@ -38,12 +42,14 @@ public ProfileController(AuthenticationUserRepository authenticationUserReposito
                           AuthenticationService authenticationService,
                             EmailService emailService,
                               S3Presigner presigner,
+                              Encoder encoder,
                                  @Value("${r2.bucket}") String bucket,
                                     @Value("${r2.url}") String publicBaseUrl){
                               this.authenticationService = authenticationService;
                               this.authenticationUserRepository = authenticationUserRepository;
                               this.emailService = emailService;
                               this.presigner = presigner;
+                              this.encoder = encoder;
                               this.bucket = bucket;
                               this.publicBaseUrl = publicBaseUrl;
                             }
@@ -88,7 +94,25 @@ public ProfileRequest getProfile(@RequestAttribute("authenticatedUser") Authenti
      AuthenticationUser user = authenticationService.getUser(authenticationUser.getEmail());
     user.setColor(color);
     authenticationUserRepository.save(user);
-  } 
+  }
+
+  // request body DTO for account updates
+  public record AccountUpdateRequest(String firstName, String lastName, String password) {}
+
+  @PutMapping("/account")
+  public void updateAccountInfo(@RequestAttribute("authenticatedUser") AuthenticationUser authenticationUser, @RequestBody AccountUpdateRequest request){
+    AuthenticationUser user = authenticationService.getUser(authenticationUser.getEmail());
+    if (request.firstName() != null && !request.firstName().isBlank()) {
+      user.setName(request.firstName());
+    }
+    if (request.lastName() != null && !request.lastName().isBlank()) {
+      user.setLastName(request.lastName());
+    }
+    if (request.password() != null && !request.password().isBlank()) {
+      user.setPassword(encoder.encode(request.password()));
+    }
+    authenticationUserRepository.save(user);
+  }
 
   // request body DTO (simple)
   public record UploadUrlRequest(String contentType, Long fileSize) {}
@@ -185,6 +209,7 @@ private ProfileRequest toProfileRequest(AuthenticationUser user) {
       user.getUsername(),
       user.getName(),
       user.getLastName(),
+      user.getEmail(),
       user.getBio(),
       user.getColor(),
       imageKey,
@@ -192,6 +217,22 @@ private ProfileRequest toProfileRequest(AuthenticationUser user) {
       presignedGetUrl,
       expires
   );
+}
+
+@GetMapping("/search")
+public List<ProfileRequest> searchUsers(@RequestParam String query) {
+  if (query == null || query.trim().isEmpty()) {
+    return List.of();
+  }
+  
+  String lowerQuery = query.toLowerCase().trim();
+  
+  // Get all users and filter by username containing the search query (case-insensitive)
+  List<AuthenticationUser> allUsers = authenticationUserRepository.findAll();
+  return allUsers.stream()
+      .filter(user -> user.getUsername() != null && user.getUsername().toLowerCase().contains(lowerQuery))
+      .map(this::toProfileRequest)
+      .collect(Collectors.toList());
 }
 
 }

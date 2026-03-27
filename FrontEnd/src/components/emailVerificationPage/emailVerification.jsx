@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./emailVerification.css";
 
 export default function EmailVerification() {
   const [code, setCode] = useState("");
@@ -71,34 +72,42 @@ export default function EmailVerification() {
   };
 
   return (
-    <div className="flex flex-col items-center mt-10">
-      <h2 className="text-2xl font-bold mb-4">Verify Your Email</h2>
-      <form onSubmit={handleVerify} className="flex flex-col gap-3">
-        <input
-          type="text"
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
-          placeholder="Enter verification code"
-          className="border rounded px-3 py-2"
-        />
+    <div className="email-verification-container">
+      <div className="email-verification-card">
+        <h2 className="email-verification-title">Verify Your Email</h2>
+        <p className="email-verification-subtitle">We've sent a verification code to your email address</p>
+        
+        <form onSubmit={handleVerify} className="email-verification-form">
+          <div className="email-verification-input-group">
+            <input
+              type="text"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              placeholder="Enter verification code"
+              className="email-verification-input"
+              disabled={loading}
+            />
+          </div>
+          
+          <button
+            type="submit"
+            className={`email-verification-btn ${loading ? 'loading' : ''}`}
+            disabled={loading}
+          >
+            {loading ? "Verifying..." : "Verify Email"}
+          </button>
+        </form>
+
         <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
-          disabled={loading}
+          onClick={handleResend}
+          className="email-verification-resend-btn"
         >
-          {loading ? "Verifying..." : "Verify"}
+          Resend Code
         </button>
-      </form>
 
-      <button
-        onClick={handleResend}
-        className="mt-4 bg-gray-200 px-4 py-2 rounded hover:bg-gray-300"
-      >
-        Resend Code
-      </button>
-
-      {message && <p className="mt-4 text-lg">{message}</p>}
-      {resendMessage && <p className="mt-2 text-sm text-gray-600">{resendMessage}</p>}
+        {message && <p className={`email-verification-message ${message.startsWith('✅') ? 'success' : 'error'}`}>{message}</p>}
+        {resendMessage && <p className={`email-verification-resend-message ${resendMessage.startsWith('✅') ? 'success' : 'error'}`}>{resendMessage}</p>}
+      </div>
     </div>
   );
 }

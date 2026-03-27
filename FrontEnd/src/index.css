@@ -2,7 +2,7 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: 'Montserrat', sans-serif;
   height: 100vh;
   background: #c7dbef;
   color: #333;
@@ -22,6 +22,11 @@ body {
 h1,
 h2 {
   background: #9fc594; 
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+h3 {
   text-align: center;
   margin-bottom: 20px;
 }

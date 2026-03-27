@@ -4,21 +4,24 @@ import ProfilePage from "./components/profilePage/profilePage";
 import Login from "./components/loginPage/login";
 import HomePage from "./components/homePage/homePage";
 import FrontPage from "./components/frontPage/frontPage";
-import AboutPage from "./components/aboutPage/aboutPage";
-import DeveloperPage from "./components/developerPage/developerPage";
 import ConnectSpotify from "./components/spotify/ConnectSpotify";
+import FriendPage from "./components/friendPage/friendPage";
+import PostPage from "./components/postPage/postPage";
+import ReviewPage from "./components/reviewPage/reviewPage";
 
 function App() {
   return (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<FrontPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/developers" element={<DeveloperPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/connect-spotify" element={<ConnectSpotify />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/friends" element={<FriendPage />} />
+          <Route path="/reviews" element={<ReviewPage />} />
+          <Route path="/post" element={<PostPage />} />
+          
         </Routes>
       </BrowserRouter>
   );
