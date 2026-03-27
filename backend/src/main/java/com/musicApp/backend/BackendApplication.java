@@ -42,6 +42,9 @@ public class BackendApplication {
 				System.setProperty("CLOUDFLARE_ACCOUNT_ID", dotenv.get("CLOUDFLARE_ACCOUNT_ID"));
 				System.setProperty("CLOUDFLARE_BUCKET", dotenv.get("CLOUDFLARE_BUCKET"));
 				System.setProperty("CLOUDFLARE_PUBLIC_URL", dotenv.get("CLOUDFLARE_PUBLIC_URL"));
+				System.setProperty("TICKETMASTER_API_KEY", dotenv.get("TICKETMASTER_API_KEY"));
+				System.setProperty("TICKETMASTER_CONSUMER_SECRET_KEY", dotenv.get("TICKETMASTER_CONSUMER_SECRET_KEY"));
+
 
 		SpringApplication.run(BackendApplication.class, args);
 	}

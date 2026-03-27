@@ -38,7 +38,7 @@ dependencies {
     // --- Environment Variables ---
     implementation("io.github.cdimascio:dotenv-java:3.0.0")
 
-    // --- From your old pom.xml ---
+    // --- From old pom.xml ---
     compileOnly("org.projectlombok:lombok:1.18.34")
     annotationProcessor("org.projectlombok:lombok:1.18.34")
 
@@ -62,6 +62,8 @@ dependencies {
     implementation("software.amazon.awssdk:s3:2.41.13")
     implementation("software.amazon.awssdk:url-connection-client:2.41.13")
 
+    //WebClient
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
 
 }
 
