@@ -372,7 +372,7 @@ export default function ReviewPage() {
                         {selectedSong && (
                             <form onSubmit={handleSubmitReview} className="reviewpage-form">
                                 <div className="reviewpage-section">
-                                    <h3>Selected Song</h3>
+                                    <h3>Selected Song, Artist, or Album</h3>
                                     <div className="reviewpage-selected-song">
                                         <div className="reviewpage-song-title">{selectedSong.title}</div>
                                         <div className="reviewpage-song-artist">{selectedSong.artist || "Unknown Artist"}</div>
