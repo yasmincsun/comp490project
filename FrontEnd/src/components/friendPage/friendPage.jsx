@@ -349,13 +349,13 @@ const FriendPage = () => {
                                         <div className="friendpage-user-favorites">
                                             {user.favoriteArtists && (
                                                 <div className="friendpage-user-favorite-row">
-                                                    <span className="friendpage-user-favorite-label">Favorite artists:</span>
+                                                    <span className="friendpage-user-favorite-label">Favorite artists: </span>
                                                     <span className="friendpage-user-favorite-value">{user.favoriteArtists}</span>
                                                 </div>
                                             )}
                                             {user.favoriteSongs && (
                                                 <div className="friendpage-user-favorite-row">
-                                                    <span className="friendpage-user-favorite-label">Favorite songs:</span>
+                                                    <span className="friendpage-user-favorite-label">Favorite songs: </span>
                                                     <span className="friendpage-user-favorite-value">{user.favoriteSongs}</span>
                                                 </div>
                                             )}
