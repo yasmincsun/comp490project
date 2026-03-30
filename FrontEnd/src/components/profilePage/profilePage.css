@@ -596,6 +596,38 @@
 
 .listening-input {
   width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+}
+
+.listening-search-results {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #f9f9f9;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.listening-search-option {
+  text-align: left;
+  padding: 10px 12px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  color: #333;
+}
+
+.listening-search-option:hover {
+  background: #eef4fb;
 }
 
 /* Preview section additions */
