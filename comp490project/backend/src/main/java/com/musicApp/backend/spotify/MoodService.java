@@ -120,8 +120,6 @@ public class MoodService {
         String selectedArtistString = selectedArtistMapper.writeValueAsString(selectedArtist);
     
 
-        
-
         List<Pattern> tags = MoodMatchers.MOOD_MATCHERS.get(mood);
 
         List<String> tag2String = tags.stream().map(Pattern::pattern).toList();
