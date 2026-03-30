@@ -50,6 +50,10 @@ const MOOD_COLORS = {
     "creative": ["#9370DB", "#FF69B4", "#00CED1"],
     "high": ["#00FF00", "#FFD700", "#FF6347"],
     "free": ["#87CEEB", "#00FF00", "#FFD700"],
+    "anxious": ["#696969", "#A9A9A9", "#778899"],
+    "yearning": ["#FFB6C1", "#DDA0DD", "#B0C4DE"],
+    "tired": ["#A9A9A9", "#696969", "#778899"],
+    "cool": ["#20B2AA", "#87CEEB", "#5F9EA0"],
     "default": ["#87CEEB", "#20B2AA", "#5F9EA0"]
 };
 
