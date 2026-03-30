@@ -210,8 +210,8 @@
     top: calc(100% + 8px);
     left: 50%;
     transform: translateX(-50%); /* center the smaller dropdown under the larger selected */
-    width: 420px; /* smaller options width */
-    max-height: 320px;
+    width: 500px; /* smaller options width */
+    max-height: 275px;
     overflow-y: auto;
     background: #fff;
     border-radius: 8px;
