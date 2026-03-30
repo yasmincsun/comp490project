@@ -11,7 +11,9 @@ package com.musicApp.backend.profiles.dto;
     String imageKey,
     Long profileImageUpdatedAt,
     String profileImageUrl,          // presigned GET URL (nullable if no image)
-    long profileImageUrlExpiresInSeconds
+    long profileImageUrlExpiresInSeconds,
+    String favoriteArtists,
+    String favoriteSongs
 ) {}
 
 

@@ -6,7 +6,7 @@ import noNotifsIcon from "../assets/nonotifs.png";
 
 // list of moods used by the dropdown
 const MOODS = [
-    "happy","chill","pumped","melancholic","romantic","nostalgic","energetic","peaceful","dark","motivated","sad","angry","relaxed","hopeful","lonely","mysterious","gritty","groovy","wild","epic","focused","funny","spiritual","rebellious","cozy","adventurous","playful","mellow","party","sentimental","country","spooky","heroic","sexy","moody","motivational","creative","high","free"
+    "happy","chill","pumped","melancholic","romantic","nostalgic","energetic","peaceful","dark","motivated","sad","angry","relaxed","hopeful","lonely","mysterious","gritty","groovy","wild","epic","focused","funny","spiritual","rebellious","cozy","adventurous","playful","mellow","party","sentimental","country","spooky","heroic","sexy","moody","motivational","creative","high","free", "anxious","yearning","tired","cool"
 ];
 
 // Mood-to-gradient-colors mapping: each mood maps to [color1, color2, color3] for animated gradients
@@ -50,6 +50,10 @@ const MOOD_COLORS = {
     "creative": ["#9370DB", "#FF69B4", "#00CED1"],
     "high": ["#00FF00", "#FFD700", "#FF6347"],
     "free": ["#87CEEB", "#00FF00", "#FFD700"],
+    "anxious": ["#696969", "#A9A9A9", "#778899"],
+    "yearning": ["#FFB6C1", "#DDA0DD", "#B0C4DE"],
+    "tired": ["#A9A9A9", "#696969", "#778899"],
+    "cool": ["#20B2AA", "#87CEEB", "#5F9EA0"],
     "default": ["#87CEEB", "#20B2AA", "#5F9EA0"]
 };
 
