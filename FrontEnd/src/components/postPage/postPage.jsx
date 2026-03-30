@@ -122,7 +122,7 @@ const PostPage = () => {
             }}
         >
             <div className="postpage-card">
-                <button type="button" className="postpage-back-btn" onClick={() => navigate("/home")}>Back</button>
+                <button type="button" className="postpage-back-btn" onClick={() => navigate("/home")}>← BACK</button>
                 <div className="postpage-header">
                     <h2>Create Post</h2>
                     <p>Share your thoughts with others.</p>
