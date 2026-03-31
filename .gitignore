@@ -79,3 +79,5 @@ backend/.gradle/
 backend/.idea/
 **/target/
 **/.vite/
+
+backend/src/main/resources/.env
