@@ -1,3 +1,9 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# Environment-dependent path to Maven home directory
+/mavenHomeManager.xml
+
 # Logs
 logs
 *.log
@@ -65,4 +71,17 @@ nbdist/
 .vscode
 
 ## .env folder ##
+<<<<<<< HEAD
 .env
+=======
+.env
+
+
+# Build/tooling
+backend/.gradle/
+backend/.idea/
+**/target/
+**/.vite/
+
+backend/src/main/resources/.env
+>>>>>>> d1b244bbee0258c607d1fff5fb5d7228f9100609
