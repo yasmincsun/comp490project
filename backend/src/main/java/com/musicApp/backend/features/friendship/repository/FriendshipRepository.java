@@ -28,8 +28,10 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
     List<Friendship> findByUser2(AuthenticationUser user2);
     
     /**
-     * Check if a friendship exists between two users in either direction.
+     * Check if a friendship exists between two users in either direction using native query.
+     *
+     * Fix Long-to-Boolean cast issue by returning explicit boolean values instead of a raw numeric expression.
      */
     @Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END FROM friendship WHERE (user1_id = :user1Id AND user2_id = :user2Id) OR (user1_id = :user2Id AND user2_id = :user1Id)", nativeQuery = true)
-    boolean existsByUser1_IdAndUser2_IdOrUser2_IdAndUser1_Id(@Param("user1Id") Long user1Id, @Param("user2Id") Long user2Id, @Param("user2Id") Long user2IdAgain, @Param("user1Id") Long user1IdAgain);
+    boolean existsByUser1AndUser2OrUser2AndUser1(@Param("user1Id") Long user1Id, @Param("user2Id") Long user2Id);
 }

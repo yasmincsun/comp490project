@@ -96,20 +96,6 @@ public ProfileRequest getProfile(@RequestAttribute("authenticatedUser") Authenti
     authenticationUserRepository.save(user);
   }
 
-  @PutMapping("/favorites/artists")
-  public void updateFavoriteArtists(@RequestAttribute("authenticatedUser") AuthenticationUser authenticationUser, @RequestParam String favoriteArtists){
-     AuthenticationUser user = authenticationService.getUser(authenticationUser.getEmail());
-    user.setFavoriteArtists(favoriteArtists);
-    authenticationUserRepository.save(user);
-  }
-
-  @PutMapping("/favorites/songs")
-  public void updateFavoriteSongs(@RequestAttribute("authenticatedUser") AuthenticationUser authenticationUser, @RequestParam String favoriteSongs){
-     AuthenticationUser user = authenticationService.getUser(authenticationUser.getEmail());
-    user.setFavoriteSongs(favoriteSongs);
-    authenticationUserRepository.save(user);
-  }
-
   // request body DTO for account updates
   public record AccountUpdateRequest(String firstName, String lastName, String password) {}
 
@@ -229,9 +215,7 @@ private ProfileRequest toProfileRequest(AuthenticationUser user) {
       imageKey,
       updatedAt,
       presignedGetUrl,
-      expires,
-      user.getFavoriteArtists(),
-      user.getFavoriteSongs()
+      expires
   );
 }
 

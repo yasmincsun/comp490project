@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import se.michaelthelin.spotify.SpotifyApi;
-import se.michaelthelin.spotify.model_objects.specification.AlbumSimplified;
 import se.michaelthelin.spotify.model_objects.specification.Artist;
 import se.michaelthelin.spotify.model_objects.specification.Paging;
 import se.michaelthelin.spotify.model_objects.specification.Track;
@@ -80,25 +79,7 @@ public class SpotifySearchController {
                 return ResponseEntity.ok(response);
             }
 
-            if ("album".equals(type)) {
-                Paging<AlbumSimplified> payload = spotifyApi.searchAlbums(query).limit(limit).build().execute();
-                List<Map<String, Object>> items = Arrays.stream(payload.getItems()).map(album -> {
-                    return Map.of(
-                        "id", album.getId(),
-                        "name", album.getName(),
-                        "artists", Arrays.stream(album.getArtists()).map(artist -> artist.getName()).collect(Collectors.toList()),
-                        "images", Arrays.stream(album.getImages()).map(img -> Map.of("url", img.getUrl(), "width", img.getWidth(), "height", img.getHeight())).collect(Collectors.toList()),
-                        "release_date", album.getReleaseDate()
-                    );
-                }).collect(Collectors.toList());
-
-                Map<String, Object> response = new HashMap<>();
-                response.put("albums", Map.of("items", items));
-                response.put("query", query);
-                return ResponseEntity.ok(response);
-            }
-
-            return ResponseEntity.badRequest().body(Map.of("error", "Unsupported type (track|artist|album)"));
+            return ResponseEntity.badRequest().body(Map.of("error", "Unsupported type (track|artist)"));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(Map.of("error", "Spotify search failed", "detail", e.getMessage()));
         }

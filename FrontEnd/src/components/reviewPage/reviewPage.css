@@ -190,42 +190,12 @@
     cursor: not-allowed;
 }
 
-.reviewpage-search-controls {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 16px;
-}
-
-.reviewpage-search-type {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.reviewpage-search-type-btn {
-    padding: 10px 16px;
-    background: #f5f7fb;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 600;
-    color: #333;
-}
-
-.reviewpage-search-type-btn.active {
-    background: var(--btn-bg1, #789c90);
-    color: black;
-    border-color: #8ab4f8;
-}
-
 .reviewpage-search-results {
     display: flex;
     flex-direction: column;
     gap: 8px;
     margin-top: 16px;
-    max-height: 380px;
+    max-height: 300px;
     overflow-y: auto;
     border: 1px solid #eee;
     border-radius: 6px;
@@ -235,41 +205,12 @@
     padding: 12px;
     background: #f9f9f9;
     border: 1px solid transparent;
-    border-radius: 10px;
+    border-radius: 6px;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
     transition: all 0.2s;
-}
-
-.reviewpage-song-thumb {
-    width: 56px;
-    height: 56px;
-    border-radius: 14px;
-    background-size: cover;
-    background-position: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #3a3a3a;
-    font-size: 12px;
-    font-weight: 700;
-    margin-right: 12px;
-    flex-shrink: 0;
-}
-
-.reviewpage-search-results .reviewpage-song-item {
-    align-items: flex-start;
-}
-
-.reviewpage-no-results-message {
-    text-align: center;
-    color: #555;
-    padding: 18px;
-    background: #fff;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
 }
 
 .reviewpage-song-item:hover {

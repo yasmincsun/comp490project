@@ -62,12 +62,6 @@ public class AuthenticationUser {
     private int friends_count;
     private int color = 12901359;
 
-    @Column(name = "favoriteArtists", length = 255)
-    private String favoriteArtists;
-
-    @Column(name = "favoriteSongs", length = 255)
-    private String favoriteSongs;
-
     @ManyToOne
     @JoinColumn(name = "mood_id")
     private Mood currentMood;
@@ -363,22 +357,6 @@ public class AuthenticationUser {
 
     public int getColor(){
         return color;
-    }
-
-    public String getFavoriteArtists() {
-        return favoriteArtists;
-    }
-
-    public void setFavoriteArtists(String favoriteArtists) {
-        this.favoriteArtists = favoriteArtists;
-    }
-
-    public String getFavoriteSongs() {
-        return favoriteSongs;
-    }
-
-    public void setFavoriteSongs(String favoriteSongs) {
-        this.favoriteSongs = favoriteSongs;
     }
 
     public void setBio(String bio){

@@ -61,7 +61,6 @@ const ProfilePage = () => {
   const [profilePic, setProfilePic] = useState(null);
   const [artistQuery, setArtistQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const [listeningSearchResults, setListeningSearchResults] = useState([]);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -137,8 +136,6 @@ const ProfilePage = () => {
         setLastName(user.lastName || "");
         setEmail(user.email || "");
         setUsername(user.username || "");
-        setFavorites(user.favoriteArtists ? user.favoriteArtists.split(",").map((artist) => artist.trim()).filter(Boolean) : []);
-        setCurrentlyListeningTo(user.favoriteSongs || "");
         // Password is never returned from backend for security
 
         // allow retry again after a successful load
@@ -200,51 +197,6 @@ const ProfilePage = () => {
 
     searchSpotify();
   }, [artistQuery]);
-
-  useEffect(() => {
-    if (!currentlyListeningTo || currentlyListeningTo.trim().length < 2) {
-      setListeningSearchResults([]);
-      return;
-    }
-
-    const timer = setTimeout(async () => {
-      try {
-        const token = localStorage.getItem("authToken");
-        const response = await fetch(
-          `http://127.0.0.1:8080/api/v1/spotify/search?q=${encodeURIComponent(currentlyListeningTo)}&type=track&limit=5`,
-          {
-            headers: {
-              Authorization: `Bearer ${token || ""}`,
-            },
-          }
-        );
-
-        if (!response.ok) {
-          setListeningSearchResults([]);
-          return;
-        }
-
-        const data = await response.json();
-        const tracks = data.tracks?.items?.map((track) => ({
-          id: track.id,
-          title: track.name,
-          artist: track.artists?.join(", ") || "Unknown Artist",
-          album: track.album?.name || "",
-        })) || [];
-
-        setListeningSearchResults(tracks);
-      } catch (e) {
-        setListeningSearchResults([]);
-      }
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [currentlyListeningTo]);
-
-  const selectListeningTrack = (track) => {
-    setCurrentlyListeningTo(`${track.title} - ${track.artist}`);
-    setListeningSearchResults([]);
-  };
 
   const [selectedProfileFile, setSelectedProfileFile] = useState(null);
 
@@ -347,17 +299,7 @@ const ProfilePage = () => {
         { method: "PUT", headers }
       );
 
-      const response4 = await fetch(
-        `http://127.0.0.1:8080/api/v1/profile/favorites/artists?favoriteArtists=${encodeURIComponent(favorites.join(","))}`,
-        { method: "PUT", headers }
-      );
-
-      const response5 = await fetch(
-        `http://127.0.0.1:8080/api/v1/profile/favorites/songs?favoriteSongs=${encodeURIComponent(currentlyListeningTo)}`,
-        { method: "PUT", headers }
-      );
-
-      for (const r of [response1, response2, response3, response4, response5]) {
+      for (const r of [response1, response2, response3]) {
         if (!r.ok) {
           const msg = await r.text();
           console.error("Update failed:", r.status, msg);
@@ -627,25 +569,11 @@ const ProfilePage = () => {
               <label className="label">What Are You Listening To?</label>
               <input
                 type="text"
-                placeholder="search for your current favorite song..."
+                placeholder="e.g., 'Blinding Lights - The Weeknd' or 'Abbey Road - The Beatles'"
                 value={currentlyListeningTo}
                 onChange={(e) => setCurrentlyListeningTo(e.target.value)}
                 className="input listening-input"
               />
-              {listeningSearchResults.length > 0 && (
-                <div className="listening-search-results">
-                  {listeningSearchResults.slice(0, 5).map((track, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      className="listening-search-option"
-                      onClick={() => selectListeningTrack(track)}
-                    >
-                      <strong>{track.title}</strong> · {track.artist}
-                    </button>
-                  ))}
-                </div>
-              )}
 
               <label className="label" style={{ marginTop: 20 }}>Display Reviews on Profile</label>
               <div className="toggle-switch-container">
