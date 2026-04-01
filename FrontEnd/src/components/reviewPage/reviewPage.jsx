@@ -6,9 +6,11 @@ export default function ReviewPage() {
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState([]);
+    const [searchType, setSearchType] = useState("track");
     const [selectedSong, setSelectedSong] = useState(null);
     const [rating, setRating] = useState(3);
     const [reviewText, setReviewText] = useState("");
+    const [noReviewResults, setNoReviewResults] = useState(false);
     const [loading, setLoading] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [error, setError] = useState("");
@@ -60,10 +62,8 @@ export default function ReviewPage() {
         setError("");
         try {
             const token = localStorage.getItem("authToken");
-            
-            // Try Spotify API first via backend
             const response = await fetch(
-                `http://127.0.0.1:8080/api/v1/spotify/search?q=${encodeURIComponent(searchQuery)}&type=track`,
+                `http://127.0.0.1:8080/api/v1/spotify/search?q=${encodeURIComponent(searchQuery)}&type=${encodeURIComponent(searchType)}&limit=12`,
                 {
                     headers: {
                         Authorization: `Bearer ${token || ""}`,
@@ -71,28 +71,49 @@ export default function ReviewPage() {
                 }
             );
 
-            if (response.ok) {
-                const data = await response.json();
-                const tracks = data.tracks?.items?.map((track) => ({
+            if (!response.ok) {
+                setSearchResults([]);
+                setError("Spotify search failed. Please try again.");
+                return;
+            }
+
+            const data = await response.json();
+            let results = [];
+
+            if (searchType === "track") {
+                results = data.tracks?.items?.map((track) => ({
                     id: track.id,
+                    type: "track",
                     title: track.name,
-                    artist: track.artists?.map((a) => a.name).join(", ") || "Unknown Artist",
+                    artist: track.artists?.join(", ") || "Unknown Artist",
                     album: track.album?.name || "",
                     image: track.album?.images?.[0]?.url || null,
                 })) || [];
-                setSearchResults(tracks);
-            } else {
-                // Fallback to simple mock
-                setSearchResults([
-                    { id: 1, title: searchQuery, artist: "Various Artists", album: "Search Results" }
-                ]);
+            } else if (searchType === "artist") {
+                results = data.artists?.items?.map((artist) => ({
+                    id: artist.id,
+                    type: "artist",
+                    title: artist.name,
+                    artist: artist.name,
+                    album: "",
+                    image: artist.images?.[0]?.url || null,
+                })) || [];
+            } else if (searchType === "album") {
+                results = data.albums?.items?.map((album) => ({
+                    id: album.id,
+                    type: "album",
+                    title: album.name,
+                    artist: album.artists?.join(", ") || "Various Artists",
+                    album: album.name,
+                    image: album.images?.[0]?.url || null,
+                })) || [];
             }
+
+            setSearchResults(results);
         } catch (error) {
             console.error("Search error:", error);
-            // Fallback mock data
-            setSearchResults([
-                { id: 1, title: searchQuery, artist: "Artist Name", album: "Album Name" }
-            ]);
+            setSearchResults([]);
+            setError("Spotify search failed. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -101,11 +122,14 @@ export default function ReviewPage() {
     const handleReviewSearch = async () => {
         if (!reviewSearchQuery.trim()) {
             setReviewSearchResults([]);
+            setNoReviewResults(false);
             return;
         }
 
         setReviewSearchLoading(true);
         setError("");
+        setNoReviewResults(false);
+
         try {
             const token = localStorage.getItem("authToken");
             let url = `http://127.0.0.1:8080/api/v1/reviews/search?query=${encodeURIComponent(reviewSearchQuery)}`;
@@ -120,20 +144,18 @@ export default function ReviewPage() {
             });
 
             if (!response.ok) {
-                // Fallback mock data
-                setReviewSearchResults([
-                    { id: 1, songTitle: reviewSearchQuery, rating: 4, comment: "Great song!", username: "User" }
-                ]);
+                setReviewSearchResults([]);
+                setNoReviewResults(true);
             } else {
                 const results = await response.json();
-                setReviewSearchResults(Array.isArray(results) ? results : []);
+                const list = Array.isArray(results) ? results : [];
+                setReviewSearchResults(list);
+                setNoReviewResults(list.length === 0);
             }
         } catch (error) {
             console.error("Review search error:", error);
-            // Fallback mock data
-            setReviewSearchResults([
-                { id: 1, songTitle: reviewSearchQuery, rating: 4, comment: "Amazing track", username: "Someone" }
-            ]);
+            setReviewSearchResults([]);
+            setNoReviewResults(true);
         } finally {
             setReviewSearchLoading(false);
         }
@@ -158,7 +180,9 @@ export default function ReviewPage() {
                 },
                 body: JSON.stringify({
                     userID: currentUserId,
-                    songID: selectedSong.id,
+                    targetType: selectedSong.type || "track",
+                    targetName: selectedSong.title,
+                    artist: selectedSong.artist || "",
                     album: selectedSong.album || "",
                     rating: rating,
                     comment: reviewText,
@@ -272,6 +296,23 @@ export default function ReviewPage() {
 
                         <div className="reviewpage-section">
                             <h3>Search for a Song or Album</h3>
+                            <div className="reviewpage-search-controls">
+                            <div className="reviewpage-search-type">
+                                {[
+                                    { key: "track", label: "Song" },
+                                    { key: "artist", label: "Artist" },
+                                    { key: "album", label: "Album" },
+                                ].map((option) => (
+                                    <button
+                                        key={option.key}
+                                        type="button"
+                                        className={`reviewpage-search-type-btn ${searchType === option.key ? 'active' : ''}`}
+                                        onClick={() => setSearchType(option.key)}
+                                    >
+                                        {option.label}
+                                    </button>
+                                ))}
+                            </div>
                             <div className="reviewpage-search-form">
                                 <input
                                     type="text"
@@ -289,19 +330,31 @@ export default function ReviewPage() {
                                     {loading ? "Searching..." : "Search"}
                                 </button>
                             </div>
+                        </div>
 
-                            {searchResults.length > 0 && (
+                            {searchResults.length > 0 ? (
                                 <div className="reviewpage-search-results">
-                                    {searchResults.map((song) => (
+                                    {searchResults.map((song, idx) => (
                                         <div
-                                            key={song.id}
+                                            key={`${song.id}-${idx}`}
                                             className={`reviewpage-song-item ${selectedSong?.id === song.id ? 'selected' : ''}`}
                                             onClick={() => setSelectedSong(song)}
                                         >
+                                            <div
+                                                className="reviewpage-song-thumb"
+                                                style={song.image ? { backgroundImage: `url(${song.image})` } : { backgroundColor: `hsl(${(idx * 52) % 360}, 70%, 88%)` }}
+                                            >
+                                                {!song.image && <span>{song.type === 'artist' ? 'ART' : song.type === 'album' ? 'ALB' : 'SON'}</span>}
+                                            </div>
                                             <div className="reviewpage-song-info">
                                                 <div className="reviewpage-song-title">{song.title}</div>
-                                                <div className="reviewpage-song-artist">{song.artist || song.name}</div>
-                                                {song.album && <div className="reviewpage-song-album">Album: {song.album}</div>}
+                                                <div className="reviewpage-song-artist">
+                                                    {song.type === 'track'
+                                                        ? song.artist || "Unknown Artist"
+                                                        : song.artist || (song.type === 'album' ? "Various Artists" : song.title)}
+                                                </div>
+                                                {song.type === 'track' && song.album && <div className="reviewpage-song-album">Album: {song.album}</div>}
+                                                {song.type !== 'track' && <div className="reviewpage-song-album">{song.type === 'artist' ? 'Artist review' : 'Album review'}</div>}
                                             </div>
                                             <div className="reviewpage-song-check">
                                                 {selectedSong?.id === song.id && "✓"}
@@ -309,13 +362,17 @@ export default function ReviewPage() {
                                         </div>
                                     ))}
                                 </div>
+                            ) : (
+                                searchQuery.trim() && !loading && (
+                                    <div className="reviewpage-no-results-message">No Spotify results found. Try a different search term.</div>
+                                )
                             )}
                         </div>
 
                         {selectedSong && (
                             <form onSubmit={handleSubmitReview} className="reviewpage-form">
                                 <div className="reviewpage-section">
-                                    <h3>Selected Song</h3>
+                                    <h3>Selected Song, Artist, or Album</h3>
                                     <div className="reviewpage-selected-song">
                                         <div className="reviewpage-song-title">{selectedSong.title}</div>
                                         <div className="reviewpage-song-artist">{selectedSong.artist || "Unknown Artist"}</div>
@@ -335,7 +392,7 @@ export default function ReviewPage() {
                                 <div className="reviewpage-section">
                                     <h3>Rating (0-5 stars)</h3>
                                     <div className="reviewpage-rating">
-                                        {[0, 1, 2, 3, 4, 5].map((star) => (
+                                        {[1, 2, 3, 4, 5].map((star) => (
                                             <button
                                                 key={star}
                                                 type="button"
@@ -421,15 +478,24 @@ export default function ReviewPage() {
                         <div className="reviewpage-section">
                             {reviewSearchResults.length > 0 ? (
                                 <div className="reviewpage-reviews-list">
-                                    {reviewSearchResults.map((review) => (
-                                        <div key={review.id} className="reviewpage-review-card">
+                                    {reviewSearchResults.map((review, idx) => (
+                                        <div key={review.reviewID || idx} className="reviewpage-review-card">
                                             <div className="review-header">
                                                 <div className="review-song-info">
-                                                    <div className="review-title">{review.songTitle || 'Song'}</div>
+                                                    <div className="review-title">
+                                                        {review.targetName || 'Unknown'}
+                                                        {review.targetType ? ` (${review.targetType})` : ''}
+                                                    </div>
                                                     {review.username && <div className="review-author">by {review.username}</div>}
+                                                    {review.artist && review.targetType !== 'artist' && (
+                                                        <div className="review-author">Artist: {review.artist}</div>
+                                                    )}
+                                                    {review.album && review.targetType !== 'album' && (
+                                                        <div className="review-author">Album: {review.album}</div>
+                                                    )}
                                                 </div>
                                                 <div className="review-rating-display">
-                                                    {'★'.repeat(review.rating)}{'☆'.repeat(5-review.rating)}
+                                                    {'★'.repeat(review.rating || 0)}{'☆'.repeat(5 - (review.rating || 0))}
                                                 </div>
                                             </div>
                                             {review.comment && (
@@ -442,7 +508,7 @@ export default function ReviewPage() {
                                 </div>
                             ) : (
                                 <p style={{ textAlign: 'center', color: '#999' }}>
-                                    {reviewSearchQuery ? 'No reviews found. Try a different search!' : 'Search for reviews above'}
+                                    {noReviewResults ? 'No reviews exist for this artist / song / album.' : (reviewSearchQuery ? 'No reviews found. Try a different search!' : 'Search for reviews above')}
                                 </p>
                             )}
                         </div>
