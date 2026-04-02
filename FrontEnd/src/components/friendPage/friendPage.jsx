@@ -299,7 +299,7 @@ const FriendPage = () => {
                             >
                                 { }
                                 {(() => {
-                                    const isActive = user.login_status === true || user.login_status === 1;
+                                    const isActive = user.login_status = "1";
                                     return (
                                         <div className="friendpage-active-indicator-wrapper">
                                             <div className={isActive ? 'friendpage-active-indicator' : 'friendpage-inactive-indicator'}></div>
