@@ -65,6 +65,9 @@ dependencies {
     //WebClient
     implementation("org.springframework.boot:spring-boot-starter-webflux")
 
+    //GeminiAI
+    implementation("com.google.genai:google-genai:1.45.0")
+
 }
 
 tasks.withType<Test> {

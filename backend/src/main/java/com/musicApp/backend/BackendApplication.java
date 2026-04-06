@@ -44,6 +44,7 @@ public class BackendApplication {
 				System.setProperty("CLOUDFLARE_PUBLIC_URL", dotenv.get("CLOUDFLARE_PUBLIC_URL"));
 				System.setProperty("TICKETMASTER_API_KEY", dotenv.get("TICKETMASTER_API_KEY"));
 				System.setProperty("TICKETMASTER_CONSUMER_SECRET_KEY", dotenv.get("TICKETMASTER_CONSUMER_SECRET_KEY"));
+				System.setProperty("GEMINI_API_KEY", dotenv.get("GEMINI_API_KEY"));
 
 
 		SpringApplication.run(BackendApplication.class, args);
