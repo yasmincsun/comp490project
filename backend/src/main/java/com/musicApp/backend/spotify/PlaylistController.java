@@ -134,33 +134,26 @@ public class PlaylistController {
       String userId = (String) session.getAttribute("userId");
       if (userId == null) return ResponseEntity.status(401).body(Map.of("error", "Not logged in"));
 
-      int useLimit = (limit == null) ? 20 : Math.max(1, Math.min(100, limit));
-
-      var res = moodService.recommendBySelectedMood(userId, mood, useLimit);
-      var recs = res.recommendations();
-      if (recs == null || recs.isEmpty()) {
-        return ResponseEntity.badRequest().body(Map.of("error", "No tracks found for mood", "mood", mood));
-      }
+      var res = moodService.recommendBySelectedMood(userId, mood, limit);
 
       List<String> uris = new ArrayList<>();
-      for (var m : recs) {
-        Object uri = m.get("uri");
-        if (uri != null) uris.add(uri.toString());
+      for (var m : res) {
+        if (m != null) uris.add(m);
       }
       if (uris.isEmpty()) return ResponseEntity.badRequest().body(Map.of("error", "No track URIs in recommendations"));
 
       SpotifyApi api = auth.apiForUser(userId);
       String playlistName = (name == null || name.isBlank())
-          ? ("Mood • " + res.mood().bucket())
+          ? (mood + " songs")
           : name.trim();
 
       var created = api.createPlaylist(userId, playlistName)
           .public_(false)
-          .description("Here's a playlist when you feel " + res.mood().bucket())
+          .description("Here's a playlist when you feel " + mood)
           .build()
           .execute();
 
-      for (int i = 0; i < uris.size(); i += 100) {
+       for (int i = 0; i < uris.size(); i += 100) {
         String[] chunk = uris.subList(i, Math.min(i + 100, uris.size())).toArray(new String[0]);
         api.addItemsToPlaylist(created.getId(), chunk).build().execute();
       }
@@ -168,10 +161,13 @@ public class PlaylistController {
       return ResponseEntity.ok(Map.of(
           "playlistId", created.getId(),
           "name", created.getName(),
-          "mood", res.mood().bucket(),
+          "mood", mood,
           "tracksAdded", uris.size(),
           "url", created.getExternalUrls() != null ? created.getExternalUrls().get("spotify") : null
       ));
+
+
+  
     } catch (Exception e) {
       return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
     }
