@@ -6,438 +6,361 @@ package com.musicApp.backend.spotify;
 
 import org.springframework.stereotype.Service;
 import se.michaelthelin.spotify.SpotifyApi;
+
 import se.michaelthelin.spotify.model_objects.specification.Artist;
 import se.michaelthelin.spotify.model_objects.specification.Track;
-import com.neovisionaries.i18n.CountryCode;
-import java.security.SecureRandom;
-import java.text.Normalizer;
+import se.michaelthelin.spotify.requests.data.search.simplified.SearchTracksRequest;
+import se.michaelthelin.spotify.model_objects.specification.Paging;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import com.openai.client.OpenAIClient;
+import com.openai.models.responses.Response;
+import com.openai.models.responses.ResponseCreateParams;
+import com.openai.models.responses.ResponseOutputItem;
+import com.openai.models.responses.ResponseOutputMessage;
+import com.openai.models.responses.Tool;
+import com.openai.models.responses.WebSearchTool;
+
+import org.springframework.beans.factory.annotation.Value;
+
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.concurrent.ThreadLocalRandom;
+
 
 @Service
 public class MoodService {
 
-  /**
-   * 
-   * A pattern that checks for tracks that contain featuring artists and removes
-   * them from consideration. 
-   * 
-   */
 
-  private static final Pattern FEAT_PATTERN = Pattern.compile(
-    "\\s*(\\(|\\[)?\\s*(feat\\.|featuring|with)\\s+[^)\\]]+(\\)|\\])?",
-    Pattern.CASE_INSENSITIVE
-  );
-
-  /**
-   * 
-   * A pattern that checks songs for variations of the original like remasters, remixes, or 
-   * any edits to ensure there are no duplicate tracks being recommended
-   * 
-   */
-
-  private static final Pattern VERSION_PATTERN = Pattern.compile(
-    "\\s*[-–:]?\\s*(remaster(ed)?(\\s*\\d{4})?|radio edit|single version|album version|clean|explicit|demo|live|mix|edit|version)\\b.*",
-    Pattern.CASE_INSENSITIVE
-  );
-
-  /**
-   * 
-   * A method to help remove duplicate tracks and compare songs for originality
-   * 
-   * For example, If Song A exists, but Song A has another variation featuring an artist or a remix or an edit, this
-   * method removes the variations
-   * 
-   * @param name is the track name
-   * @returns the original track, or a canonicalized track
-   * 
-   */
-  private static String canonicalTitle(String name) {
-  if (name == null) return "";
-  String n = Normalizer.normalize(name, Normalizer.Form.NFKD);
-  n = n.replaceAll("[\\p{M}]", "");             // strip accents
-  n = FEAT_PATTERN.matcher(n).replaceAll("");   // drop "feat./featuring/with …"
-  n = n.replaceAll("\\s*\\(.*?\\)\\s*$", "");   // trim trailing (…) blobs
-  n = VERSION_PATTERN.matcher(n).replaceAll(""); // drop “remastered / edit / version …”
-  n = n.replace("&", "and");
-  n = n.replaceAll("[^a-z0-9]+", " ").trim().toLowerCase(); // normalize whitespace/case
-  return n;
-}
-
-/**
- * Helps fetch the artist ID from a track
- * 
- * @param t holds the track
- * @return gives the artist ID or an empty string if a track doesn't have an artist
- */
-private static String primaryArtistId(Track t) {
-  if (t == null || t.getArtists() == null || t.getArtists().length == 0 || t.getArtists()[0] == null)
-    return "";
-  return t.getArtists()[0].getId() == null ? "" : t.getArtists()[0].getId();
-}
-
-  /**
-   * Handles authentication for the user to use the search engine
-   */
   private final SpotifyAuthService auth;
+  private final OpenAIClient client;
+  private final String model;
+
+  public record Song(String title, String artist, double confidence) {}
+  public record ArtistSongs(int number, String artist, List<String> songs) {}
 
 
-  /**
-   * 
-   * A constructor that is linked with the {@link SpotifyAuthService}
-   * 
-   * Important so that users are authorized to use the MoodService
-   * 
-   */
-  public MoodService(SpotifyAuthService auth) {
+  public MoodService(SpotifyAuthService auth, @Value("${openai.model}") String model, OpenAIClient client) {
     this.auth = auth;
+    this.client = client;
+    this.model = model;
   }
 
+  long startTime;
+  long endTime;
 
-  /**
-   * A record to holds how similar the track's or mood is or genre characteristics
-   * 
-   * @param valence measures how positve a song is
-   * @param energy measures song intensity
-   * @param tempo measures song BPM
-   * @param danceability measures how danceable a song is
-   * @param bucket is the mood its achieving to collect
-   */
-  public static record MoodVector(double valence, double energy, double tempo,
-                                  double danceability, String bucket) {}
-  /**
-   * A record for returning the mood and the recommendations
-   */
-  public static record MoodResult(MoodVector mood,
-                                  List<Map<String, Object>> recommendations) {}
-  /**
-   * Computes the user's mood profile and returns a neutral recommendation
-   * 
-   * It goes through a user's top tracks (or an artist's top tracks if not available)
-   * 
-   * @param userId holds the user's SpotifyId
-   * @return a link to {@link MoodResult}, containing a neutral set of trakcs
-   * @throws Exception if API call fails or authorization is invalid
-   */
-  public MoodResult computeAndRecommend(String userId) throws Exception {
+  public List<String> recommendBySelectedMood(String userId, String mood, int limit) throws Exception {
+    List<Integer> selectionSublist;
+    List<Map<String, Object>> top;
+    String prompt;
+
+    startTime = System.currentTimeMillis();
+
     SpotifyApi api = auth.apiForUser(userId);
 
-    // 1) Primary: user's top tracks
-    List<Track> pool = new ArrayList<>();
-    try {
-      // Rotate time_range and offset to avoid repetition 
-    String[] ranges = {"short_term", "medium_term", "long_term"};
-    String timeRange = ranges[(int)(System.currentTimeMillis() / 86_400_000L) % ranges.length]; // rotates daily
-    int offset = new java.util.Random().nextInt(30); // vary results slightly
+        Artist[] items = api.getUsersTopArtists().limit(limit).build().execute().getItems();
 
-    Track[] topTracks = api.getUsersTopTracks()
-    .time_range(timeRange)
-    .limit(20)
-    .offset(offset)
-    .build()
-    .execute()
-    .getItems();
-
-      if (topTracks != null) pool.addAll(Arrays.asList(topTracks));
-    } catch (Exception ignored) { /* fallback below */ }
-
-    // 2) Fallback: a few top tracks from each top artist (skip artists that error)
-    if (pool.isEmpty()) {
-      Artist[] topArtists = api.getUsersTopArtists().limit(5).build().execute().getItems();
-      for (Artist a : topArtists) {
-        try {
-          Track[] artistTop = api.getArtistsTopTracks(a.getId(), CountryCode.US).build().execute();
-          int limit = Math.min(5, artistTop.length);
-          for (int i = 0; i < limit; i++) pool.add(artistTop[i]);
-        } catch (Exception ignored) { /* regional/other issues → skip */ }
-      }
-    }
-
-    if (pool.isEmpty()) {
-      return new MoodResult(
-          new MoodVector(0.5, 0.5, 120, 0.5, "unavailable_due_to_spotify_api_changes"),
-          List.of()
-      );
-    }
-
-    // 3) De-dupe and add variety
-    LinkedHashMap<String, Track> unique = new LinkedHashMap<>();
-    for (Track t : pool) {
-      if (t != null && t.getId() != null){
-        continue;
-      }
-      String key = canonicalTitle(t.getName()) + "::" + primaryArtistId(t);
-      unique.putIfAbsent(key, t);
-    }
-    List<Track> uniq = new ArrayList<>(unique.values());
-    Collections.shuffle(uniq, new SecureRandom()); // non-deterministic each call
-
-    // 4) Present up to 20 items as "recommendations"
-    List<Map<String, Object>> recList = uniq.stream()
-        .limit(10)
-        .map(t -> Map.<String, Object>of(
-            "id", t.getId(),
-            "name", t.getName(),
-            "artist", (t.getArtists() != null && t.getArtists().length > 0)
-                ? t.getArtists()[0].getName() : "Unknown",
-            "uri", t.getUri()
-        ))
-        .collect(Collectors.toList());
-
-    // Neutral mood vector
-    MoodVector mv = new MoodVector(0.5, 0.5, 120, 0.5, "unavailable_due_to_spotify_api_changes");
-    return new MoodResult(mv, recList);
-  }
-
-  /**
-   * Generates the playlist with the user's mood of preference
-   * 
-   * It analyzes the user's favorite tracks and artist, and matches them against
-   * the keywords in {@link MoodMatchers}, then scores what is best fit
-   * 
-   * @param userId the user's Spotify ID
-   * @param selectedMood the user's mood of preference
-   * @return a {@link MoodResult} containing a list of songs best fit for the mood
-   * @throws Exception if the API call fails
-   */
-  public MoodResult recommendBySelectedMood(String userId, String selectedMood) throws Exception {
-    return recommendBySelectedMood(userId, selectedMood, 10);
-  }
-
-
-/**
- * This method helps generate the mood-based recommendation
- * 
- * It fetches the user tracks and their genres, matches the genres against the patterns in {@link MoodMatchers}
- * scores the track per artist, then randomly samples a small set per artist to create a balanced playlist
- * @param userId holds the user's Spotify ID
- * @param selectedMood user's mood of preference
- * @param limit the number of songs to return
- * @return a {@link MoodResult} with the computed mood vector and reccomendations
- * @throws Exception if the API calls fail
- */
-  public MoodResult recommendBySelectedMood(String userId, String selectedMood, int limit) throws Exception {
-    SpotifyApi api = auth.apiForUser(userId);
-
-    // ---------- Build the pool ----------
-    List<Track> pool = new ArrayList<>();
-    try {
-      // Rotate time_range and offset to avoid repetition (3A)
-    String[] ranges = {"short_term", "medium_term", "long_term"};
-    String timeRange = ranges[(int)(System.currentTimeMillis() / 86_400_000L) % ranges.length];
-    int offset = new java.util.Random().nextInt(30);
-
-    Track[] topTracks = api.getUsersTopTracks()
-    .time_range(timeRange)
-    .limit(20)
-    .offset(offset)
-    .build()
-    .execute()
-    .getItems();
-
-      if (topTracks != null) pool.addAll(Arrays.asList(topTracks));
-    } catch (Exception ignored) {}
-
-    if (pool.isEmpty()) {
-      Artist[] topArtists = api.getUsersTopArtists().limit(50).build().execute().getItems();
-      for (Artist a : topArtists) {
-        try {
-          Track[] artistTop = api.getArtistsTopTracks(a.getId(), CountryCode.US).build().execute();
-          for (int i = 0; i < Math.min(5, artistTop.length); i++) pool.add(artistTop[i]);
-        } catch (Exception ignored) {}
-      }
-    }
-
-    if (pool.isEmpty()) {
-      return new MoodResult(new MoodVector(0.5, 0.5, 120, 0.5, "no_data"), List.of());
-    }
-
-    // ---------- Build artist genre map for ALL artists on the tracks ----------
-    LinkedHashSet<String> artistIds = new LinkedHashSet<>();
-    for (Track t : pool) {
-      if (t.getArtists() != null) {
-        for (var art : t.getArtists()) {
-          if (art != null && art.getId() != null) artistIds.add(art.getId());
+        if (items == null || items.length == 0){
+          top = new ArrayList<>();
+        } else {
+          top = IntStream.range(0, items.length).mapToObj(i -> {Map<String, Object> map2 = new HashMap<>(); 
+            map2.put("number", i + 1);
+            map2.put("id", items[i].getId()); 
+            map2.put("name", items[i].getName()); 
+            return map2; }).collect(Collectors.toList());
         }
-      }
-    }
 
-    Map<String, List<String>> artistGenres = new HashMap<>();
-    List<String> ids = new ArrayList<>(artistIds);
-    for (int i = 0; i < ids.size(); i += 50) {
-      String[] chunk = ids.subList(i, Math.min(i + 50, ids.size())).toArray(new String[0]);
-      Artist[] arts = api.getSeveralArtists(chunk).build().execute();
-      if (arts != null) {
-        for (Artist a : arts) {
-          if (a != null && a.getId() != null && a.getGenres() != null) {
-            artistGenres.put(a.getId(), Arrays.asList(a.getGenres()));
+        Tool webSearch = Tool.ofWebSearch(
+        WebSearchTool.builder()
+        .type(WebSearchTool.Type.WEB_SEARCH)   // <-- required
+        .build()
+          );
+
+        ObjectMapper mapper = new ObjectMapper();
+        String artistsNames = mapper.writeValueAsString(top);
+
+        System.out.println(artistsNames);
+
+        List<Integer> sample = new ArrayList<>();
+
+        while (sample.size() < Math.min(50, top.size())) {
+          int randomNum = ThreadLocalRandom.current().nextInt(1, top.size() + 1);
+          if (!sample.contains(randomNum)) {
+            sample.add(randomNum);
           }
         }
-      }
-    }
 
-    Map<String, List<Pattern>> moodHash = MoodMatchers.MOOD_MATCHERS;
-    String key = (selectedMood == null || selectedMood.isBlank()) ? "happy" : selectedMood.toLowerCase().trim();
-    List<Pattern> patterns = moodHash.getOrDefault(key, moodHash.get("happy"));
+        if (sample.size() >= 30){
+          selectionSublist = sample.subList(0, 20);
+        } else {
+          selectionSublist = sample.subList(0, sample.size());
+        }
 
-    // ---------- Score tracks by ANY artist’s genres ----------
-    record Scored(Track t, int score) {}
-    List<Scored> scored = new ArrayList<>();
-    for (Track t : pool) {
-      int score = 0;
-      if (t.getArtists() != null) {
-        for (var art : t.getArtists()) {
-          if (art == null || art.getId() == null) continue;
-          List<String> genres = artistGenres.getOrDefault(art.getId(), List.of());
-          for (String g : genres) {
-            if (g == null) continue;
-            String gl = g.toLowerCase();
-            for (Pattern p : patterns) {
-              if (p.matcher(gl).find()) { score++; break; } // count each artist once
+        ObjectMapper selectMapper = new ObjectMapper();
+        String selection = selectMapper.writeValueAsString(selectionSublist);
+
+        System.out.println(selection);
+
+        List<Map<String, Object>> selectedArtist = new ArrayList<>();
+
+        for (Map<String, Object> artist : top){
+          int number = (int) artist.get("number");
+          if (selectionSublist.contains(number)){
+            Map<String, Object> entry = new HashMap<>();
+            entry.put("number", number);
+            entry.put("artist", artist.get("name"));
+            selectedArtist.add(entry);
+          }
+        }
+
+        ObjectMapper selectedArtistMapper = new ObjectMapper();
+        String selectedArtistString = selectedArtistMapper.writeValueAsString(selectedArtist);
+    
+
+        List<Pattern> tags = MoodMatchers.MOOD_MATCHERS.get(mood);
+
+        List<String> tag2String = tags.stream().map(Pattern::pattern).toList();
+
+        String tagString = tag2String.stream().collect(Collectors.joining(", "));
+
+        endTime = System.currentTimeMillis();
+        System.out.println("Time taken for Spotify response: " + (endTime - startTime) / 1000.0 + " seconds");
+
+        if (sample.size() >= 30){
+
+        prompt = String.format("""
+                  You are generating Spotify Song candidates for a mood
+                  Mood: %s
+                  Allowed artists (choose from these that fit the mood): %s
+                  Mood tags/defs: %s
+
+                  Output: JSON array of 30 UNIQUE objects: {title, artist, confidence}
+                  Constraints:
+                  - artist MUST be in allowed list; no dups or your own suggestions
+                  - use 10-20 of the 30 artists, 2-3 songs per artist, do not exceed more than 3 songs per artist; ~60%% popular / ~40%% deep cuts (not top-5 for artist)
+                  - exclude remaster/remix/live/intro/skit; exclude collabs unless allowed artist is featured
+                  - confidence is NUMBER 0-1; include only >= 0.75 (0.90-1.00 strong, 0.75-0.89 ok)
+                  - Prefer song genres that match the mood strongly. For example if mood is "angry", prioritize aggressive/intense genres (metal/punk/hard rock/hardcore/rap) over pop/R&B.
+                  - Add songs that match the mood instrumentally
+
+                  Return JSON only.
+                  """, mood, selectedArtistString, tagString);
+        } else{ //in the case user is new and has less than 30 top artists, we will not give the AI the selection instructions and just let it choose from the artists it thinks fit best
+          prompt = String.format("""
+                    Mood: %s
+                    Preferred artists: %s
+                    Mood tags: %s
+
+                    Output: JSON array of 30 UNIQUE objects: {title, artist, confidence} (NUMBER 0-1)
+                    Rules:
+                    - prioritize preferred artists; aim 2-3 songs/artist when possible; rank them higher
+                    - if <30 artists, add similar artists (in terms of genre) to reach 30; tracks must be real + on Spotify
+                    - for preferred artists, use titles from user dataset when possible
+                    - ~60%% popular / ~40%% deep cuts; no remaster/remix/live/intro/skit; no collabs unless original artist is featured
+                    - include only confidence >= 0.75 (0.90-1.00 strong, 0.75-0.89 ok)
+
+                    Return JSON only.
+                    """, mood, artistsNames, tagString);
+        }
+
+        startTime = System.currentTimeMillis();
+
+
+        ResponseCreateParams params = ResponseCreateParams.builder()
+                .model(model)
+                .input(prompt)
+                .tools(List.of(webSearch))
+                .temperature(0.9)
+                .topP(1.0)
+                .build();
+        
+        Response res = client.responses().create(params);
+
+        String aiResponse = extractText(res);
+
+        System.out.println(aiResponse); 
+
+        ObjectMapper songMapper = new ObjectMapper();
+
+        List<Song> songs = songMapper.readValue(aiResponse, new com.fasterxml.jackson.core.type.TypeReference<List<Song>>(){});
+        
+        List<String> URIs = new ArrayList<>();
+
+        endTime = System.currentTimeMillis();
+        System.out.println("Time taken for AI response: " + (endTime - startTime) / 1000.0 + " seconds");
+
+        if (sample.size() < 30){
+          //if user has less than 30 artists, we will not give the AI the selection instructions and just let it choose from the artists it thinks fit best, so we will not filter the songs based on the selection and just take the top 20 songs that fit the mood
+          return songCompilerPriority(URIs, songs, api, songs.size(), 0.75, top);
+        } 
+          return songCompiler(URIs, songs, api, sample.size(), 0.80);
+
+  }
+
+  public static List<String> songCompilerPriority(List<String> x, List<Song> y, SpotifyApi api, int size, double confidence, List<Map<String, Object>> top) throws Exception { //needs work
+
+       System.out.println("MEthode Priority triggered");
+       long startTime2 = System.currentTimeMillis();
+       long endTime2;
+
+       Collections.shuffle(y);
+
+    for (Song prioritySongs : y) {
+          SearchTracksRequest searchReq = api.searchTracks("track:" + prioritySongs.title + " artist:" + prioritySongs.artist).limit(1).build();
+          
+          Paging<Track> results = searchReq.execute();
+
+          if (results.getItems().length == 0) {
+            continue;
+          }
+
+          if (prioritySongs.confidence >= confidence && top.stream().anyMatch(artist -> artist.get("name").equals(prioritySongs.artist))){
+
+            if (x.size() == 10){
+              break;
+            }
+
+            Track song = results.getItems()[0];
+            String uri = song.getUri();
+
+            if (!x.contains(uri)) {
+              x.add(uri);
+              System.out.println("added: " + prioritySongs.title + " by " + prioritySongs.artist + " with confidence " + prioritySongs.confidence);
+              System.out.println("Current size: " + x.size());
+            }
+          } else {
+            continue;
+          }
+
+        }
+
+        System.out.println("Backfilling");
+
+        for (Song t : y){
+          SearchTracksRequest searchReq = api.searchTracks("track:" + t.title + " artist:" + t.artist).limit(1).build();
+          
+          Paging<Track> results = searchReq.execute();
+
+          if (results.getItems().length == 0) {
+            continue;
+          }
+
+          if (t.confidence >= 0.80){
+             Track song = results.getItems()[0];
+
+             String uri = song.getUri();
+
+            if (x.size() == 20){
+              break;
+            } else {
+              if (!x.contains(uri)) {
+              x.add(uri);
+              System.out.println("added: " + t.title + " by " + t.artist + " with confidence " + t.confidence);
+              System.out.println("Current size (Backfill): " + x.size());
+              }
             }
           }
         }
-      }
-      scored.add(new Scored(t, score));
-    }
 
-    // ---------- Prefer positives; if none exist, use all ----------
-    List<Scored> candidates = scored.stream().filter(s -> s.score > 0).toList();
-    if (candidates.isEmpty()) candidates = scored;
+        endTime2 = System.currentTimeMillis();
+        System.out.println("Time taken for backfilling: " + (endTime2 - startTime2) / 1000.0 + " seconds");
 
-    // ---------- De-dupe by track ID ----------
-    LinkedHashMap<String, Scored> uniqMap = new LinkedHashMap<>();
-    for (Scored s : candidates) {
-      if (s.t != null && s.t.getId() != null){
-        continue;
-      }
-      String dedupeKey = canonicalTitle(s.t.getName()) + "::" + primaryArtistId(s.t);
-      uniqMap.putIfAbsent(dedupeKey, s);
-    }
-    List<Scored> uniq = new ArrayList<>(uniqMap.values());
-
-    // ---------- Group by artist; select NUM_ARTISTS artists; pick SONGS_PER_ARTIST per artist ----------
-Random rnd = new SecureRandom();
-
-// Build a canonical "primary artist" (first listed) for grouping
-Map<String, List<Scored>> byArtist = new LinkedHashMap<>();
-for (Scored s : candidates) {
-  String artistId = null;
-  if (s.t != null && s.t.getArtists()!=null && s.t.getArtists().length>0 && s.t.getArtists()[0]!=null) {
-    artistId = s.t.getArtists()[0].getId();
+        System.out.println("Recommended URIs: " + x);
+        return x;
   }
-  if (artistId == null) continue;
-  byArtist.computeIfAbsent(artistId, k -> new ArrayList<>()).add(s);
-}
 
-// Shuffle tracks inside each artist, but prefer higher score (tie-broken randomly)
-for (List<Scored> list : byArtist.values()) {
-  list.sort((a,b) -> Integer.compare(b.score, a.score));
-  Collections.shuffle(list, rnd); // add stochasticity among similarly scored items
-}
+  public static List<String> songCompiler(List<String> x, List<Song> y, SpotifyApi api, int size, double confidence) throws Exception { //needs work
 
-// Rank artists by their best track score (desc), tie-broken randomly
-List<Map.Entry<String, List<Scored>>> artistEntries = new ArrayList<>(byArtist.entrySet());
-artistEntries.sort((a,b) -> {
-  int bestA = a.getValue().stream().mapToInt(x -> x.score).max().orElse(0);
-  int bestB = b.getValue().stream().mapToInt(x -> x.score).max().orElse(0);
-  int cmp = Integer.compare(bestB, bestA);
-  return (cmp != 0) ? cmp : rnd.nextInt(3)-1; // weak random tie-break
-});
+       System.out.println("MEthode songCompiler triggered");
+       long startTime2 = System.currentTimeMillis();
+       long endTime2;
 
-// Pick up to NUM_ARTISTS artists
-List<Map.Entry<String, List<Scored>>> pickedArtists = new ArrayList<>();
-for (var e : artistEntries) {
-  pickedArtists.add(e);
-  if (pickedArtists.size() >= 10) break;
-}
+       Collections.shuffle(y);
 
-// If not enough artists matched the mood, backfill from all pool artists
-if (pickedArtists.size() < 10) {
-  // Build artist groups from the whole pool (ignoring mood), unique by ID
-  LinkedHashMap<String, List<Scored>> allByArtist = new LinkedHashMap<>();
-  LinkedHashMap<String, Track> uniqPool = new LinkedHashMap<>();
-  for (Track t : pool) if (t != null && t.getId()!=null) uniqPool.putIfAbsent(t.getId(), t);
-  for (Track t : uniqPool.values()) {
-    if (t.getArtists()!=null && t.getArtists().length>0 && t.getArtists()[0]!=null) {
-      String aid = t.getArtists()[0].getId();
-      if (aid==null) continue;
-      allByArtist.computeIfAbsent(aid, k -> new ArrayList<>()).add(new Scored(t, 0));
-    }
+    for (Song s : y) {
+          SearchTracksRequest searchReq = api.searchTracks("track:" + s.title + " artist:" + s.artist).limit(1).build();
+          
+          Paging<Track> results = searchReq.execute();
+
+          if (results.getItems().length == 0) {
+            continue;
+          }
+
+          if (s.confidence >= confidence){
+
+            if (x.size() == 15){
+              break;
+            }
+
+            Track song = results.getItems()[0];
+            String uri = song.getUri();
+
+            if (!x.contains(uri)) {
+              x.add(uri);
+              System.out.println("added: " + s.title + " by " + s.artist + " with confidence " + s.confidence);
+              System.out.println("Current size: " + x.size());
+            }
+          } else {
+            continue;
+          }
+
+        }
+
+        System.out.println("Backfilling");
+
+        for (Song t : y){
+          SearchTracksRequest searchReq = api.searchTracks("track:" + t.title + " artist:" + t.artist).limit(1).build();
+          
+          Paging<Track> results = searchReq.execute();
+
+          if (results.getItems().length == 0) {
+            continue;
+          }
+
+          if (t.confidence >= 0.75){
+             Track song = results.getItems()[0];
+
+             String uri = song.getUri();
+
+            if (x.size() == 20){
+              break;
+            } else {
+              if (!x.contains(uri)) {
+              x.add(uri);
+              System.out.println("added: " + t.title + " by " + t.artist + " with confidence " + t.confidence);
+              System.out.println("Current size (Backfill): " + x.size());
+              }
+            }
+          }
+        }
+
+        endTime2 = System.currentTimeMillis();
+        System.out.println("Time taken for backfilling: " + (endTime2 - startTime2) / 1000.0 + " seconds");
+
+        System.out.println("Recommended URIs: " + x);
+        return x;
   }
-  // Don’t duplicate artists already picked
-  Set<String> already = pickedArtists.stream().map(Map.Entry::getKey).collect(java.util.stream.Collectors.toSet());
-  for (var e : allByArtist.entrySet()) {
-    if (already.contains(e.getKey())) continue;
-    pickedArtists.add(e);
-    if (pickedArtists.size() >= 10) break;
-  }
-}
 
-// Now pick up to SONGS_PER_ARTIST tracks per selected artist (unique by track ID)
-LinkedHashSet<String> seenTrackIds = new LinkedHashSet<>();
-List<Scored> chosen = new ArrayList<>();
-for (var e : pickedArtists) {
-  int taken = 0;
-  // Prefer mood candidates first (they’re already in e.getValue())
-  for (Scored s : e.getValue()) {
-    if (s.t==null || s.t.getId()==null) continue;
-    if (seenTrackIds.add(s.t.getId())) {
-      chosen.add(s);
-      taken++;
-      if (taken >= 2) break;
-    }
-  }
-  // If this artist had < SONGS_PER_ARTIST mood tracks, try to top up from the full pool for that artist
-  if (taken < 2) {
-    // collect more tracks by this artist from the full pool
-    for (Track t : pool) {
-      if (t==null || t.getId()==null || t.getArtists()==null || t.getArtists().length==0 || t.getArtists()[0]==null) continue;
-      String aid = t.getArtists()[0].getId();
-      if (aid!=null && aid.equals(e.getKey())) {
-        if (seenTrackIds.add(t.getId())) {
-          chosen.add(new Scored(t, 0));
-          taken++;
-          if (taken >= 2) break;
+  public static String extractText(Response response) {
+    if (response == null || response.output() == null) return null;
+
+    for (ResponseOutputItem item : response.output()) {
+      var msgOpt = item.message();
+      if (msgOpt.isEmpty()) continue;
+
+      var msg = msgOpt.get();
+      if (msg.content() == null) continue;
+
+      for (ResponseOutputMessage.Content c : msg.content()) {
+        var outTextOpt = c.outputText();
+        if (outTextOpt.isPresent()) {
+          return outTextOpt.get().text();
         }
       }
     }
+    return null;
   }
 }
-
-// As a final backfill (rare), if total < PLAYLIST_SIZE, add any remaining unique tracks
-if (chosen.size() < 10) {
-  LinkedHashMap<String, Track> allUniq = new LinkedHashMap<>();
-  for (Track t : pool) if (t != null && t.getId()!=null) allUniq.putIfAbsent(t.getId(), t);
-  for (Track t : allUniq.values()) {
-    if (t==null || t.getId()==null) continue;
-    long countForArtist = chosen.stream().filter(s ->
-      s.t!=null && s.t.getArtists()!=null && s.t.getArtists().length>0 && s.t.getArtists()[0]!=null &&
-      t.getArtists()!=null && t.getArtists().length>0 && t.getArtists()[0]!=null &&
-      Objects.equals(s.t.getArtists()[0].getId(), t.getArtists()[0].getId())
-    ).count();
-    if (countForArtist >= 2) continue; // respect the cap
-    if (seenTrackIds.add(t.getId())) {
-      chosen.add(new Scored(t, 0));
-      if (chosen.size() >= 10) break;
-    }
-  }
-}
-
-    // ---------- Build response ----------
-    List<Map<String, Object>> recList = chosen.stream()
-        .map(s -> Map.<String, Object>of(
-            "id", s.t.getId(),
-            "name", s.t.getName(),
-            "artist", (s.t.getArtists()!=null && s.t.getArtists().length>0) ? s.t.getArtists()[0].getName() : "Unknown",
-            "uri", s.t.getUri()
-        ))
-        .collect(Collectors.toList());
-
-    // Neutral vector; bucket echoes the selected mood
-    MoodVector mv = new MoodVector(0.5, 0.5, 120, 0.5, key);
-    return new MoodResult(mv, recList);
-  }
-
-} 
