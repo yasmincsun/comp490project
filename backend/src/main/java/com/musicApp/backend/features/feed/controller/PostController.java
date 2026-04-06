@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/posts")
 public class PostController {
-
+ 
     private final PostRepository postRepository;
     private final AuthenticationUserRepository userRepository;
 
