@@ -7,12 +7,15 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Node / frontend
 node_modules
 dist
 dist-ssr
 *.local
+.vite/
+**/.vite/
 
-# Editor directories and files
+# Editor / OS
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -23,15 +26,15 @@ dist-ssr
 *.sln
 *.sw?
 
-# backend
-
+# Backend / Java / Gradle
 HELP.md
 .gradle
+.gradle/
 build/
+backend/build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-.gradle/
 
 ### STS ###
 .apt_generated
@@ -46,7 +49,6 @@ bin/
 !**/src/test/**/bin/
 
 ### IntelliJ IDEA ###
-.idea
 *.iws
 *.iml
 *.ipr
@@ -57,12 +59,21 @@ out/
 ### NetBeans ###
 nbproject/private/
 nbbuild/
-dist/
 nbdist/
 .nb-gradle/
 
 ### VS Code ###
 .vscode
 
-## .env folder ##
+# Environment files
 .env
+backend/src/main/resources/.env
+
+# Maven / Java build output
+target/
+**/target/
+*.class
+
+# Backend project-specific
+backend/.gradle/
+backend/.idea/
