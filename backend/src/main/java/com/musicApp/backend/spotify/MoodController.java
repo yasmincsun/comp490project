@@ -7,9 +7,6 @@ package com.musicApp.backend.spotify;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.musicApp.backend.spotify.MoodService;
-import com.musicApp.backend.spotify.MoodService.MoodResult;
-
 import jakarta.servlet.http.HttpSession;
 
 import java.util.Map;
@@ -29,13 +26,13 @@ public class MoodController {
   /**
    * Helps compute mood vectors and generate reccomendations
    */
-  private final MoodService mood;
+  private final MoodService moodService;
 
   /**
    * A constructor that is linked to {@link MoodService}
    * @param mood the "search engine" used to analyze user's listening habits
    */
-  public MoodController(MoodService mood) { this.mood = mood; }
+  public MoodController(MoodService moodService) { this.moodService = moodService; }
 
 
   /**
@@ -48,23 +45,13 @@ public class MoodController {
    */
   @GetMapping("/mood/by")
 public ResponseEntity<?> byMood(
-    @RequestParam(name = "mood", required = false) String mood,
+    @RequestParam String mood,
     HttpSession session
 ) {
   try {
     String userId = (String) session.getAttribute("userId");
     if (userId == null) return ResponseEntity.status(401).body(Map.of("error", "Not logged in"));
-    var res = this.mood.recommendBySelectedMood(userId, mood);
-    return ResponseEntity.ok(Map.of(
-        "mood", Map.of(
-            "valence", res.mood().valence(),
-            "energy", res.mood().energy(),
-            "tempo", res.mood().tempo(),
-            "danceability", res.mood().danceability(),
-            "bucket", res.mood().bucket()
-        ),
-        "recommendations", res.recommendations()
-    ));
+    return ResponseEntity.ok(moodService.recommendBySelectedMood(userId, mood, 50));
   } catch (Exception e) {
     return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
   }
