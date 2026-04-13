@@ -1,3 +1,6 @@
+//Author: Miguel Alfaro
+//version: 1.0
+
 package com.musicApp.backend.features.authentication.dto;
 
 import com.musicApp.backend.features.feed.model.Post;
