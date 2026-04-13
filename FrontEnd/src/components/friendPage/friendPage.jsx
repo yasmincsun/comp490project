@@ -317,7 +317,7 @@ const FriendPage = () => {
                         )}
 
                         {!loadingActivity && !activityError && friendActivity.length === 0 && (
-                            <div className="friendpage-activity-empty">No recent activity from friends yet. Add friends with the magnifying glass in the top-right corner to see their latest posts and reviews.</div>
+                            <div className="friendpage-activity-empty">No recent activity from friends yet. Search for friends with the magnifying glass to see their latest posts and reviews.</div>
                         )}
 
                         <div className="friendpage-activity-list">
