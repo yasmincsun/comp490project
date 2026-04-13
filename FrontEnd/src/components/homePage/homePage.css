@@ -694,3 +694,60 @@
 .homepage-notification-item:hover {
     background-color: #f5f5f5;
 }
+
+.homepage-notification-badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: #ef4444;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.9);
+}
+
+.homepage-notification-message {
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+.homepage-notification-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.homepage-notification-action-btn {
+    border: none;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.homepage-notification-action-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+.homepage-notification-action-btn.accept {
+    background: #10b981;
+    color: white;
+}
+
+.homepage-notification-action-btn.decline {
+    background: #ef4444;
+    color: white;
+}
+
+.homepage-notification-action-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

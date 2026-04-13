@@ -17,6 +17,10 @@ const FriendPage = () => {
     const [addingFriend, setAddingFriend] = useState(null);
     const [notification, setNotification] = useState(null);
     const [addedFriendIds, setAddedFriendIds] = useState(new Set());
+    const [searchOpen, setSearchOpen] = useState(false);
+    const [friendActivity, setFriendActivity] = useState([]);
+    const [loadingActivity, setLoadingActivity] = useState(false);
+    const [activityError, setActivityError] = useState(null);
 
     // Check if user is logged in
     useEffect(() => {
@@ -54,6 +58,42 @@ const FriendPage = () => {
             }
         })();
     }, []);
+
+    useEffect(() => {
+        if (!currentUserId) return;
+        const loadActivity = async () => {
+            setLoadingActivity(true);
+            setActivityError(null);
+            try {
+                const token = localStorage.getItem("authToken");
+                const response = await fetch(`http://127.0.0.1:8080/api/v1/friendship/activity/${currentUserId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token || ""}`,
+                    },
+                });
+                if (!response.ok) {
+                    const msg = await response.text();
+                    throw new Error(msg || `Activity fetch failed: ${response.status}`);
+                }
+                const activity = await response.json();
+                setFriendActivity(activity);
+            } catch (error) {
+                console.error("Error loading friend activity:", error);
+                setActivityError("Could not load your friends' activity right now.");
+            } finally {
+                setLoadingActivity(false);
+            }
+        };
+
+        loadActivity();
+    }, [currentUserId]);
+
+    const closeSearch = () => {
+        setSearchOpen(false);
+        setHasSearched(false);
+        setSearchQuery("");
+        setSearchResults([]);
+    };
 
     const adjustHex = (hex, amt) => {
         try {
@@ -123,6 +163,11 @@ const FriendPage = () => {
         return "#" + hex;
     };
 
+    const isUserActive = (user) => {
+        const status = user.loginStatus ?? user.login_status;
+        return status === true || status === "1" || status === 1 || status === "true" || status === "TRUE";
+    };
+
     const handleAddFriend = async (friendUserId) => {
         if (!currentUserId) {
             setNotification({ type: 'error', message: 'Could not load your profile. Please refresh.' });
@@ -149,7 +194,7 @@ const FriendPage = () => {
                 setNotification({ type: 'error', message: msg || `Failed to add friend: ${response.status}` });
             } else {
                 setAddedFriendIds(new Set([...addedFriendIds, friendUserId]));
-                setNotification({ type: 'success', message: 'Friend request sent! They can now add you back to confirm the friendship.' });
+                setNotification({ type: 'success', message: 'Friend request sent! They must accept it before you become friends.' });
             }
         } catch (error) {
             console.error("Error adding friend:", error);
@@ -241,141 +286,182 @@ const FriendPage = () => {
                 </button>
             </div>
 
-            {/* Animated search bar container */}
-            <div
-                className={`friendpage-search-bar-top ${hasSearched ? "moved-to-top" : "centered"}`}
-            >
-                <h3 className="friendpage-search-title">Search for Friends</h3>
-                {!hasSearched && (
-                    <p className="friendpage-search-tagline">Find and connect with your friends by searching their usernames</p>
-                )}
-                {/* Show center magnifier when initially on page OR when a search returned no results */}
-                {(!hasSearched || (hasSearched && searchResults.length === 0)) && (
-                    <>
-                        <img src={magGlass} alt="Search" className="friendpage-empty-glass" />
-                        {hasSearched && searchResults.length === 0 && (
-                            <p style={{ marginTop: 100, color: '#333', fontWeight: 600 }}>No users found. Try searching using a different search term!</p>
-                        )}
-                    </>
-                )}
-                <div className="friendpage-search-form">
-                    <input
-                        type="text"
-                        placeholder={hasSearched ? "Search for a user..." : "Enter a username..."}
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        onKeyPress={handleKeyPress}
-                        className="friendpage-search-input-centered"
-                    />
+            {!searchOpen && (
+                <div className="friendpage-search-toggle">
                     <button
-                        onClick={handleSearch}
-                        className="friendpage-search-btn-centered"
-                        disabled={loading}
-                        title="Search"
+                        className="friendpage-search-toggle-btn"
+                        onClick={() => setSearchOpen(true)}
+                        title="Search friends"
                     >
-                        {loading ? "..." : "→"}
+                        <img src={magGlass} alt="Search friends" />
                     </button>
                 </div>
-            </div>
+            )}
 
-            {/* Search results gallery */}
-            {hasSearched && searchResults.length > 0 && (
-                <div className="friendpage-results-container">
-                    <div className="friendpage-results-gallery">
-                        {searchResults.map((user) => (
-                            <div
-                                key={user.id}
-                                className={`friendpage-user-card ${newResultIds.has(user.id) ? 'new' : ''}`}
-                                style={{
-                                    // use user's stored color if present AND not the default account color (12901359)
-                                    backgroundColor: (() => {
-                                        const stored = user.bgColor ?? user.color ?? null;
-                                        const intVal = stored != null ? Number(stored) : null;
-                                        if (intVal && intVal !== 12901359) return intToHex(intVal);
-                                        // fallback profile preview background
-                                        return "rgba(255, 255, 255, 0.92)";
-                                    })()
-                                }}
-                            >
-                                { }
-                                {(() => {
-                                    const isActive = user.login_status = "1";
-                                    return (
-                                        <div className="friendpage-active-indicator-wrapper">
-                                            <div className={isActive ? 'friendpage-active-indicator' : 'friendpage-inactive-indicator'}></div>
-                                            <span className={isActive ? 'friendpage-active-tooltip' : 'friendpage-inactive-tooltip'}>{isActive ? 'Active' : 'Inactive'}</span>
-                                        </div>
-                                    );
-                                })()}
-                                <div className="friendpage-user-avatar">
-                                    {user.profileImageUrl ? (
-                                        <img src={user.profileImageUrl} alt={user.username} onError={(e) => { e.target.style.display = 'none'; }} />
-                                    ) : (
-                                        <div className="friendpage-avatar-placeholder">No Photo</div>
-                                    )}
+            {!searchOpen && (
+                <div className="friendpage-activity-section">
+                    <div className="friendpage-activity-wrapper">
+                        <div className="friendpage-activity-header">
+                            <div>
+                                <h3 className="friendpage-activity-title">Friends' Activity</h3>
+                                <p className="friendpage-activity-subtitle">Recent posts and reviews from your accepted friends, newest first.</p>
+                            </div>
+                        </div>
+
+                        {loadingActivity && (
+                            <div className="friendpage-activity-loading">Loading friend activity…</div>
+                        )}
+
+                        {activityError && (
+                            <div className="friendpage-activity-error">{activityError}</div>
+                        )}
+
+                        {!loadingActivity && !activityError && friendActivity.length === 0 && (
+                            <div className="friendpage-activity-empty">No recent activity from friends yet. Search for friends with the magnifying glass to see their latest posts and reviews.</div>
+                        )}
+
+                        <div className="friendpage-activity-list">
+                        {friendActivity.map((item) => (
+                            <div key={`${item.type}-${item.id}`} className="friendpage-activity-card">
+                                <div className="friendpage-activity-row">
+                                    <span className="friendpage-activity-label">{item.type === "post" ? "Post" : "Review"}</span>
+                                    <span className="friendpage-activity-time">{item.createdAt || item.datePosted}</span>
                                 </div>
-                                <div className="friendpage-user-info">
-                                    <div 
-                                        className="friendpage-user-username" 
-                                        style={{
-                                            color: (() => {
-                                                const stored = user.bgColor ?? user.color ?? null;
-                                                const intVal = stored != null ? Number(stored) : null;
-                                                if (intVal && intVal !== 12901359) return getContrastingTextColor(intToHex(intVal));
-                                                return "#333";
-                                            })()
-                                        }}
-                                    >
-                                        {user.username}
-                                    </div>
-                                    {user.bio && <div 
-                                        className="friendpage-user-bio"
-                                        style={{
-                                            color: (() => {
-                                                const stored = user.bgColor ?? user.color ?? null;
-                                                const intVal = stored != null ? Number(stored) : null;
-                                                if (intVal && intVal !== 12901359) {
-                                                    const textColor = getContrastingTextColor(intToHex(intVal));
-                                                    // For bio, make it slightly more faded but still readable
-                                                    return textColor === "#ffffff" ? "rgba(255, 255, 255, 0.8)" : "rgba(26, 26, 26, 0.7)";
-                                                }
-                                                return "#666";
-                                            })()
-                                        }}
-                                    >
-                                        {user.bio}
-                                    </div>}
-                                    {(user.favoriteArtists || user.favoriteSongs) && (
-                                        <div className="friendpage-user-favorites">
-                                            {user.favoriteArtists && (
-                                                <div className="friendpage-user-favorite-row">
-                                                    <span className="friendpage-user-favorite-label">Favorite Artists: </span>
-                                                    <span className="friendpage-user-favorite-value">{user.favoriteArtists}</span>
-                                                </div>
-                                            )}
-                                            {user.favoriteSongs && (
-                                                <div className="friendpage-user-favorite-row">
-                                                    <span className="friendpage-user-favorite-label">Current Listen: </span>
-                                                    <span className="friendpage-user-favorite-value">{user.favoriteSongs}</span>
-                                                </div>
-                                            )}
-                                        </div>
-                                    )}
-                                    <button
-                                        className="friendpage-add-friend-btn"
-                                        onClick={() => handleAddFriend(user.id)}
-                                        disabled={addingFriend === user.id || addedFriendIds.has(user.id)}
-                                        style={{
-                                            backgroundColor: addedFriendIds.has(user.id) ? '#90EE90' : 'var(--btn-bg1)',
-                                            cursor: addedFriendIds.has(user.id) || addingFriend === user.id ? 'default' : 'pointer',
-                                            opacity: addedFriendIds.has(user.id) ? 0.8 : 1,
-                                        }}
-                                    >
-                                        {addingFriend === user.id ? '...' : addedFriendIds.has(user.id) ? '✓ Added' : '+ Add Friend'}
-                                    </button>
-                                </div>
+                                <div className="friendpage-activity-author">{item.author}</div>
+                                {item.type === "post" ? (
+                                    <>
+                                        {item.content && <div className="friendpage-activity-content">{item.content}</div>}
+                                        {item.picture && <img src={item.picture} alt="Friend post" className="friendpage-activity-image" />}
+                                    </>
+                                ) : (
+                                    <>
+                                        <div className="friendpage-activity-content">{item.comment}</div>
+                                        <div className="friendpage-activity-meta">Rating: {item.rating} · {item.targetName}</div>
+                                    </>
+                                )}
                             </div>
                         ))}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {searchOpen && (
+                <div
+                    className={`friendpage-search-bar-top ${hasSearched ? "moved-to-top" : "centered"}`}
+                >
+                    <div className="friendpage-search-top-row">
+                        <h3 className="friendpage-search-title">Search for Friends</h3>
+                        <button className="friendpage-search-close-btn" onClick={closeSearch} title="Close search">×</button>
+                    </div>
+                    {!hasSearched && (
+                        <p className="friendpage-search-tagline">Find and connect with your friends by searching their usernames</p>
+                    )}
+                    {/* Show center magnifier when search is open but no query has been performed yet */}
+                    {(!hasSearched || (hasSearched && searchResults.length === 0)) && (
+                        <>
+                            <img src={magGlass} alt="Search" className="friendpage-empty-glass" />
+                            {hasSearched && searchResults.length === 0 && (
+                                <p style={{ marginTop: 100, color: '#333', fontWeight: 600 }}>No users found. Try searching using a different search term!</p>
+                            )}
+                        </>
+                    )}
+                    <div className="friendpage-search-form">
+                        <input
+                            type="text"
+                            placeholder={hasSearched ? "Search for a user..." : "Enter a username..."}
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onKeyPress={handleKeyPress}
+                            className="friendpage-search-input-centered"
+                        />
+                        <button
+                            onClick={handleSearch}
+                            className="friendpage-search-btn-centered"
+                            disabled={loading}
+                            title="Search"
+                        >
+                            {loading ? "..." : "→"}
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {searchOpen && hasSearched && searchResults.length > 0 && (
+                <div className="friendpage-results-container">
+                    <div className="friendpage-results-gallery">
+                        {searchResults.map((user) => {
+                            const stored = user.bgColor ?? user.color ?? null;
+                            const intVal = stored != null ? Number(stored) : null;
+                            const cardBackground = intVal !== null && !Number.isNaN(intVal) && intVal !== 12901359 ? intToHex(intVal) : "rgba(255, 255, 255, 0.92)";
+                            const cardTextColor = getContrastingTextColor(cardBackground);
+                            const cardSubTextColor = cardTextColor === "#ffffff" ? "rgba(255,255,255,0.8)" : "rgba(26,26,26,0.75)";
+                            const isActive = isUserActive(user);
+
+                            return (
+                                <div
+                                    key={user.id}
+                                    className={`friendpage-user-card ${newResultIds.has(user.id) ? 'new' : ''}`}
+                                    style={{ backgroundColor: cardBackground }}
+                                >
+                                    <div className="friendpage-active-indicator-wrapper">
+                                        <div className={isActive ? 'friendpage-active-indicator' : 'friendpage-inactive-indicator'}></div>
+                                        <span className={isActive ? 'friendpage-active-tooltip' : 'friendpage-inactive-tooltip'}>{isActive ? 'Active' : 'Inactive'}</span>
+                                    </div>
+                                    <div className="friendpage-user-avatar">
+                                        {user.profileImageUrl ? (
+                                            <img src={user.profileImageUrl} alt={user.username} onError={(e) => { e.target.style.display = 'none'; }} />
+                                        ) : (
+                                            <div className="friendpage-avatar-placeholder">No Photo</div>
+                                        )}
+                                    </div>
+                                    <div className="friendpage-user-info">
+                                        <div
+                                            className="friendpage-user-username"
+                                            style={{ color: cardTextColor }}
+                                        >
+                                            {user.username}
+                                        </div>
+                                        {user.bio && (
+                                            <div
+                                                className="friendpage-user-bio"
+                                                style={{ color: cardSubTextColor }}
+                                            >
+                                                {user.bio}
+                                            </div>
+                                        )}
+                                        {(user.favoriteArtists || user.favoriteSongs) && (
+                                            <div className="friendpage-user-favorites">
+                                                {user.favoriteArtists && (
+                                                    <div className="friendpage-user-favorite-row">
+                                                        <span className="friendpage-user-favorite-label" style={{ color: cardTextColor }}>Favorite Artists: </span>
+                                                        <span className="friendpage-user-favorite-value" style={{ color: cardTextColor }}>{user.favoriteArtists}</span>
+                                                    </div>
+                                                )}
+                                                {user.favoriteSongs && (
+                                                    <div className="friendpage-user-favorite-row">
+                                                        <span className="friendpage-user-favorite-label" style={{ color: cardTextColor }}>Current Listen: </span>
+                                                        <span className="friendpage-user-favorite-value" style={{ color: cardTextColor }}>{user.favoriteSongs}</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+                                        <button
+                                            className="friendpage-add-friend-btn"
+                                            onClick={() => handleAddFriend(user.id)}
+                                            disabled={addingFriend === user.id || addedFriendIds.has(user.id)}
+                                            style={{
+                                                backgroundColor: addedFriendIds.has(user.id) ? '#90EE90' : 'var(--btn-bg1)',
+                                                cursor: addedFriendIds.has(user.id) || addingFriend === user.id ? 'default' : 'pointer',
+                                                opacity: addedFriendIds.has(user.id) ? 0.8 : 1,
+                                            }}
+                                        >
+                                            {addingFriend === user.id ? '...' : addedFriendIds.has(user.id) ? '✓ Requested' : '+ Add Friend'}
+                                        </button>
+                                    </div>
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
             )}

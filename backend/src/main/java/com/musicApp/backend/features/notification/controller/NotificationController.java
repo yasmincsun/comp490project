@@ -7,6 +7,7 @@ import com.musicApp.backend.features.notification.model.Notification;
 import com.musicApp.backend.features.notification.service.NotificationService;
 import com.musicApp.backend.features.authentication.model.AuthenticationUser;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -62,6 +63,16 @@ public class NotificationController {
         }
     }
 
+    @PutMapping("/read-all")
+    public ResponseEntity<?> markAllAsRead(@RequestAttribute("authenticatedUser") AuthenticationUser user) {
+        try {
+            notificationService.markAllAsRead(user);
+            return ResponseEntity.ok(Map.of("message", "All notifications marked as read"));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error marking notifications as read: " + e.getMessage());
+        }
+    }
+
     /**
      * Delete a notification.
      */
@@ -78,14 +89,16 @@ public class NotificationController {
     // DTO class
     public static class NotificationDTO {
         public Long id;
+        public Long senderId;
         public String senderUsername;
         public String type;
         public String message;
         public Boolean isRead;
         public String createdAt;
 
-        public NotificationDTO(Long id, String senderUsername, String type, String message, Boolean isRead, String createdAt) {
+        public NotificationDTO(Long id, Long senderId, String senderUsername, String type, String message, Boolean isRead, String createdAt) {
             this.id = id;
+            this.senderId = senderId;
             this.senderUsername = senderUsername;
             this.type = type;
             this.message = message;
@@ -97,6 +110,7 @@ public class NotificationController {
     private NotificationDTO toDTO(Notification notification) {
         return new NotificationDTO(
                 notification.getId(),
+                notification.getSender().getId(),
                 notification.getSender().getUsername(),
                 notification.getType(),
                 notification.getMessage(),

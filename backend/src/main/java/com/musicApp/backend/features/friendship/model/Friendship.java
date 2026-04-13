@@ -8,21 +8,20 @@ import java.time.LocalDateTime;
 
 /**
  * Friendship entity that represents a friendship relationship between two users.
- * A friendship is directional: user1 adds user2 as a friend.
+ * The friendship primary key is the pair of users, matching a schema without a separate id column.
  */
 @Entity
+@IdClass(FriendshipId.class)
 @Table(name = "friendship")
 public class Friendship {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @NotNull
     @ManyToOne
     @JoinColumn(name = "user1_id", nullable = false)
     private AuthenticationUser user1;
 
+    @Id
     @NotNull
     @ManyToOne
     @JoinColumn(name = "user2_id", nullable = false)
@@ -30,6 +29,13 @@ public class Friendship {
 
     @CreationTimestamp
     private LocalDateTime createdAt;
+
+    @NotNull
+    @Column(name = "status", nullable = false, length = 20)
+    private String status = STATUS_PENDING;
+
+    public static final String STATUS_PENDING = "PENDING";
+    public static final String STATUS_ACCEPTED = "ACCEPTED";
 
     // Constructors
     public Friendship() {
@@ -41,14 +47,6 @@ public class Friendship {
     }
 
     // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public AuthenticationUser getUser1() {
         return user1;
     }
@@ -71,5 +69,13 @@ public class Friendship {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

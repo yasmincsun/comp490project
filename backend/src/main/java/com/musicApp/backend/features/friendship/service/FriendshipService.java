@@ -8,6 +8,7 @@ import com.musicApp.backend.features.authentication.model.AuthenticationUser;
 import com.musicApp.backend.features.authentication.repository.AuthenticationUserRepository;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class FriendshipService {
@@ -18,79 +19,137 @@ public class FriendshipService {
     @Autowired
     private AuthenticationUserRepository userRepository;
 
+    private AuthenticationUser getUserOrThrow(Long userId, String label) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException(label + " not found"));
+    }
+
+    private boolean acceptedFriendshipExists(Long user1Id, Long user2Id) {
+        return friendshipRepository.existsByUser1_IdAndUser2_IdAndStatus(user1Id, user2Id, Friendship.STATUS_ACCEPTED)
+                || friendshipRepository.existsByUser2_IdAndUser1_IdAndStatus(user2Id, user1Id, Friendship.STATUS_ACCEPTED);
+    }
+
+    private boolean pendingFriendshipExists(Long user1Id, Long user2Id) {
+        return friendshipRepository.existsByUser1_IdAndUser2_IdAndStatus(user1Id, user2Id, Friendship.STATUS_PENDING)
+                || friendshipRepository.existsByUser2_IdAndUser1_IdAndStatus(user2Id, user1Id, Friendship.STATUS_PENDING);
+    }
+
     /**
-     * Add a user as a friend (create a friendship record).
-     * 
-     * @param user1Id the ID of the user initiating the friendship
-     * @param user2Id the ID of the user being added as a friend
-     * @return the created Friendship entity
-     * @throws IllegalArgumentException if user or friendship already exists
+     * Send a friend request or accept a pending incoming request.
      */
     public Friendship addFriend(Long user1Id, Long user2Id) {
         if (user1Id.equals(user2Id)) {
             throw new IllegalArgumentException("A user cannot be their own friend");
         }
 
-        AuthenticationUser user1 = userRepository.findById(user1Id)
-                .orElseThrow(() -> new IllegalArgumentException("User 1 not found"));
-        AuthenticationUser user2 = userRepository.findById(user2Id)
-                .orElseThrow(() -> new IllegalArgumentException("User 2 not found"));
+        AuthenticationUser user1 = getUserOrThrow(user1Id, "User 1");
+        AuthenticationUser user2 = getUserOrThrow(user2Id, "User 2");
 
-        // Check if friendship already exists in either direction
-        if (friendshipRepository.existsByUser1_IdAndUser2_IdOrUser2_IdAndUser1_Id(user1Id, user2Id, user2Id, user1Id)) {
+        if (acceptedFriendshipExists(user1Id, user2Id)) {
             throw new IllegalArgumentException("Friendship already exists between these users");
         }
 
+        if (friendshipRepository.existsByUser2_IdAndUser1_IdAndStatus(user2Id, user1Id, Friendship.STATUS_PENDING)) {
+            Friendship existing = friendshipRepository.findByUser2AndUser1AndStatus(user2, user1, Friendship.STATUS_PENDING)
+                    .orElseThrow(() -> new IllegalArgumentException("Pending friendship not found"));
+            existing.setStatus(Friendship.STATUS_ACCEPTED);
+            return friendshipRepository.save(existing);
+        }
+
+        if (friendshipRepository.existsByUser1_IdAndUser2_IdAndStatus(user1Id, user2Id, Friendship.STATUS_PENDING)) {
+            throw new IllegalArgumentException("Friend request already sent");
+        }
+
         Friendship friendship = new Friendship(user1, user2);
+        friendship.setStatus(Friendship.STATUS_PENDING);
         return friendshipRepository.save(friendship);
     }
 
     /**
-     * Remove a friendship between two users.
-     * 
-     * @param user1Id the ID of the first user
-     * @param user2Id the ID of the second user
+     * Accept a pending friend request.
+     */
+    public Friendship acceptFriendRequest(Long requesterId, Long recipientId) {
+        AuthenticationUser requester = getUserOrThrow(requesterId, "Requester");
+        AuthenticationUser recipient = getUserOrThrow(recipientId, "Recipient");
+
+        Friendship friendship = friendshipRepository.findByUser1AndUser2AndStatus(requester, recipient, Friendship.STATUS_PENDING)
+                .orElseThrow(() -> new IllegalArgumentException("Pending friend request not found"));
+        friendship.setStatus(Friendship.STATUS_ACCEPTED);
+        return friendshipRepository.save(friendship);
+    }
+
+    /**
+     * Decline a pending friend request.
+     */
+    public void declineFriendRequest(Long requesterId, Long recipientId) {
+        AuthenticationUser requester = getUserOrThrow(requesterId, "Requester");
+        AuthenticationUser recipient = getUserOrThrow(recipientId, "Recipient");
+
+        Optional<Friendship> friendship = friendshipRepository.findByUser1AndUser2AndStatus(requester, recipient, Friendship.STATUS_PENDING);
+        if (friendship.isEmpty()) {
+            throw new IllegalArgumentException("Pending friend request not found");
+        }
+        friendshipRepository.delete(friendship.get());
+    }
+
+    /**
+     * Remove a friendship or pending request between two users.
      */
     public void removeFriend(Long user1Id, Long user2Id) {
-        AuthenticationUser user1 = userRepository.findById(user1Id)
-                .orElseThrow(() -> new IllegalArgumentException("User 1 not found"));
-        AuthenticationUser user2 = userRepository.findById(user2Id)
-                .orElseThrow(() -> new IllegalArgumentException("User 2 not found"));
+        AuthenticationUser user1 = getUserOrThrow(user1Id, "User 1");
+        AuthenticationUser user2 = getUserOrThrow(user2Id, "User 2");
 
         Optional<Friendship> friendship = friendshipRepository.findByUser1AndUser2(user1, user2);
-        if (friendship.isPresent()) {
-            friendshipRepository.delete(friendship.get());
+        if (friendship.isEmpty()) {
+            friendship = friendshipRepository.findByUser2AndUser1(user2, user1);
         }
+        friendship.ifPresent(friendshipRepository::delete);
     }
 
     /**
-     * Check if two users are friends (checks both directions).
-     * 
-     * @param user1Id the ID of the first user
-     * @param user2Id the ID of the second user
-     * @return true if they are friends, false otherwise
+     * Check if two users are friends (accepted in either direction).
      */
     public boolean areFriends(Long user1Id, Long user2Id) {
-        userRepository.findById(user1Id)
-                .orElseThrow(() -> new IllegalArgumentException("User 1 not found"));
-        userRepository.findById(user2Id)
-                .orElseThrow(() -> new IllegalArgumentException("User 2 not found"));
+        getUserOrThrow(user1Id, "User 1");
+        getUserOrThrow(user2Id, "User 2");
 
-        return friendshipRepository.existsByUser1_IdAndUser2_IdOrUser2_IdAndUser1_Id(user1Id, user2Id, user2Id, user1Id);
+        return friendshipRepository.existsByUser1_IdAndUser2_IdAndStatus(user1Id, user2Id, Friendship.STATUS_ACCEPTED)
+                || friendshipRepository.existsByUser2_IdAndUser1_IdAndStatus(user2Id, user1Id, Friendship.STATUS_ACCEPTED);
     }
 
     /**
-     * Get all friends of a user (both directions combined).
-     * 
-     * @param userId the ID of the user
-     * @return list of all friends
+     * Get all accepted friendships of a user.
      */
     public List<Friendship> getFriendships(Long userId) {
-        AuthenticationUser user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        AuthenticationUser user = getUserOrThrow(userId, "User");
 
-        List<Friendship> friendships = friendshipRepository.findByUser1(user);
-        friendships.addAll(friendshipRepository.findByUser2(user));
+        List<Friendship> friendships = friendshipRepository.findByUser1AndStatus(user, Friendship.STATUS_ACCEPTED);
+        friendships.addAll(friendshipRepository.findByUser2AndStatus(user, Friendship.STATUS_ACCEPTED));
         return friendships;
+    }
+
+    public String getFriendshipStatus(Long user1Id, Long user2Id) {
+        getUserOrThrow(user1Id, "User 1");
+        getUserOrThrow(user2Id, "User 2");
+
+        if (acceptedFriendshipExists(user1Id, user2Id)) {
+            return "friends";
+        }
+        if (friendshipRepository.existsByUser1_IdAndUser2_IdAndStatus(user1Id, user2Id, Friendship.STATUS_PENDING)) {
+            return "pending_outgoing";
+        }
+        if (friendshipRepository.existsByUser1_IdAndUser2_IdAndStatus(user2Id, user1Id, Friendship.STATUS_PENDING)) {
+            return "pending_incoming";
+        }
+        return "none";
+    }
+
+    public List<Long> getAcceptedFriendIds(Long userId) {
+        AuthenticationUser user = getUserOrThrow(userId, "User");
+        return friendshipRepository.findByUser1_IdAndStatusOrUser2_IdAndStatus(userId, Friendship.STATUS_ACCEPTED, userId, Friendship.STATUS_ACCEPTED)
+                .stream()
+                .map(friendship -> friendship.getUser1().getId().equals(userId) ? friendship.getUser2().getId() : friendship.getUser1().getId())
+                .distinct()
+                .collect(Collectors.toList());
     }
 }
