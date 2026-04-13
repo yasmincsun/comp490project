@@ -78,6 +78,9 @@ const HomePage = () => {
     const [openDropdown, setDropdownOpen] = useState(false);
     const [notificationsOpen, setNotificationsOpen] = useState(false);
     const [notifications, setNotifications] = useState([]); // empty array for default "No Notifications" state
+    const [unreadCount, setUnreadCount] = useState(0);
+    const [currentUserId, setCurrentUserId] = useState(null);
+    const [actionLoadingId, setActionLoadingId] = useState(null);
     const navigate = useNavigate();
 
 /**
@@ -125,6 +128,75 @@ const HomePage = () => {
         }
     };
 
+    const fetchUnreadCount = async () => {
+        try {
+            const token = localStorage.getItem("authToken");
+            if (!token) return;
+            const res = await fetch("http://127.0.0.1:8080/api/v1/notifications/unread", {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (!res.ok) {
+                console.error("Failed to fetch unread notifications:", res.status);
+                return;
+            }
+            const data = await res.json();
+            setUnreadCount(Array.isArray(data) ? data.length : 0);
+        } catch (e) {
+            console.error("Error fetching unread count:", e);
+        }
+    };
+
+    const markAllNotificationsRead = async () => {
+        try {
+            const token = localStorage.getItem("authToken");
+            if (!token) return;
+            await fetch("http://127.0.0.1:8080/api/v1/notifications/read-all", {
+                method: "PUT",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            });
+        } catch (e) {
+            console.error("Error marking notifications read:", e);
+        }
+    };
+
+    const handleNotificationAction = async (notif, action) => {
+        if (!currentUserId || !notif?.senderId) return;
+        setActionLoadingId(notif.id);
+
+        const url = `http://127.0.0.1:8080/api/v1/friendship/${action}`;
+        const body = {
+            user1_id: notif.senderId,
+            user2_id: currentUserId,
+            notification_id: notif.id,
+        };
+
+        try {
+            const token = localStorage.getItem("authToken");
+            const res = await fetch(url, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(body),
+            });
+            if (!res.ok) {
+                const msg = await res.text();
+                throw new Error(msg || `Action failed: ${res.status}`);
+            }
+            await fetchNotifications();
+            await fetchUnreadCount();
+        } catch (e) {
+            console.error(`Error ${action}ing friend request:`, e);
+            alert(`Failed to ${action} friend request. Please try again.`);
+        } finally {
+            setActionLoadingId(null);
+        }
+    };
+
     useEffect(() => {
         (async () => {
             const user = await fetchProfile();
@@ -132,13 +204,26 @@ const HomePage = () => {
                 const hex = "#" + Number(user.color).toString(16).padStart(6, "0");
                 setBgColor(hex);
             }
+            if (user && user.id) {
+                setCurrentUserId(user.id);
+            }
         })();
     }, []);
 
     // Fetch notifications when component mounts or when dropdown is opened
     useEffect(() => {
+        if (isLoggedIn) {
+            fetchUnreadCount();
+        }
+    }, [isLoggedIn]);
+
+    useEffect(() => {
         if (isLoggedIn && notificationsOpen) {
-            fetchNotifications();
+            (async () => {
+                await markAllNotificationsRead();
+                await fetchNotifications();
+                await fetchUnreadCount();
+            })();
         }
     }, [isLoggedIn, notificationsOpen]);
 
@@ -227,7 +312,9 @@ const HomePage = () => {
 
 
         if (!response.ok) {
-            throw new Error("Backend returned error: " + response.status);
+            const errorBody = await response.json().catch(() => null);
+            const errorDetail = errorBody?.error || errorBody?.message || response.statusText;
+            throw new Error("Backend returned error: " + errorDetail);
         }
 
         const data = await response.json();
@@ -249,7 +336,7 @@ const HomePage = () => {
         setTimeout(() => setNewMoodId(null), 600);
     } catch (err) {
         console.error("Error:", err);
-        alert("Failed to fetch recommendations.");
+        alert(`Failed to fetch recommendations: ${err.message}`);
     }
 };
 
@@ -382,6 +469,9 @@ const handleLogout = async () => {
                                 title="Notifications"
                             >
                                 <img src={notifIcon} alt="Notifications" className="homepage-notif-icon" />
+                                {unreadCount > 0 && (
+                                    <span className="homepage-notification-badge">{unreadCount}</span>
+                                )}
                             </button>
                             {notificationsOpen && (
                                 <div className="homepage-notifications-dropdown">
@@ -394,7 +484,25 @@ const handleLogout = async () => {
                                         <div className="homepage-notifications-list">
                                             {notifications.map((notif, idx) => (
                                                 <div key={idx} className="homepage-notification-item">
-                                                    {notif.message || notif}
+                                                    <div className="homepage-notification-message">{notif.message || notif}</div>
+                                                    {notif.type === "friend_request" && (
+                                                        <div className="homepage-notification-actions">
+                                                            <button
+                                                                className="homepage-notification-action-btn accept"
+                                                                disabled={actionLoadingId === notif.id}
+                                                                onClick={() => handleNotificationAction(notif, "accept")}
+                                                            >
+                                                                {actionLoadingId === notif.id ? "..." : "Accept"}
+                                                            </button>
+                                                            <button
+                                                                className="homepage-notification-action-btn decline"
+                                                                disabled={actionLoadingId === notif.id}
+                                                                onClick={() => handleNotificationAction(notif, "decline")}
+                                                            >
+                                                                {actionLoadingId === notif.id ? "..." : "Decline"}
+                                                            </button>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             ))}
                                         </div>

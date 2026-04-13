@@ -52,6 +52,12 @@ public class NotificationService {
         return notificationRepository.save(notification);
     }
 
+    public void markAllAsRead(AuthenticationUser recipient) {
+        List<Notification> unread = notificationRepository.findByRecipientAndIsReadFalse(recipient);
+        unread.forEach(n -> n.setIsRead(true));
+        notificationRepository.saveAll(unread);
+    }
+
     /**
      * Delete a notification.
      */

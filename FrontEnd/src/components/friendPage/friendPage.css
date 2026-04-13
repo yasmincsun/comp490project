@@ -16,6 +16,7 @@
     background-size: 400% 400%;
     animation: gradientShift 15s ease infinite;
     z-index: 1;
+    overflow-x: hidden;
 }
 
 @keyframes gradientShift {
@@ -91,7 +92,8 @@
     width: 100vw;
     z-index: 10;
     background: transparent;
-    padding: 0;
+    padding: 0 30px;
+    box-sizing: border-box;
     transition: all 0.6s ease-in-out;
     display: flex;
     flex-direction: column;
@@ -229,14 +231,249 @@
     }
 }
 
-.friendpage-search-input {
-    flex: 1;
+.friendpage-search-toggle {
+    position: fixed;
+    top: 20px;
+    right: 30px;
+    z-index: 200;
+}
+
+.friendpage-search-toggle-btn,
+.friendpage-search-close-btn {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
     border: none;
-    background: transparent;
-    font-size: 16px;
-    font-family: 'Montserrat', sans-serif;
-    outline: none;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.friendpage-search-toggle-btn:hover,
+.friendpage-search-close-btn:hover {
+    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 1);
+}
+
+.friendpage-search-toggle-btn img,
+.friendpage-search-close-btn img {
+    width: 22px;
+    height: 22px;
+}
+
+.friendpage-search-close-btn {
+    font-size: 26px;
+    font-weight: 700;
     color: #333;
+    line-height: 1;
+}
+
+.friendpage-activity-section {
+    position: absolute;
+    top: 100px;
+    left: 30px;
+    right: 30px;
+    bottom: 30px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 10px 0 30px;
+    z-index: 5;
+    display: flex;
+    justify-content: center;
+}
+
+.friendpage-activity-wrapper {
+    width: 100%;
+    max-width: 960px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.friendpage-activity-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 6px;
+    text-align: center;
+}
+
+.friendpage-activity-title,
+.friendpage-activity-subtitle,
+.friendpage-activity-empty,
+.friendpage-activity-error,
+.friendpage-activity-loading {
+    text-align: center;
+}
+
+.friendpage-activity-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.friendpage-activity-title {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0;
+    color: rgba(0, 0, 0, 0.88);
+}
+
+.friendpage-activity-subtitle {
+    margin: 10px 0 0;
+    color: rgba(0, 0, 0, 0.63);
+    max-width: 640px;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.friendpage-activity-search-btn {
+    width: 48px;
+    min-width: 48px;
+    height: 48px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.friendpage-activity-loading,
+.friendpage-activity-error,
+.friendpage-activity-empty {
+    padding: 22px 18px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    margin-bottom: 18px;
+    font-size: 16px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.friendpage-activity-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+}
+
+.friendpage-activity-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(10px);
+}
+
+.friendpage-activity-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.friendpage-activity-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.friendpage-activity-time {
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.58);
+}
+
+.friendpage-activity-author {
+    font-size: 18px;
+    font-weight: 700;
+    color: rgba(0, 0, 0, 0.82);
+    margin-bottom: 8px;
+}
+
+.friendpage-activity-content {
+    font-size: 15px;
+    color: rgba(0, 0, 0, 0.76);
+    margin-bottom: 10px;
+    line-height: 1.6;
+}
+
+.friendpage-activity-image {
+    width: 100%;
+    max-height: 280px;
+    object-fit: cover;
+    border-radius: 16px;
+    margin-top: 10px;
+}
+
+.friendpage-activity-meta {
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.62);
+}
+
+.friendpage-search-top-row {
+    width: 100%;
+    max-width: 800px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 30px;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.friendpage-search-top-row h3 {
+    flex: 1;
+}
+
+.friendpage-search-close-btn {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.96);
+}
+
+.friendpage-search-tagline {
+    max-width: 640px;
+}
+
+.friendpage-results-container {
+    position: absolute;
+    top: 160px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 20px 30px 30px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 5;
+}
+
+.friendpage-results-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+}
+
+.friendpage-user-card {
+    border-radius: 22px;
+    padding: 18px;
+    min-height: 280px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+    position: relative;
+    overflow: hidden;
 }
 
 .friendpage-search-input::placeholder {

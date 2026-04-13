@@ -11,6 +11,9 @@ import java.util.List;
 public interface ReviewRepository extends JpaRepository<Review, Integer> {
     List<Review> findByUser_Id(Long userId);
 
+    @Query("SELECT r FROM Review r WHERE r.user.id IN :userIds ORDER BY r.datePosted DESC")
+    List<Review> findByUserIdsOrderByDatePostedDesc(@Param("userIds") List<Long> userIds);
+
     @Query("SELECT r FROM Review r LEFT JOIN r.song s WHERE " +
            "LOWER(r.targetName) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
            "LOWER(r.artist) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
