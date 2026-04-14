@@ -1,19 +1,22 @@
+/**
+ * Class Name: Embedded
+ * Date: February 13, 2026
+ * @author Jose Bastidas
+ *
+ * Description:
+ * This class represents embedded venue data returned from the API.
+ * It is used to store an array of venue objects associated with an event.
+ */
 package com.musicApp.backend.map.EmbeddedData;
 
-import java.util.ArrayList;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.musicApp.backend.map.TicketMaster.util.Venue;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-// Puts events into lists
-
 
 @Data
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Embedded {
-  private Venues[] venues;
+    private Venues[] venues;
 }
