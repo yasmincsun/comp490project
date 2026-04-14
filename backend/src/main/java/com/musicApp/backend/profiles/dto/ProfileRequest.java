@@ -1,6 +1,16 @@
+/**
+ * Class Name: ProfileRequest
+ * Date: February 13, 2026
+ * @author Jose Bastidas
+ *
+ * Description:
+ * This record represents the profile data returned by the application.
+ * It stores user profile information such as name, username, email,
+ * bio, color, profile image details, and favorite music preferences.
+ */
 package com.musicApp.backend.profiles.dto;
 
-  public record ProfileRequest(
+public record ProfileRequest(
     long id,
     String username,
     String name,
@@ -10,7 +20,7 @@ package com.musicApp.backend.profiles.dto;
     Integer color,
     String imageKey,
     Long profileImageUpdatedAt,
-    String profileImageUrl,          // presigned GET URL (nullable if no image)
+    String profileImageUrl,
     long profileImageUrlExpiresInSeconds,
     String favoriteArtists,
     String favoriteSongs
