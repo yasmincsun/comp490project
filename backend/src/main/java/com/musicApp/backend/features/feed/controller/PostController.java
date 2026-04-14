@@ -1,3 +1,9 @@
+/**
+ * Date: April 13, 2026
+ * @author Miguel Alfaro
+ *
+ */
+
 package com.musicApp.backend.features.feed.controller;
 
 import com.musicApp.backend.features.feed.model.Post;

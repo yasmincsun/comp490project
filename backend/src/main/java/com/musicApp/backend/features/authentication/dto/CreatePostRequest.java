@@ -1,6 +1,10 @@
-//Author: Miguel Alfaro
-//version: 1.0
 
+
+/**
+ * Date: March 22, 2026
+ * @author Miguel Alfaro
+ *
+ */
 package com.musicApp.backend.features.authentication.dto;
 
 import com.musicApp.backend.features.feed.model.Post;

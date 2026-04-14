@@ -1,6 +1,8 @@
-//Author: Miguel Alfaro
-//version: 1.0
-
+/**
+ * Date: March 27, 2026
+ * @author Miguel Alfaro
+ *
+ */
 package com.musicApp.backend.features.feed.model;
 
 import jakarta.persistence.Id;
@@ -20,6 +22,12 @@ import java.util.List;
 import java.util.Set;
 import org.hibernate.annotations.CreationTimestamp;
 import com.musicApp.backend.features.authentication.model.AuthenticationUser;
+
+/**
+ * Class representing a Post entity in the MusicApp backend. Each post contains content, 
+ * an optional picture, an author (linked to AuthenticationUser), timestamps for creation and updates, and relationships to comments and likes.
+ *  This class is mapped to the "posts" table in the database using JPA annotations.
+ */
 
 @Entity(name = "posts")
 public class Post {
