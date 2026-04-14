@@ -12,16 +12,17 @@ import com.musicApp.backend.features.feed.repository.PostRepository;
 
 
 
+/**
+ * DTO used for creating a new post.
+ * Contains the basic fields required to submit post data from the client.
+ */
 public class CreatePostRequest {
 
     private String title;
     private String content;
     private String category;
 
-
-
-    // Getters for title, content, and category
-        public String getTitle() {
+    public String getTitle() {
         return title;
     }
 
@@ -32,6 +33,4 @@ public class CreatePostRequest {
     public String getCategory() {
         return category;
     }
-
-
 }

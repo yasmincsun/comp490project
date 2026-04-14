@@ -29,10 +29,16 @@ import com.musicApp.backend.features.authentication.model.AuthenticationUser;
  *  This class is mapped to the "posts" table in the database using JPA annotations.
  */
 
+/**
+ * Post entity.
+ */
 @Entity(name = "posts")
 public class Post {
 
-    public Post(){}
+    /**
+     * JPA constructor.
+     */
+    public Post() {}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,6 +46,7 @@ public class Post {
 
     @NotEmpty
     private String content;
+
     private String picture;
 
     @ManyToOne
@@ -52,8 +59,9 @@ public class Post {
     private LocalDateTime updatedDate;
 
     @OneToMany(
-          mappedBy = "post",
-          cascade = CascadeType.ALL, orphanRemoval = true
+        mappedBy = "post",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
     )
     private List<Comment> comments;
 
@@ -66,16 +74,22 @@ public class Post {
     private Set<AuthenticationUser> likes;
 
     @PreUpdate
-    public void preUpdate(){
-      this.updatedDate = LocalDateTime.now();
+    public void preUpdate() {
+        this.updatedDate = LocalDateTime.now();
     }
 
+    /**
+     * Creates a post.
+     *
+     * @param content post content
+     * @param author post author
+     */
     public Post(String content, AuthenticationUser author) {
-      this.content = content;
-      this.author = author;
+        this.content = content;
+        this.author = author;
     }
 
-    public void setId(Long id){ this.id = id; }
+    public void setId(Long id) { this.id = id; }
     public Long getId() { return id; }
 
     public String getContent() { return content; }
@@ -95,6 +109,4 @@ public class Post {
 
     public Set<AuthenticationUser> getLikes() { return likes; }
     public void setLikes(Set<AuthenticationUser> likes) { this.likes = likes; }
-
-    
 }

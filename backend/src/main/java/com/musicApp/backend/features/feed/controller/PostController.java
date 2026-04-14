@@ -16,18 +16,35 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * Handles feed post operations such as creating posts.
+ * A post may include text content, an optional image, and is associated with an authenticated user.
+ */
 @RestController
 @RequestMapping("/api/posts")
 public class PostController {
- 
+
     private final PostRepository postRepository;
     private final AuthenticationUserRepository userRepository;
 
+    /**
+     * Creates a PostController.
+     *
+     * @param postRepository repository for posts
+     * @param userRepository repository for users
+     */
     public PostController(PostRepository postRepository, AuthenticationUserRepository userRepository) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
     }
 
+    /**
+     * Creates a new post.
+     *
+     * @param content post text content
+     * @param picture optional image file
+     * @param authenticatedUser authenticated user from request context
+     */
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createPost(
             @RequestParam("content") String content,
