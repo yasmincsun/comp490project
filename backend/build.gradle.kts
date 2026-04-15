@@ -68,6 +68,9 @@ dependencies {
     //GeminiAI
     implementation("com.google.genai:google-genai:1.45.0")
 
+    //OpenAI
+    implementation("com.openai:openai-java:4.26.0")
+
 }
 
 tasks.withType<Test> {
