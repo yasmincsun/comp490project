@@ -68,6 +68,13 @@ MOODS.forEach((m) => {
  * <p> 
  * This function displays and runs the entirety of the Home Page. This page contains information about generating playlists and collecting information from the user’s Spotify account. The user’s Spotify playlists are displayed on the home page. Personalized features, like the user-chosen background	color, are also displayed here. 
  */
+/**
+ * HomePage component.
+ * Provides mood-based playlist generation, notifications, and navigation for logged-in users.
+ * Manages user profile color, notification state, and mood selection.
+ * @author Yasmin Zubair
+ * Date: April 15th, 2026
+ */
 const HomePage = () => {
     const [mood, setMood] = useState("");
     const [bgColor, setBgColor] = useState("");
@@ -94,6 +101,10 @@ const HomePage = () => {
     }, []);
 
     // fetch current user's profile color from backend (do not use localStorage)
+    /**
+     * Fetch the current user's profile from the backend.
+     * @returns profile object or null if unavailable
+     */
     const fetchProfile = async () => {
         try {
             const token = localStorage.getItem("authToken");
@@ -110,6 +121,9 @@ const HomePage = () => {
     };
 
     // Fetch notifications from backend
+    /**
+     * Retrieve all notifications for the logged in user.
+     */
     const fetchNotifications = async () => {
         try {
             const token = localStorage.getItem("authToken");
@@ -128,6 +142,9 @@ const HomePage = () => {
         }
     };
 
+    /**
+     * Fetch unread notification count for the current user.
+     */
     const fetchUnreadCount = async () => {
         try {
             const token = localStorage.getItem("authToken");
@@ -146,6 +163,9 @@ const HomePage = () => {
         }
     };
 
+    /**
+     * Mark every notification for the user as read.
+     */
     const markAllNotificationsRead = async () => {
         try {
             const token = localStorage.getItem("authToken");
@@ -162,6 +182,11 @@ const HomePage = () => {
         }
     };
 
+    /**
+     * Handle accepting or declining a friend request notification.
+     * @param notif notification object from the list
+     * @param action action string, either "accept" or "decline"
+     */
     const handleNotificationAction = async (notif, action) => {
         if (!currentUserId || !notif?.senderId) return;
         setActionLoadingId(notif.id);
@@ -228,6 +253,12 @@ const HomePage = () => {
     }, [isLoggedIn, notificationsOpen]);
 
     // utility: adjust hex color by amount (-255..255)
+    /**
+     * Adjust a hex color's brightness by a signed amount.
+     * @param hex original hex color string
+     * @param amt adjustment amount
+     * @returns modified hex color string
+     */
     const adjustHex = (hex, amt) => {
         try {
             const h = hex.replace('#','');
@@ -245,6 +276,11 @@ const HomePage = () => {
     };
 
     // utility: get a lighter/brighter version of the color for gradient
+    /**
+     * Brighten a hex color for gradient use.
+     * @param hex original hex color string
+     * @returns brighter hex color string
+     */
     const brightenHex = (hex) => {
         try {
             const h = hex.replace('#','');
@@ -263,6 +299,11 @@ const HomePage = () => {
     };
 
     // utility: get complementary color by inverting hue via simple RGB invert fallback
+    /**
+     * Compute a complementary color for button styling.
+     * @param hex original hex color string
+     * @returns complementary hex color string
+     */
     const complementaryHex = (hex) => {
         try {
             const h = hex.replace('#','');
@@ -281,6 +322,11 @@ const HomePage = () => {
     }
 
     // utility: return CSS vars for the mood gradient
+    /**
+     * Resolve gradient color variables for a mood.
+     * @param moodName mood string selected by the user
+     * @returns CSS variable object with mood gradient colors
+     */
     const getMoodGradientColors = (moodName) => {
         if (!moodName) moodName = 'default';
         const key = ('' + moodName).toLowerCase();
@@ -292,6 +338,10 @@ const HomePage = () => {
         };
     };
 
+   /**
+    * Generate mood-based playlists by sending the selected mood to the backend.
+    * @param e submit event for the generate form
+    */
    const handleSearch = async (e) => {
     e.preventDefault();
 
@@ -343,6 +393,9 @@ const HomePage = () => {
 
         // 🔹 Handle logout
 
+/**
+ * Log the current user out by calling the backend logout endpoint.
+ */
 const handleLogout = async () => {
   try {
     const token = localStorage.getItem("authToken");

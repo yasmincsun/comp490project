@@ -9,6 +9,9 @@ import java.time.LocalDateTime;
 /**
  * Friendship entity that represents a friendship relationship between two users.
  * The friendship primary key is the pair of users, matching a schema without a separate id column.
+ * Contains the creation timestamp and the current friendship status.
+ * @author Yasmin Zubair
+ * Date: April 15th, 2026
  */
 @Entity
 @IdClass(FriendshipId.class)

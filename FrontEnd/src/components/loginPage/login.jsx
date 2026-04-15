@@ -10,6 +10,13 @@ import passwordIcon from "../assets/password.png";
  * <p>  
  * Displays a login input form if the user already has an account or displays a signup input form if the user wants to create an account
  */
+/**
+ * Login and signup form component.
+ * Manages authentication form state, validation, and backend submission.
+ * Supports email verification flow for new users.
+ * @author Yasmin Zubair
+ * Date: April 15th, 2026
+ */
 const FormWithValidation = () => {
   const [mode, setMode] = useState("login"); // 'login' or 'signup'
   const [formData, setFormData] = useState({
@@ -50,6 +57,10 @@ const FormWithValidation = () => {
  * <p>
  * Checks whether the user’s inputs are valid, ensuring that they are including all required fields in the standard format. Error messages are displayed to the user if they are missing a component or included information in an incorrect format. 
  */
+/**
+   * Validate and update form input values.
+   * @param event input change event
+   */
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
@@ -79,6 +90,11 @@ const FormWithValidation = () => {
  * Processes the login information 
  * <p>
  * This function processes the login information after ensuring the inputs are valid, and sends the information through to the backend. The information is then stored in the database and now gives the user the option to login using their information. 
+ */
+/**
+ * Submit the login or signup form to the backend.
+ * Performs client-side validation before sending the request.
+ * @param event form submit event
  */
 const handleSubmit = async (event) => {
   event.preventDefault();
@@ -161,6 +177,9 @@ console.log("Sending verification code:", verificationCode);
  * <p>
  * This function sends a verification code to the user’s email address to confirm their account. Verifying the email address ensures that spam bots are not created, and guarantees that the user did not accidentally input the wrong address. The verification code is sent via MailChimp, which is accessed through Port 8080.  
  */
+  /**
+   * Validate the user's email verification code with the backend.
+   */
   const handleVerification = async () => {
   if (!verificationCode.trim()) {
     alert("Please enter the verification code.");
@@ -249,6 +268,10 @@ console.log("Sending verification code:", verificationCode);
 * @return Login Page display to the Web Page
  */
   // determine if form is complete (for signup require name/lastname/username/email/password; for login only email/password)
+  /**
+   * Determine whether the required form fields are complete.
+   * @returns true if the form is ready to submit
+   */
   const isComplete = () => {
     if (mode === "signup") {
       return (

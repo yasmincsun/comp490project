@@ -10,6 +10,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Service layer for friendship operations.
+ * Handles friend request creation, acceptance, decline, removal, and friendship queries.
+ * Contains helper logic for matching friendship status in either direction.
+ * @author Yasmin Zubair
+ * Date: April 15th, 2026
+ */
 @Service
 public class FriendshipService {
 
@@ -19,16 +26,34 @@ public class FriendshipService {
     @Autowired
     private AuthenticationUserRepository userRepository;
 
+    /**
+     * Retrieve a user by id or throw an exception if the user does not exist.
+     * @param userId user id to look up
+     * @param label descriptive label used in exception messages
+     * @return found AuthenticationUser
+     */
     private AuthenticationUser getUserOrThrow(Long userId, String label) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException(label + " not found"));
     }
 
+    /**
+     * Check whether an accepted friendship exists between two users in either direction.
+     * @param user1Id first user id
+     * @param user2Id second user id
+     * @return true if an accepted friendship exists
+     */
     private boolean acceptedFriendshipExists(Long user1Id, Long user2Id) {
         return friendshipRepository.existsByUser1_IdAndUser2_IdAndStatus(user1Id, user2Id, Friendship.STATUS_ACCEPTED)
                 || friendshipRepository.existsByUser2_IdAndUser1_IdAndStatus(user2Id, user1Id, Friendship.STATUS_ACCEPTED);
     }
 
+    /**
+     * Check whether a pending friendship exists between two users in either direction.
+     * @param user1Id first user id
+     * @param user2Id second user id
+     * @return true if a pending friendship exists
+     */
     private boolean pendingFriendshipExists(Long user1Id, Long user2Id) {
         return friendshipRepository.existsByUser1_IdAndUser2_IdAndStatus(user1Id, user2Id, Friendship.STATUS_PENDING)
                 || friendshipRepository.existsByUser2_IdAndUser1_IdAndStatus(user2Id, user1Id, Friendship.STATUS_PENDING);

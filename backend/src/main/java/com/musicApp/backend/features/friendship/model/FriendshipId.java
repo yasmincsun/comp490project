@@ -6,6 +6,12 @@ import java.util.Objects;
 /**
  * Composite primary key for Friendship using user1 and user2 identifiers.
  */
+/**
+ * Composite primary key class for Friendship.
+ * Uses two user identifiers to uniquely identify a friendship record.
+ * @author Yasmin Zubair
+ * Date: April 15th, 2026
+ */
 public class FriendshipId implements Serializable {
 
     private Long user1;

@@ -8,6 +8,12 @@ import com.musicApp.backend.features.authentication.model.AuthenticationUser;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Repository interface for Friendship persistence operations.
+ * Provides Spring Data JPA queries for reading and checking friendship relationships.
+ * @author Yasmin Zubair
+ * Date: April 15th, 2026
+ */
 @Repository
 public interface FriendshipRepository extends JpaRepository<Friendship, FriendshipId> {
     

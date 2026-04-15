@@ -1,13 +1,22 @@
 import React, { useState } from "react";
 import "./emailVerification.css";
 
+/**
+ * EmailVerification component.
+ * Allows users to enter and verify their email verification code, and resend a new code if needed.
+ * @author Yasmin Zubair
+ * Date: April 15th, 2026
+ */
 export default function EmailVerification() {
   const [code, setCode] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [resendMessage, setResendMessage] = useState("");
 
-  // Handle code verification
+  /**
+   * Verify the entered email confirmation code with the backend.
+   * @param e form submit event
+   */
   const handleVerify = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -42,7 +51,9 @@ export default function EmailVerification() {
     }
   };
 
-  // Handle resend email verification code
+  /**
+   * Request a new verification code to be resent to the user's email.
+   */
   const handleResend = async () => {
     setResendMessage("Sending new code...");
     const token = localStorage.getItem("authToken"); // only if you store JWT

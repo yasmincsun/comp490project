@@ -6,6 +6,12 @@ import com.musicApp.backend.features.notification.model.Notification;
 import com.musicApp.backend.features.authentication.model.AuthenticationUser;
 import java.util.List;
 
+/**
+ * Repository interface for Notification persistence operations.
+ * Defines query methods for recipient-based and unread notification retrieval.
+ * @author Yasmin Zubair
+ * Date: April 15th, 2026
+ */
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
     

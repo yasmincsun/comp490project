@@ -4,6 +4,13 @@ import "./friendPage.css";
 import magGlass from "../assets/magGlass.png";
 
 
+/**
+ * FriendPage component.
+ * Provides friend search, friend request creation, and friend activity feed display.
+ * Loads profile color and current user data from the backend.
+ * @author Yasmin Zubair
+ * Date: April 15th, 2026
+ */
 const FriendPage = () => {
     const navigate = useNavigate();
     const [bgColor, setBgColor] = useState("");
@@ -31,6 +38,10 @@ const FriendPage = () => {
         }
     }, [navigate]);
 
+    /**
+     * Load the current user's profile from the backend.
+     * @returns profile object or null on error
+     */
     const fetchProfile = async () => {
         try {
             const token = localStorage.getItem("authToken");
@@ -88,6 +99,9 @@ const FriendPage = () => {
         loadActivity();
     }, [currentUserId]);
 
+    /**
+     * Close the search UI and reset search state.
+     */
     const closeSearch = () => {
         setSearchOpen(false);
         setHasSearched(false);
@@ -95,6 +109,12 @@ const FriendPage = () => {
         setSearchResults([]);
     };
 
+    /**
+     * Adjust the brightness of a hex color by a signed amount.
+     * @param hex source hex color value
+     * @param amt brightness adjustment amount
+     * @returns adjusted hex color string
+     */
     const adjustHex = (hex, amt) => {
         try {
             const h = hex.replace("#", "");
@@ -111,6 +131,11 @@ const FriendPage = () => {
         }
     };
 
+    /**
+     * Brighten a hex color for use in the UI theme.
+     * @param hex source hex color value
+     * @returns brightened hex color string
+     */
     const brightenHex = (hex) => {
         try {
             const h = hex.replace("#", "");
@@ -127,6 +152,11 @@ const FriendPage = () => {
         }
     };
 
+    /**
+     * Compute a complementary color for button contrast.
+     * @param hex source hex color value
+     * @returns complementary hex color string
+     */
     const complementaryHex = (hex) => {
         try {
             const h = hex.replace("#", "");
@@ -141,6 +171,11 @@ const FriendPage = () => {
     };
 
     // Get contrasting text color based on background brightness
+    /**
+     * Return a contrasting text color for the given background.
+     * @param hexColor background color in hex format
+     * @returns dark or light text color string
+     */
     const getContrastingTextColor = (hexColor) => {
         try {
             const h = hexColor.replace("#", "");
@@ -168,6 +203,10 @@ const FriendPage = () => {
         return status === true || status === "1" || status === 1 || status === "true" || status === "TRUE";
     };
 
+    /**
+     * Send a friend request to a user.
+     * @param friendUserId id of the user to add as a friend
+     */
     const handleAddFriend = async (friendUserId) => {
         if (!currentUserId) {
             setNotification({ type: 'error', message: 'Could not load your profile. Please refresh.' });
@@ -206,6 +245,10 @@ const FriendPage = () => {
         }
     };
 
+    /**
+     * Search for users by query string.
+     * Populates the search results list.
+     */
     const handleSearch = async () => {
         if (!searchQuery.trim()) {
             setSearchResults([]);
@@ -246,6 +289,10 @@ const FriendPage = () => {
         }
     };
 
+    /**
+     * Trigger search on enter key press.
+     * @param e keyboard event
+     */
     const handleKeyPress = (e) => {
         if (e.key === "Enter") {
             handleSearch();

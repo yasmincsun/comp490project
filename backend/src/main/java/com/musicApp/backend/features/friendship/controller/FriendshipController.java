@@ -18,6 +18,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * REST controller for friendship actions.
+ * Supports friend request creation, acceptance, decline, removal, status checks, and friend activity retrieval.
+ * Sends notifications when friendship state changes.
+ * @author Yasmin Zubair
+ * Date: April 15th, 2026
+ */
 @RestController
 @RequestMapping("/api/v1/friendship")
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -38,6 +45,11 @@ public class FriendshipController {
     @Autowired
     private ReviewRepository reviewRepository;
 
+    /**
+     * Handle friend request creation.
+     * @param request request payload containing user1_id and user2_id
+     * @return response entity with friendship details or an error message
+     */
     @PostMapping("/add")
     public ResponseEntity<?> addFriend(@RequestBody Map<String, Object> request) {
         try {
@@ -71,6 +83,11 @@ public class FriendshipController {
         }
     }
 
+    /**
+     * Accept a pending friend request.
+     * @param request request payload containing user1_id, user2_id, and optional notification_id
+     * @return response entity with updated friendship details or an error message
+     */
     @PostMapping("/accept")
     public ResponseEntity<?> acceptFriendRequest(@RequestBody Map<String, Object> request) {
         try {
@@ -102,6 +119,11 @@ public class FriendshipController {
         }
     }
 
+    /**
+     * Decline a pending friend request.
+     * @param request request payload containing user1_id, user2_id, and optional notification_id
+     * @return response entity with a confirmation or an error message
+     */
     @PostMapping("/decline")
     public ResponseEntity<?> declineFriendRequest(@RequestBody Map<String, Object> request) {
         try {
@@ -126,6 +148,12 @@ public class FriendshipController {
         }
     }
 
+    /**
+     * Get the current friendship status between two users.
+     * @param user1Id first user id
+     * @param user2Id second user id
+     * @return response entity with status mapping or an error message
+     */
     @GetMapping("/status/{user1Id}/{user2Id}")
     public ResponseEntity<?> getFriendshipStatus(@PathVariable Long user1Id, @PathVariable Long user2Id) {
         try {
@@ -138,6 +166,11 @@ public class FriendshipController {
         }
     }
 
+    /**
+     * Get recent activity from a user's accepted friends.
+     * @param userId id of the user whose friends' activity should be returned
+     * @return response entity containing posts and reviews by friends or an error message
+     */
     @GetMapping("/activity/{userId}")
     public ResponseEntity<?> getFriendActivity(@PathVariable Long userId) {
         try {
@@ -186,6 +219,11 @@ public class FriendshipController {
         }
     }
 
+    /**
+     * Remove a friendship or pending request between two users.
+     * @param request request payload containing user1_id and user2_id
+     * @return response entity confirming removal or returning an error
+     */
     @PostMapping("/remove")
     public ResponseEntity<?> removeFriend(@RequestBody Map<String, Object> request) {
         try {
@@ -206,6 +244,11 @@ public class FriendshipController {
         }
     }
 
+    /**
+     * Convert a request value into a Long if possible.
+     * @param value value from the request payload
+     * @return parsed Long or null if conversion fails
+     */
     private Long toLong(Object value) {
         if (value == null) return null;
         if (value instanceof Long) return (Long) value;
@@ -218,6 +261,12 @@ public class FriendshipController {
         }
     }
 
+    /**
+     * Determine if two users are friends.
+     * @param user1Id first user id
+     * @param user2Id second user id
+     * @return response entity containing a boolean areFriends field or an error message
+     */
     @GetMapping("/check/{user1Id}/{user2Id}")
     public ResponseEntity<?> areFriends(@PathVariable Long user1Id, @PathVariable Long user2Id) {
         try {
@@ -228,6 +277,11 @@ public class FriendshipController {
         }
     }
 
+    /**
+     * Retrieve accepted friendships for a user.
+     * @param userId id of the user whose friends should be returned
+     * @return response entity with a list of Friendship objects or an error message
+     */
     @GetMapping("/list/{userId}")
     public ResponseEntity<?> getFriendships(@PathVariable Long userId) {
         try {

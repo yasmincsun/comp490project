@@ -9,33 +9,60 @@ import java.time.LocalDateTime;
 /**
  * Notification entity for user notifications (friend requests, etc)
  */
+/**
+ * Notification entity representing a message sent from one user to another.
+ * Includes notification type, read state, creation timestamp, sender, and recipient.
+ * @author Yasmin Zubair
+ * Date: April 15th, 2026
+ */
 @Entity
 @Table(name = "notifications")
 public class Notification {
 
+    /**
+     * Primary key identifier for the notification.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * Recipient user who will receive the notification.
+     */
     @NotNull
     @ManyToOne
     @JoinColumn(name = "recipient_id", nullable = false)
-    private AuthenticationUser recipient; // User receiving the notification
+    private AuthenticationUser recipient;
 
+    /**
+     * Sender user who triggered the notification.
+     */
     @NotNull
     @ManyToOne
     @JoinColumn(name = "sender_id", nullable = false)
-    private AuthenticationUser sender; // User sending the notification
+    private AuthenticationUser sender;
 
+    /**
+     * Notification type descriptor, such as friend_request or friend_accepted.
+     */
     @NotNull
     @Column(length = 50)
-    private String type; // "friend_request", "friend_accepted", etc
+    private String type;
 
+    /**
+     * Display message shown to the recipient.
+     */
     @Column(length = 500)
     private String message;
 
+    /**
+     * Read status of the notification.
+     */
     private Boolean isRead = false;
 
+    /**
+     * Timestamp when the notification was created.
+     */
     @CreationTimestamp
     private LocalDateTime createdAt;
 

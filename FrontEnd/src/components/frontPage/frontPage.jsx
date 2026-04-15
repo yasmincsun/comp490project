@@ -35,6 +35,8 @@ const TEAM_MEMBERS = [
  * 
  * Displays the landing page with welcome message, about section, and team information.
  * Users can navigate to login from the navigation bar.
+ * @author Yasmin Zubair
+ * Date: April 15th, 2026
  */
 const FrontPage = () => {
   const navigate = useNavigate();

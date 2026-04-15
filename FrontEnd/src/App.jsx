@@ -9,6 +9,12 @@ import FriendPage from "./components/friendPage/friendPage";
 import PostPage from "./components/postPage/postPage";
 import ReviewPage from "./components/reviewPage/reviewPage";
 
+/**
+ * Main application component.
+ * Defines client-side routes for the Moody app using React Router.
+ * @author Yasmin Zubair
+ * Date: April 15th, 2026
+ */
 function App() {
   return (
       <BrowserRouter>

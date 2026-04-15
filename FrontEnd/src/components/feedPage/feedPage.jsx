@@ -4,6 +4,13 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./postPage.css";
 
+/**
+ * FeedPage component.
+ * Intended to display a social feed of posts and provide navigation to post creation.
+ * Loads the current user's profile color and fetches posts from the backend.
+ * @author Yasmin Zubair
+ * Date: April 15th, 2026
+ */
 const feedPage = () => {
     //Boilerplate from homePage.jsx, will be used to fetch profile color and display posts
     const [bgColor, setBgColor] = useState("");
@@ -11,7 +18,10 @@ const feedPage = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
 
 
- // fetch current user's profile color from backend (do not use localStorage)
+ /**
+     * Fetch the current user's profile color from the backend.
+     * @returns profile object or null on failure
+     */
     const fetchProfile = async () => {
         try {
             const token = localStorage.getItem("authToken");
@@ -27,11 +37,10 @@ const feedPage = () => {
         }
     };
 
-    //Implement Post fetching logic here
-    //User will click on the social button and see a feed in the center column.
-    //Users should be able to see posts in a feed format, startin with most recent
-    //On the right side, there will be a button to create a new post, which will open go to the post creation page (postPage.jsx)
-    
+    /**
+     * Fetch social posts for the feed from the backend.
+     * @returns list of post objects or null on failure
+     */
     const fetchPosts = async () => {
         try{
             const token = localStorage.getItem("authToken");

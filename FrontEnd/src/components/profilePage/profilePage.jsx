@@ -45,6 +45,13 @@ const MOCK_ARTISTS = [
  * <p>
  * This method sets the value of ProfilePage to be constant. This function is used to navigate between pages in Javascript, to display all of the components of the ProfilePage, and adds useStates for all profile variables.
  */
+/**
+ * ProfilePage component.
+ * Displays and updates the user's profile, preferences, and saved review history.
+ * Loads profile data from the backend and allows editing of profile fields.
+ * @author Yasmin Zubair
+ * Date: April 15th, 2026
+ */
 const ProfilePage = () => {
   const navigate = useNavigate();
 
@@ -93,6 +100,10 @@ const ProfilePage = () => {
 
 
 
+  /**
+   * Load the currently authenticated user's profile information.
+   * @returns profile JSON object from the backend
+   */
   const fetchProfile = async () => {
     const token = localStorage.getItem("authToken");
 
@@ -241,6 +252,10 @@ const ProfilePage = () => {
     return () => clearTimeout(timer);
   }, [currentlyListeningTo]);
 
+  /**
+   * Select a track from the listening suggestions and set it as the current track description.
+   * @param track track object selected by the user
+   */
   const selectListeningTrack = (track) => {
     setCurrentlyListeningTo(`${track.title} - ${track.artist}`);
     setListeningSearchResults([]);

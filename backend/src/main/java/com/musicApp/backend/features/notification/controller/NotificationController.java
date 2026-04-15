@@ -10,6 +10,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * REST controller for notification APIs.
+ * Provides endpoints for retrieving, marking read, and deleting notifications.
+ * This controller exposes user notification lists and read/unread state operations.
+ * @author Yasmin Zubair
+ * Date: April 15th, 2026
+ */
 @RestController
 @RequestMapping("/api/v1/notifications")
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -20,6 +27,11 @@ public class NotificationController {
 
     /**
      * Get all notifications for the current user.
+     */
+    /**
+     * Retrieve all notifications for the authenticated user.
+     * @param user authenticated user obtained from request context
+     * @return response entity containing a list of NotificationDTO objects
      */
     @GetMapping
     public ResponseEntity<?> getNotifications(@RequestAttribute("authenticatedUser") AuthenticationUser user) {
@@ -37,6 +49,11 @@ public class NotificationController {
     /**
      * Get unread notifications for the current user.
      */
+    /**
+     * Retrieve unread notifications for the authenticated user.
+     * @param user authenticated user obtained from request context
+     * @return response entity containing a list of unread NotificationDTO objects
+     */
     @GetMapping("/unread")
     public ResponseEntity<?> getUnreadNotifications(@RequestAttribute("authenticatedUser") AuthenticationUser user) {
         try {
@@ -53,6 +70,11 @@ public class NotificationController {
     /**
      * Mark a notification as read.
      */
+    /**
+     * Mark a specific notification as read.
+     * @param id id of the notification to mark as read
+     * @return response entity containing the updated NotificationDTO
+     */
     @PutMapping("/{id}/read")
     public ResponseEntity<?> markAsRead(@PathVariable Long id) {
         try {
@@ -63,6 +85,11 @@ public class NotificationController {
         }
     }
 
+    /**
+     * Mark all notifications as read for the authenticated user.
+     * @param user authenticated user obtained from request context
+     * @return response entity confirming that all notifications were marked read
+     */
     @PutMapping("/read-all")
     public ResponseEntity<?> markAllAsRead(@RequestAttribute("authenticatedUser") AuthenticationUser user) {
         try {
@@ -76,6 +103,11 @@ public class NotificationController {
     /**
      * Delete a notification.
      */
+    /**
+     * Delete a notification.
+     * @param id id of the notification to delete
+     * @return response entity confirming deletion or returning an error
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteNotification(@PathVariable Long id) {
         try {
@@ -87,6 +119,10 @@ public class NotificationController {
     }
 
     // DTO class
+    /**
+     * Data transfer object for notification responses.
+     * Includes sender metadata, type, read state, and timestamp.
+     */
     public static class NotificationDTO {
         public Long id;
         public Long senderId;
@@ -107,6 +143,11 @@ public class NotificationController {
         }
     }
 
+    /**
+     * Convert a Notification entity into a NotificationDTO.
+     * @param notification notification entity to convert
+     * @return NotificationDTO containing payload fields for the frontend
+     */
     private NotificationDTO toDTO(Notification notification) {
         return new NotificationDTO(
                 notification.getId(),

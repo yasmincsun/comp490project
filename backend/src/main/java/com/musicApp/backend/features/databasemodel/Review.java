@@ -7,48 +7,77 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 /**
- * Entity class for Review
- * Uses JPA  to define the entity and its relationships. It creates a table named "reviews" with fields 
- * for reviewID, userID, songID, album, rating, datePosted, and comment.
- * @author M. Alfaro
-
+ * Entity class for Review.
+ * Defines the review data model used for storing user reviews in the database.
+ * Includes relationships to the user and optional song entity, rating metadata, and review content.
+ * @author Yasmin Zubair
+ * Date: April 15th, 2026
  */
 
 @Entity
 @Table(name = "reviews")
 public class Review {
 
+    /**
+     * Primary identifier for the review.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer reviewID;
 
+    /**
+     * User who created the review.
+     */
     @ManyToOne
     @JoinColumn(name = "userID", referencedColumnName = "id", nullable = true)
     private AuthenticationUser user;
 
-
+    /**
+     * Optional song associated with the review.
+     */
     @ManyToOne
     @JoinColumn(name = "songID", nullable = true)
     private Song song;
 
+    /**
+     * Album name for the reviewed item.
+     */
     @Column(length = 100)
     private String album;
 
+    /**
+     * Type of target being reviewed (track, artist, album, etc.).
+     */
     @Column(length = 50)
     private String targetType;
 
+    /**
+     * Name of the target entity being reviewed.
+     */
     @Column(length = 100)
     private String targetName;
 
+    /**
+     * Artist name associated with the review target.
+     */
     @Column(length = 100)
     private String artist;
 
+    /**
+     * Rating assigned by the user.
+     */
     @Column
     private Integer rating;
 
+    /**
+     * Date when the review was posted.
+     */
     @Column
     private LocalDate datePosted;
 
+    /**
+     * Comment text for the review.
+     */
     @Column(columnDefinition = "TEXT")
     private String comment;
 

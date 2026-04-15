@@ -20,14 +20,32 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/spotify")
+/**
+ * REST controller for Spotify search integration.
+ * Exposes a search endpoint that queries the Spotify API for tracks, artists, or albums.
+ * Converts Spotify API payloads into lightweight JSON objects for frontend consumption.
+ * @author Yasmin Zubair
+ * Date: April 15th, 2026
+ */
 public class SpotifySearchController {
 
     private final SpotifyAuthService spotifyAuthService;
 
+    /**
+     * Create a SpotifySearchController with the given auth service.
+     * @param spotifyAuthService service used to obtain authenticated Spotify API instances
+     */
     public SpotifySearchController(SpotifyAuthService spotifyAuthService) {
         this.spotifyAuthService = spotifyAuthService;
     }
 
+    /**
+     * Search Spotify for tracks, artists, or albums.
+     * @param query search query string
+     * @param type search type, one of track, artist, or album
+     * @param limit maximum number of results to return
+     * @return response entity containing search results or an error payload
+     */
     @GetMapping("/search")
     public ResponseEntity<?> search(@RequestParam(name = "q") String query,
                                     @RequestParam(name = "type", defaultValue = "track") String type,

@@ -2,6 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./ReviewPage.css";
 
+/**
+ * ReviewPage component.
+ * Provides Spotify search, review creation, and review search functionality for users.
+ * @author Yasmin Zubair
+ * Date: April 15th, 2026
+ */
 export default function ReviewPage() {
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState("");
@@ -24,6 +30,10 @@ export default function ReviewPage() {
     const [showReviewSearch, setShowReviewSearch] = useState(false);
     const [reviewSearchLoading, setReviewSearchLoading] = useState(false);
 
+    /**
+     * Fetch the current user's profile from the backend.
+     * @returns profile JSON object or null if loading fails
+     */
     const fetchProfile = async () => {
         try {
             const token = localStorage.getItem("authToken");
@@ -52,6 +62,10 @@ export default function ReviewPage() {
         })();
     }, []);
 
+    /**
+     * Execute a Spotify search based on the user's search query and selected type.
+     * Populates search results with tracks, artists, or albums.
+     */
     const handleSearch = async () => {
         if (!searchQuery.trim()) {
             setSearchResults([]);
@@ -119,6 +133,9 @@ export default function ReviewPage() {
         }
     };
 
+    /**
+     * Search existing reviews in the backend by text and optional rating filter.
+     */
     const handleReviewSearch = async () => {
         if (!reviewSearchQuery.trim()) {
             setReviewSearchResults([]);
@@ -161,6 +178,10 @@ export default function ReviewPage() {
         }
     };
 
+    /**
+     * Submit a new review to the backend for the selected song or album.
+     * @param e form submit event
+     */
     const handleSubmitReview = async (e) => {
         e.preventDefault();
         if (!selectedSong || !currentUserId) {
@@ -207,6 +228,11 @@ export default function ReviewPage() {
         }
     };
 
+    /**
+     * Compute a complementary hex color for button contrast.
+     * @param hex original color hex string
+     * @returns adjusted complementary color hex
+     */
     const complementaryHex = (hex) => {
         try {
             const h = hex.replace("#", "");
@@ -223,6 +249,11 @@ export default function ReviewPage() {
         }
     };
 
+    /**
+     * Brighten a hex color to create a secondary theme color.
+     * @param hex original color hex string
+     * @returns brighter color hex string
+     */
     const brightenHex = (hex) => {
         try {
             const h = hex.replace("#", "");
