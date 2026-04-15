@@ -30,7 +30,7 @@ public class MoodController {
 
   /**
    * A constructor that is linked to {@link MoodService}
-   * @param mood the "search engine" used to analyze user's listening habits
+   * @param moodService the "search engine" used to analyze user's listening habits
    */
   public MoodController(MoodService moodService) { this.moodService = moodService; }
 
