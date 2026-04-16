@@ -3,14 +3,15 @@
  * Date: February 13, 2026
  * @author Jose Bastidas
  *
- * Description:
- * This class represents address information for a venue or event location.
- * It stores up to three address lines returned from the API.
  */
 package com.musicApp.backend.map.TicketMaster.Address;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+/**
+ * This class represents address information for a venue or event location.
+ * It stores up to three address lines returned from the API.
+ */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Address {
     String line1;

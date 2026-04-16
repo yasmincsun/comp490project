@@ -3,10 +3,6 @@
  * Date: February 13, 2026
  * @author Jose Bastidas
  *
- * Description:
- * This class handles feed-related business logic in the application.
- * It manages creating, editing, deleting, and retrieving posts,
- * as well as adding, editing, deleting, and liking comments and posts.
  */
 package com.musicApp.backend.features.feed.service;
 
@@ -22,6 +18,11 @@ import com.musicApp.backend.features.feed.model.Post;
 import com.musicApp.backend.features.feed.repository.CommentRepository;
 import com.musicApp.backend.features.feed.repository.PostRepository;
 
+/**
+ * This class handles feed-related business logic in the application.
+ * It manages creating, editing, deleting, and retrieving posts,
+ * as well as adding, editing, deleting, and liking comments and posts.
+ */
 @Service
 public class FeedService {
 

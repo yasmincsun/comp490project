@@ -3,10 +3,6 @@
  * Date: February 13, 2026
  * @author Jose Bastidas
  *
- * Description:
- * This class handles feed-related requests in the application.
- * It provides endpoints for retrieving posts, creating posts,
- * editing posts, deleting posts, liking posts, and managing comments.
  */
 package com.musicApp.backend.features.feed.controller;
 
@@ -30,6 +26,11 @@ import com.musicApp.backend.features.authentication.model.AuthenticationUser;
 import com.musicApp.backend.features.feed.dto.CommentDto;
 import com.musicApp.backend.features.feed.dto.PostDto;
 
+/**
+ * This class handles feed-related requests in the application.
+ * It provides endpoints for retrieving posts, creating posts,
+ * editing posts, deleting posts, liking posts, and managing comments.
+ */
 @RestController
 @RequestMapping("/api/v1/feed")
 public class FeedController {

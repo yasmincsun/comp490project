@@ -3,10 +3,6 @@
  * Date: February 13, 2026
  * @author Jose Bastidas
  *
- * Description:
- * This class represents a comment made on a post in the feed.
- * It stores the comment id, the related post, the author of the
- * comment, the comment content, and the creation and update dates.
  */
 package com.musicApp.backend.features.feed.model;
 
@@ -17,6 +13,11 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
+/**
+ * This class represents a comment made on a post in the feed.
+ * It stores the comment id, the related post, the author of the
+ * comment, the comment content, and the creation and update dates.
+ */
 @Entity(name = "comments")
 public class Comment {
 

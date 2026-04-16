@@ -3,15 +3,16 @@
  * Date: February 13, 2026
  * @author Jose Bastidas
  *
- * Description:
- * This class represents date and time information for an event.
- * It stores the event start details, timezone, status, and whether
- * the event spans multiple days.
  */
 package com.musicApp.backend.map.TicketMaster.Dates;
 
 import com.musicApp.backend.map.dto.EventStatusDTO;
 
+/**
+ * This class represents date and time information for an event.
+ * It stores the event start details, timezone, status, and whether
+ * the event spans multiple days.
+ */
 public class Dates {
     private Start start;
     private String timezone;

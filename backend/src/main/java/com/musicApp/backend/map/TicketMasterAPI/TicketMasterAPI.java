@@ -3,20 +3,6 @@
  * Date: February 13, 2026
  * @author Jose Bastidas
  *
- * Description:
- * This class connects the application to the Ticketmaster API. It sends HTTP
- * requests to retrieve event data based on a keyword search and returns the
- * results to the service layer.
- *
- * Important Data Structures:
- * Uses Flux and Mono from Project Reactor to handle asynchronous event data.
- *
- * Algorithm:
- * This class first retrieves the first page of results to determine the total
- * number of pages available. It then loops through each page, retrieves the
- * events, and filters them so only events that are on sale and contain a valid
- * URL are returned. A delay is added between page requests to avoid sending too
- * many requests too quickly.
  */
 package com.musicApp.backend.map.TicketMasterAPI;
 
@@ -31,6 +17,21 @@ import com.musicApp.backend.map.dto.TicketmasterResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ * This class connects the application to the Ticketmaster API. It sends HTTP
+ * requests to retrieve event data based on a keyword search and returns the
+ * results to the service layer.
+ *
+ * Important Data Structures:
+ * Uses Flux and Mono from Project Reactor to handle asynchronous event data.
+ *
+ * Algorithm:
+ * This class first retrieves the first page of results to determine the total
+ * number of pages available. It then loops through each page, retrieves the
+ * events, and filters them so only events that are on sale and contain a valid
+ * URL are returned. A delay is added between page requests to avoid sending too
+ * many requests too quickly.
+ */
 @Component
 public class TicketMasterAPI {
     private final WebClient webclient;

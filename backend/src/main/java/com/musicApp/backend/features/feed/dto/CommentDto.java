@@ -3,13 +3,14 @@
  * Date: February 13, 2026
  * @author Jose Bastidas
  *
- * Description:
+ */
+package com.musicApp.backend.features.feed.dto;
+
+/**
  * This class represents the data transfer object used for comments.
  * It stores the content of a comment that is sent between the client
  * and the application.
  */
-package com.musicApp.backend.features.feed.dto;
-
 public class CommentDto {
 
     private String content;

@@ -3,10 +3,6 @@
  * Date: February 13, 2026
  * @author Jose Bastidas
  *
- * Description:
- * This class represents page information returned from the Ticketmaster API.
- * It is used as a data transfer object to store page data and provide access
- * to the total page information.
  */
 package com.musicApp.backend.map.dto;
 
@@ -15,6 +11,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * This class represents page information returned from the Ticketmaster API.
+ * It is used as a data transfer object to store page data and provide access
+ * to the total page information.
+ */
 @Data
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)

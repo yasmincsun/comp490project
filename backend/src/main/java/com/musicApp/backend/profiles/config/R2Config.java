@@ -2,11 +2,6 @@
  * Class Name: R2Config
  * Date: February 13, 2026
  * @author Jose Bastidas
- *
- * Description:
- * This class configures the Cloudflare R2 presigner used by the application.
- * It creates an S3Presigner bean with the required credentials, region,
- * and endpoint settings so the application can generate presigned URLs.
  */
 package com.musicApp.backend.profiles.config;
 
@@ -20,6 +15,11 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
 import java.net.URI;
 
+/**
+ * This class configures the Cloudflare R2 presigner used by the application.
+ * It creates an S3Presigner bean with the required credentials, region,
+ * and endpoint settings so the application can generate presigned URLs.
+ */
 @Configuration
 public class R2Config {
 

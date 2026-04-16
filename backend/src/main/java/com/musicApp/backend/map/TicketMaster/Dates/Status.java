@@ -2,16 +2,16 @@
  * Class Name: Status
  * Date: February 13, 2026
  * @author Jose Bastidas
- *
- * Description:
- * This enum represents the possible status values for an event.
- * It is used to match and convert event status values received from the API.
  */
 package com.musicApp.backend.map.TicketMaster.Dates;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+/**
+ * This enum represents the possible status values for an event.
+ * It is used to match and convert event status values received from the API.
+ */
 public enum Status {
     ONSALE("onsale"),
     OFFSALE("offsale"),

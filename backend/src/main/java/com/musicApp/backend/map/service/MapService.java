@@ -3,10 +3,6 @@
  * Date: February 13, 2026
  * @author Jose Bastidas
  *
- * Description:
- * This class provides map-related services for the application.
- * It communicates with the TicketMasterAPI class to retrieve
- * event data based on a search keyword.
  */
 package com.musicApp.backend.map.service;
 
@@ -17,6 +13,11 @@ import com.musicApp.backend.map.dto.EventDTO;
 
 import reactor.core.publisher.Flux;
 
+/**
+ * This class provides map-related services for the application.
+ * It communicates with the TicketMasterAPI class to retrieve
+ * event data based on a search keyword.
+ */
 @Service
 public class MapService {
     private final TicketMasterAPI ticketmasterAPI;

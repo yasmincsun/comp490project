@@ -3,13 +3,14 @@
  * Date: February 13, 2026
  * @author Jose Bastidas
  *
- * Description:
+ */
+package com.musicApp.backend.profiles.dto;
+
+/**
  * This record represents the profile data returned by the application.
  * It stores user profile information such as name, username, email,
  * bio, color, profile image details, and favorite music preferences.
  */
-package com.musicApp.backend.profiles.dto;
-
 public record ProfileRequest(
     long id,
     String username,

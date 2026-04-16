@@ -3,9 +3,6 @@
  * Date: February 13, 2026
  * @author Jose Bastidas
  *
- * Description:
- * This class matches the top-level response returned from the Ticketmaster API.
- * It stores the embedded event data and page information from the response.
  */
 package com.musicApp.backend.map.dto;
 
@@ -15,6 +12,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * This class matches the top-level response returned from the Ticketmaster API.
+ * It stores the embedded event data and page information from the response.
+ */
 @Data
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)

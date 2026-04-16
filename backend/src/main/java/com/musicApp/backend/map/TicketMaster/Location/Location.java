@@ -2,13 +2,13 @@
  * Class Name: Location
  * Date: February 13, 2026
  * @author Jose Bastidas
- *
- * Description:
- * This class represents the geographic location of a venue or event.
- * It stores the longitude and latitude coordinates returned from the API.
  */
 package com.musicApp.backend.map.TicketMaster.Location;
 
+/**
+ * This class represents the geographic location of a venue or event.
+ * It stores the longitude and latitude coordinates returned from the API.
+ */
 public class Location {
 
     private Double longitude;

@@ -3,11 +3,6 @@
  * Date: February 13, 2026
  * @author Jose Bastidas
  *
- * Description:
- * This class represents a single event data transfer object used in the
- * application. It stores event information received from the API, including
- * the event name, id, URL, date details, age restrictions, ticketing
- * information, and embedded related data.
  */
 package com.musicApp.backend.map.dto;
 
@@ -21,6 +16,12 @@ import com.musicApp.backend.map.TicketMaster.Ticketing.Ticketing;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * This class represents a single event data transfer object used in the
+ * application. It stores event information received from the API, including
+ * the event name, id, URL, date details, age restrictions, ticketing
+ * information, and embedded related data.
+ */
 @Data
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)

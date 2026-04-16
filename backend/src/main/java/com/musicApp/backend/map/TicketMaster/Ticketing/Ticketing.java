@@ -3,13 +3,14 @@
  * Date: February 13, 2026
  * @author Jose Bastidas
  *
- * Description:
+ */
+package com.musicApp.backend.map.TicketMaster.Ticketing;
+
+/**
  * This class represents ticketing information for an event.
  * It stores SafeTix details and all-inclusive pricing information
  * returned from the API.
  */
-package com.musicApp.backend.map.TicketMaster.Ticketing;
-
 public class Ticketing {
     private SafeTix safeTix;
     private AllInclusivePricing allInclusivePricing;

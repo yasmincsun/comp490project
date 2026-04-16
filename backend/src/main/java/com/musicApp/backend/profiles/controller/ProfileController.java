@@ -2,11 +2,6 @@
  * Class Name: ProfileController
  * Date: February 13, 2026
  * @author Jose Bastidas
- *
- * Description:
- * This class handles profile-related requests in the application.
- * It allows users to view and update profile information, manage
- * profile pictures, update account details, and search for other users.
  */
 package com.musicApp.backend.profiles.controller;
 
@@ -32,6 +27,11 @@ import java.util.Set;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * This class handles profile-related requests in the application.
+ * It allows users to view and update profile information, manage
+ * profile pictures, update account details, and search for other users.
+ */
 @CrossOrigin(origins = "http://127.0.0.1:5173")
 @RestController
 @RequestMapping("/api/v1/profile")

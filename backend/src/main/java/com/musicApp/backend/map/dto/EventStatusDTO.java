@@ -3,9 +3,6 @@
  * Date: February 13, 2026
  * @author Jose Bastidas
  *
- * Description:
- * This class represents the status information for an event. It is used as a
- * data transfer object to store the event status code received from the API.
  */
 package com.musicApp.backend.map.dto;
 
@@ -15,6 +12,11 @@ import com.musicApp.backend.map.TicketMaster.Dates.Status;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Description:
+ * This class represents the status information for an event. It is used as a
+ * data transfer object to store the event status code received from the API.
+ */
 @Data
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
