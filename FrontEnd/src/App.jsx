@@ -8,6 +8,7 @@ import ConnectSpotify from "./components/spotify/ConnectSpotify";
 import FriendPage from "./components/friendPage/friendPage";
 import PostPage from "./components/postPage/postPage";
 import ReviewPage from "./components/reviewPage/reviewPage";
+import FeedPage from "./components/feedPage/feedPage";
 
 /**
  * Main application component.
@@ -27,6 +28,7 @@ function App() {
           <Route path="/friends" element={<FriendPage />} />
           <Route path="/reviews" element={<ReviewPage />} />
           <Route path="/post" element={<PostPage />} />
+          <Route path="/feed" element={<FeedPage />} />
           
         </Routes>
       </BrowserRouter>

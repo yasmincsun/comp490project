@@ -1,95 +1,136 @@
 //author: Miguel A.
-//version: 1.01
+//version: 2.0 (clean rewrite)
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "./postPage.css";
+import "./feedPage.css";
 
-/**
- * FeedPage component.
- * Intended to display a social feed of posts and provide navigation to post creation.
- * Loads the current user's profile color and fetches posts from the backend.
- * @author Yasmin Zubair
- * Date: April 15th, 2026
- */
-const feedPage = () => {
-    //Boilerplate from homePage.jsx, will be used to fetch profile color and display posts
-    const [bgColor, setBgColor] = useState("");
+const FeedPage = () => {
+    const navigate = useNavigate();
+
+    const [posts, setPosts] = useState([]);
+    const [userColor, setUserColor] = useState("#ffffff");
+    const [bgColor, setBgColor] = useState("#f5f5f5");
+    const [loading, setLoading] = useState(true);
     const [errorMsg, setErrorMsg] = useState("");
-    const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
 
-
- /**
-     * Fetch the current user's profile color from the backend.
-     * @returns profile object or null on failure
-     */
-    const fetchProfile = async () => {
+    // Fetch profile
+    const fetchProfile = async (token) => {
         try {
-            const token = localStorage.getItem("authToken");
-            if (!token) return null;
             const res = await fetch("http://127.0.0.1:8080/api/v1/profile", {
-                headers: { Authorization: `Bearer ${token || ""}` },
+                headers: { Authorization: `Bearer ${token}` },
             });
+
             if (!res.ok) return null;
+
             return await res.json();
-        } catch (e) {
-            console.error("Could not load profile from backend:", e);
+        } catch (err) {
+            console.error("Profile fetch error:", err);
             return null;
         }
     };
 
-    /**
-     * Fetch social posts for the feed from the backend.
-     * @returns list of post objects or null on failure
-     */
-    const fetchPosts = async () => {
-        try{
-            const token = localStorage.getItem("authToken");
-            if (!token) return;
+    // Fetch posts
+    const fetchPosts = async (token) => {
+        try {
             const res = await fetch("http://127.0.0.1:8080/api/posts", {
-                headers: { Authorization: `Bearer ${token || ""}` },
+                headers: { Authorization: `Bearer ${token}` },
             });
+
             if (!res.ok) {
                 console.error("Failed to fetch posts:", res.statusText);
-                return;
+                return [];
             }
+
             return await res.json();
-        } catch (e) {
-            console.error("Could not load posts from backend:", e);
-            return null;
+        } catch (err) {
+            console.error("Posts fetch error:", err);
+            return [];
         }
     };
 
-//Page elements
+    // Load everything on mount
+    useEffect(() => {
+        const loadData = async () => {
+            const token = localStorage.getItem("authToken");
 
-return(
+            if (!token) {
+                setErrorMsg("You must be logged in.");
+                setLoading(false);
+                return;
+            }
 
-    <div className="feedpage-container"
-    style={{
-        "--home-bg-1": primary,
-        "--home-bg-2": secondary,
-        
-    }}
-    >
-        <div className="feedpage-content">
-            <button type="button" className="feedPage-back-btn" onClick={() => navigate("/home")}>← BACK</button>
-            <h1>Feed Page</h1>
-            <button type="button" className="feedPage-createPost-btn" onClick={() => navigate("/post")}>Create Post</button>
+            const profile = await fetchProfile(token);
+            if (profile) {
+                setUserColor(profile.color || "#ffffff");
+                setBgColor(profile.bgColor || "#f5f5f5");
+            }
+
+            const postsData = await fetchPosts(token);
+            setPosts(postsData);
+
+            setLoading(false);
+        };
+
+        loadData();
+    }, []);
+
+    return (
+        <div
+            className="feedpage-container"
+            style={{
+                "--home-bg-1": userColor,
+                "--home-bg-2": bgColor,
+            }}
+        >
+            <div className="feedpage-content">
+                <button
+                    className="feedPage-back-btn"
+                    onClick={() => navigate("/home")}
+                >
+                    ← BACK
+                </button>
+
+                <h1>Feed Page</h1>
+
+                <button
+                    className="feedPage-createPost-btn"
+                    onClick={() => navigate("/post")}
+                >
+                    Create Post
+                </button>
+
+                {/* STATES */}
+                {loading && <p>Loading posts...</p>}
+                {errorMsg && <p className="error">{errorMsg}</p>}
+
+                {/* POSTS */}
+                {!loading && posts.length === 0 && (
+                    <p>No posts yet.</p>
+                )}
+
+                <div className="feedpage-posts">
+                    {posts.map((post) => (
+                        <div key={post.id} className="post">
+                            <p className="post-content">{post.content}</p>
+
+                            {post.image && (
+                                <img
+                                    src={post.image}
+                                    alt="post"
+                                    className="post-image"
+                                />
+                            )}
+
+                            <div className="post-meta">
+                                <span>{post.author || "Unknown user"}</span>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
         </div>
-
-
-    </div>
-
-
-
-
-
-
-
-
-
     );
+};
 
-
-}; 
-
-export default feedPage;
+export default FeedPage;
