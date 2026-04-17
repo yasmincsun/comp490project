@@ -28,3 +28,4 @@ dist-ssr
 target/
 backend/build/
 *.class
+.env

@@ -14,3 +14,5 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <App />
   </React.StrictMode>,
 )
+
+//npm install @emotion/react @emotion/styled @maptiler/geocoding-control @maptiler/sdk @mui/icons-material @mui/material

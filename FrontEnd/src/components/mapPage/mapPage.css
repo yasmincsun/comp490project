@@ -1,0 +1,74 @@
+.container {
+  position: relative;
+  height: calc(100vh - 64px);
+  width: 100%;
+  margin-top: 64px;
+}
+
+.map {
+  top: 0;
+  left: 0;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+}
+
+/* layerSwitcherControl */
+.maplibregl-ctrl-basemaps {
+  display: flex;
+  flex-direction: row;
+  pointer-events: auto;
+  bottom: 15px;
+  position: relative;
+}
+
+.maplibregl-ctrl-basemaps.reverse {
+  flex-direction: row-reverse;
+}
+
+.maplibregl-ctrl-basemaps.column {
+  flex-direction: column;
+}
+
+.maplibregl-ctrl-basemaps.column.reverse {
+  flex-direction: column-reverse;
+}
+
+.maplibregl-ctrl-basemaps .basemap {
+  width: 64px;
+  height: 64px;
+  margin: 2px;
+  border: 2px solid #ccc;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.65);
+  cursor: pointer;
+}
+
+.maplibregl-ctrl-basemaps .basemap.active {
+  border-color: orange;
+  box-shadow: 2px 2px 4px #000;
+}
+
+.maplibregl-ctrl-basemaps.closed .basemap {
+  display: none;
+}
+
+.maplibregl-ctrl-basemaps.closed .basemap.active {
+  display: block;
+  border: 2px solid #ccc;
+}
+
+.maplibregl-popup {
+  max-width: 400px;
+  font: 12px/20px Helvetica Neue, Arial, Helvetica, sans-serif;
+}
+
+.maplibregl-ctrl-top-right {
+  top: auto !important;
+  left: auto !important;
+  bottom: 90px !important;
+  right: 12px !important;
+}
+
+.maplibregl-ctrl-top-right .maplibregl-ctrl {
+  margin: 0 !important;
+}

@@ -484,7 +484,7 @@ const handleLogout = async () => {
                     <button
                         className="homepage-login-btn"
                         style={{ marginLeft: 12 }}
-                         onClick={() => { /* intentionally no-op for now */ }}
+                         onClick={() => navigate("/map")}
                     >
                         MAP
                     </button>
