@@ -237,7 +237,7 @@ public class MoodService {
 
         if (sample.size() < 30){
           //if user has less than 30 artists, we will not give the AI the selection instructions and just let it choose from the artists it thinks fit best, so we will not filter the songs based on the selection and just take the top 20 songs that fit the mood
-          return songCompilerPriority(URIs, songs, api, songs.size(), 0.75);
+          return songCompilerPriority(URIs, songs, api, songs.size(), 0.75, top);
         } 
           return songCompiler(URIs, songs, api, sample.size(), 0.80);
 
@@ -257,11 +257,12 @@ public class MoodService {
    * @param api holds the services for the SpotifyAPI
    * @param size holds the size of the song list
    * @param confidence holds the minimum score a song needs to advance
+   * @param top holds a list of all the artists the user listens to
    * @return the final playlist
    * @throws Exception in the event a parameter is missing or is invalid
    */
 
-  public static List<String> songCompilerPriority(List<String> x, List<Song> y, SpotifyApi api, int size, double confidence) throws Exception { //needs work
+  public static List<String> songCompilerPriority(List<String> x, List<Song> y, SpotifyApi api, int size, double confidence, List<Map<String,Object>> top) throws Exception { //needs work
 
        System.out.println("MEthode Priority triggered");
        long startTime2 = System.currentTimeMillis();
