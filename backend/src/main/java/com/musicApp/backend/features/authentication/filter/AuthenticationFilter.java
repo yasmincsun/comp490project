@@ -47,7 +47,8 @@ public class AuthenticationFilter extends HttpFilter {
             "/playlist",
             "/playlist/add",
             "/playlist/from-mood",
-            "/"
+            "/",
+            "/peekaboo"
 
     );
 

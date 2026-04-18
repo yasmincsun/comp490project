@@ -41,6 +41,7 @@ public class MoodController {
    * that the user is logged in and if not, it returns a 401 error, or unauthorized access
    * @param mood holds the desired mood the user feels
    * @param session the current session with the user's ID
+   * @param limit holds the number of artists considered in a pool of suggestions (max is 50)
    * @return a JSON the shows the recommendated music, an error message, or an exception
    */
   @GetMapping("/mood/by")

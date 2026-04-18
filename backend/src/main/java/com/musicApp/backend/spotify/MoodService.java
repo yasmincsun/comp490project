@@ -30,28 +30,71 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * A service that generates a suggestion of songs, based on the user's most listened artists. The improvement
+ * being it utilizes OpenAI to make these suggestions instead of relying on artist tags
+ */
 
 @Service
 public class MoodService {
 
-
+  /**
+   * In respective order, auth grants the user access to Spotify's services, client holds the
+   * access to use OpenAI, and model holds the OpenAI model used to make song decisions
+   */
   private final SpotifyAuthService auth;
   private final OpenAIClient client;
   private final String model;
 
+  /**
+   * A record to hold the object Song, which includes:
+   * @param title (the title of song)
+   * @param artist (the person/people that made the song)
+   * @param confidence (this is a score, which decides whether or not a song fits a mood or not)
+   */
   public record Song(String title, String artist, double confidence) {}
+
+  /**
+   * A record that holds an Artist's songs
+   * 
+   * @param number (Every artist is assigned a number based on most listened to least listened)
+   * @param artist (the person or people that made these songs)
+   * @param songs (a list of all the songs from the artist)
+   */
   public record ArtistSongs(int number, String artist, List<String> songs) {}
 
-
+  /**
+   * A constructor that gives the user access to Spotify, as well as the OpenAI
+   * @param auth (holds the access to Spotify)
+   * @param model (holds the model that OpenAI uses)
+   * @param client (holds the access to OpenAI)
+   */
   public MoodService(SpotifyAuthService auth, @Value("${openai.model}") String model, OpenAIClient client) {
     this.auth = auth;
     this.client = client;
     this.model = model;
   }
 
+  /**
+   * Debugging purposes, used to time response time
+   */
+
   long startTime;
   long endTime;
 
+
+  /**
+   * The actual "Mood Search Engine." What it does it collects all the artists the user has listened into a list, and put it in a pool of suggestions.
+   * We then shuffle the order of artists and pick out the first 30. We convert the selected artists into a JSON format, to which we create a prompt for
+   * the AI. We ask it to pick 10-20 artists from the 30 given and suggest 2-3 songs from each artist. We gave it parameters like no dupes, keep a
+   * 60/40 ratio of popular songs to deep cuts, not to include remixes, remasters, or live versions, among more parameters. We also give it tags to
+   * help the AI grasp the idea of the mood. The AI returns with a list of songs, along with a confidence score. It then goes into 2 final methods.
+   * @param userId holds the user's Spotify ID
+   * @param mood holds the desired mood the user wants
+   * @param limit holds the max number of artists for consideration
+   * @return returns a list of URIs, which basically are the final songs to give to the user
+   * @throws Exception in the event the user is missing one of these parameters or have an invalid parameter
+   */
   public List<String> recommendBySelectedMood(String userId, String mood, int limit) throws Exception {
     List<Integer> selectionSublist;
     List<Map<String, Object>> top;
@@ -94,7 +137,7 @@ public class MoodService {
         }
 
         if (sample.size() >= 30){
-          selectionSublist = sample.subList(0, 20);
+          selectionSublist = sample.subList(0, 30);
         } else {
           selectionSublist = sample.subList(0, sample.size());
         }
@@ -194,13 +237,31 @@ public class MoodService {
 
         if (sample.size() < 30){
           //if user has less than 30 artists, we will not give the AI the selection instructions and just let it choose from the artists it thinks fit best, so we will not filter the songs based on the selection and just take the top 20 songs that fit the mood
-          return songCompilerPriority(URIs, songs, api, songs.size(), 0.75, top);
+          return songCompilerPriority(URIs, songs, api, songs.size(), 0.75);
         } 
           return songCompiler(URIs, songs, api, sample.size(), 0.80);
 
   }
 
-  public static List<String> songCompilerPriority(List<String> x, List<Song> y, SpotifyApi api, int size, double confidence, List<Map<String, Object>> top) throws Exception { //needs work
+  /**
+   * This method acts as a checkpoint for songs. This specific method has one use case: in the event the user has less than 30 listened artists. 
+   * It basically checks if a song exists and not made up by AI, and if it does exist, it checks for
+   * the song's confidence score to see if it fits the mood perfectly. If it reaches the minumum or surpasses the score, it heads into the final
+   * playlist. The method also has a limit to how many songs can be in a playlist, which is 30.
+   * The reason being that it's "songCompilerPriority" is because it
+   * prioritize suggesting a user's listened to artist before the AI can use their own suggestions. The confidence score
+   * is fixed to 0.75 just to set the bar low on what it can suggest, while using the user's listened artists, to which a backfill method suggests
+   * songs from the AI and give out better song reccomendations
+   * @param x holds an empty list that'll eventually be filled with Spotify URIs
+   * @param y holds a list of songs the AI suggested
+   * @param api holds the services for the SpotifyAPI
+   * @param size holds the size of the song list
+   * @param confidence holds the minimum score a song needs to advance
+   * @return the final playlist
+   * @throws Exception in the event a parameter is missing or is invalid
+   */
+
+  public static List<String> songCompilerPriority(List<String> x, List<Song> y, SpotifyApi api, int size, double confidence) throws Exception { //needs work
 
        System.out.println("MEthode Priority triggered");
        long startTime2 = System.currentTimeMillis();
@@ -271,6 +332,20 @@ public class MoodService {
         System.out.println("Recommended URIs: " + x);
         return x;
   }
+
+  /**
+   * This is ideally the default songCOmpiler method if you have 50 or more artists. It does the same as songCompilerPriority, but the difference is
+   * that because a user has a bigger sample size of artist suggestions, the confidence score is hardcoded to 0.80 so the first
+   * 15 suggestions fit the mood. After it gets all the songs
+   * with that score, it backfills the playlist with songs that have a 0.75 score just to be lenient and more experimental.
+   * @param x holds an empty list that'll eventually be filled with Spotify URIs
+   * @param y holds a list of songs the AI suggested
+   * @param api holds the services for the SpotifyAPI
+   * @param size holds the size of the song list
+   * @param confidence holds the minimum score a song needs to advance
+   * @return the final playlist
+   * @throws Exception in the event a parameter is missing or is invalid
+   */
 
   public static List<String> songCompiler(List<String> x, List<Song> y, SpotifyApi api, int size, double confidence) throws Exception { //needs work
 
@@ -343,6 +418,12 @@ public class MoodService {
         System.out.println("Recommended URIs: " + x);
         return x;
   }
+
+  /**
+   * This method turns Json into a String
+   * @param response is the Json being converted into a string
+   * @return a string of the Json
+   */
 
   public static String extractText(Response response) {
     if (response == null || response.output() == null) return null;

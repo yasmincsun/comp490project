@@ -246,4 +246,3 @@ public final class MoodMatchers {
 
     private MoodMatchers() {}
 }
-

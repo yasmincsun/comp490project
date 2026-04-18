@@ -13,11 +13,11 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * It is used to match and convert event status values received from the API.
  */
 public enum Status {
-    ONSALE("onsale"),
-    OFFSALE("offsale"),
-    CANCELED("canceled"),
-    POSTPONED("postponed"),
-    RESCHEDULED("rescheduled");
+  ONSALE("onsale"),
+  OFFSALE("offsale"),
+  CANCELLED("cancelled"),
+  POSTPONED("postponed"),
+  RESCHEDULED("rescheduled");
 
     private final String code;
 

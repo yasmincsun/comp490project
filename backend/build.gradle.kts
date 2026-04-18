@@ -12,7 +12,7 @@ description = "Backend for musicApp"
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
@@ -65,8 +65,8 @@ dependencies {
     //WebClient
     implementation("org.springframework.boot:spring-boot-starter-webflux")
 
-    //GeminiAI
-    implementation("com.google.genai:google-genai:1.45.0")
+    //ai
+    implementation("com.openai:openai-java:4.26.0")
 
     //OpenAI
     implementation("com.openai:openai-java:4.26.0")
@@ -83,7 +83,7 @@ tasks.withType<Javadoc> {
 }
 
 tasks.javadoc {
-    destinationDir = file("C:/Users/16617/Desktop/JavaDoc490/JavadocOutput")
+    destinationDir = file("C:/Users/18184/Desktop/aiven")
 }
 
 tasks.withType<JavaCompile> {
