@@ -10,6 +10,7 @@ import PostPage from "./components/postPage/postPage";
 import ReviewPage from "./components/reviewPage/reviewPage";
 import MapPage from "./components/mapPage/mapPage";
 
+
 /**
  * Main application component.
  * Defines client-side routes for the Moody app using React Router.
@@ -29,7 +30,6 @@ function App() {
           <Route path="/reviews" element={<ReviewPage />} />
           <Route path="/post" element={<PostPage />} />
           <Route path="/map" element={<MapPage />} />
-          <Route path="/feed" element={<FeedPage />} />
           
         </Routes>
       </BrowserRouter>
