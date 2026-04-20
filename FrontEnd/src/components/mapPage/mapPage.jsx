@@ -82,7 +82,7 @@ class LayerSwitcherControl {
   }
 }
 
-export default function MapPage() {
+export default function MapPage() {`n  const navigate = useNavigate();
   const mapContainer = useRef(null);
   const map = useRef(null);
   const handlersRef = useRef({ click: null, enter: null, leave: null });
@@ -399,3 +399,5 @@ export default function MapPage() {
     </Box>
   );
 }
+
+*/
