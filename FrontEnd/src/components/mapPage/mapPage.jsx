@@ -1,4 +1,5 @@
-import React, { useRef, useEffect, useState } from "react";`nimport { useNavigate } from "react-router-dom";
+/*
+import React, { useRef, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as maptilersdk from "@maptiler/sdk";
 import { GeocodingControl } from "@maptiler/geocoding-control/maptilersdk";
@@ -82,7 +83,8 @@ class LayerSwitcherControl {
   }
 }
 
-export default function MapPage() {`n  const navigate = useNavigate();
+export default function MapPage() {
+  const navigate = useNavigate();
   const mapContainer = useRef(null);
   const map = useRef(null);
   const handlersRef = useRef({ click: null, enter: null, leave: null });
@@ -399,3 +401,5 @@ export default function MapPage() {`n  const navigate = useNavigate();
     </Box>
   );
 }
+
+*/
