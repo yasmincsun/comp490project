@@ -1,5 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";`nimport { useNavigate } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import React, { useRef, useEffect, useState } from "react";
 import * as maptilersdk from "@maptiler/sdk";
 import { GeocodingControl } from "@maptiler/geocoding-control/maptilersdk";
 import Box from "@mui/material/Box";
@@ -82,7 +81,7 @@ class LayerSwitcherControl {
   }
 }
 
-export default function MapPage() {`n  const navigate = useNavigate();
+export default function MapPage() {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const handlersRef = useRef({ click: null, enter: null, leave: null });
@@ -329,7 +328,7 @@ export default function MapPage() {`n  const navigate = useNavigate();
   return (
     <Box sx={{ display: "flex" }}>
       <Navbar />
-      <div className="container" style={{ position: "relative" }}>`n        <button onClick={() => navigate(-1)} style={{ position: "absolute", top: 12, left: 12, zIndex: 2, padding: "8px 12px", borderRadius: 8, cursor: "pointer", fontFamily: "Montserrat, sans-serif" }}>Back</button>
+      <div className="container" style={{ position: "relative" }}>
         <div
           style={{
             position: "absolute",
