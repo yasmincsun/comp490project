@@ -45,7 +45,7 @@ public class FeedController {
      */
     public FeedController(FeedService feedService) {
         this.feedService = feedService;
-        this.postRepository = postRepository;
+        //this.postRepository = postRepository;
     }
 
     /**
@@ -54,16 +54,12 @@ public class FeedController {
      * @param user the authenticated user taken from the request
      * @return a ResponseEntity containing a list of posts in the user's feed
      */
-    @GetMapping
+        @GetMapping
     public ResponseEntity<List<Post>> getFeedPosts(@RequestAttribute("authenticatedUser") AuthenticationUser user) {
-        //Currently, posts aren't populating and might be getting filtered out by the 2 lines below.
-        //I am changing this for now to return all posts.
-        //List<Post> posts = feedService.getFeedPosts(user.getId());
-        //return ResponseEntity.ok(posts);
-        
-        return responseEntity.ok(feedService.findAll());
-        
+        List<Post> posts = feedService.getFeedPosts(user.getId());
+        return ResponseEntity.ok(posts);
     }
+
 
     /**
      * Creates a new post for the authenticated user.
