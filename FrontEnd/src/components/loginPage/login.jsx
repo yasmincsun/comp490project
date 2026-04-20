@@ -287,11 +287,13 @@ console.log("Sending verification code:", verificationCode);
 
   return (
     <div className="container">
-      <div className="login-home-btn-container">
+      {/* <div className="login-home-btn-container">
         <button className="login-home-btn" onClick={() => navigate("/home")}>
           Home
         </button>
       </div>
+        */}
+       
 
       <div className="header">
         <div className="text">{mode === "login" ? "Login" : "Sign Up"}</div>
