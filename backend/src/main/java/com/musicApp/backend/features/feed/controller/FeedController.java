@@ -25,6 +25,7 @@ import com.musicApp.backend.features.feed.service.FeedService;
 import com.musicApp.backend.features.authentication.model.AuthenticationUser;
 import com.musicApp.backend.features.feed.dto.CommentDto;
 import com.musicApp.backend.features.feed.dto.PostDto;
+import com.musicApp.backend.features.feed.repository.PostRepository;
 
 /**
  * This class handles feed-related requests in the application.
@@ -44,6 +45,7 @@ public class FeedController {
      */
     public FeedController(FeedService feedService) {
         this.feedService = feedService;
+        this.postRepository = postRepository;
     }
 
     /**
@@ -54,8 +56,13 @@ public class FeedController {
      */
     @GetMapping
     public ResponseEntity<List<Post>> getFeedPosts(@RequestAttribute("authenticatedUser") AuthenticationUser user) {
-        List<Post> posts = feedService.getFeedPosts(user.getId());
-        return ResponseEntity.ok(posts);
+        //Currently, posts aren't populating and might be getting filtered out by the 2 lines below.
+        //I am changing this for now to return all posts.
+        //List<Post> posts = feedService.getFeedPosts(user.getId());
+        //return ResponseEntity.ok(posts);
+        
+        return responseEntity.ok(feedService.findAll());
+        
     }
 
     /**
