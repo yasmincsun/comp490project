@@ -284,6 +284,7 @@
     z-index: 5;
     display: flex;
     justify-content: center;
+    text-align: center;
 }
 
 .friendpage-activity-wrapper {
@@ -313,7 +314,7 @@
 .friendpage-activity-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     gap: 16px;
     margin-bottom: 16px;
 }
