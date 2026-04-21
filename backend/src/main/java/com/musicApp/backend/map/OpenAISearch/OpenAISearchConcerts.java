@@ -7,7 +7,7 @@ import com.openai.models.responses.ResponseOutputItem;
 import com.openai.models.responses.ResponseOutputMessage;
 import com.openai.models.responses.Tool;
 import com.openai.models.responses.WebSearchTool;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Value; 
 import org.springframework.stereotype.Service;
 
 import java.util.List;

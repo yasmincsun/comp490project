@@ -1,7 +1,7 @@
 /**
  * Class Name: MapService
  * Date: February 13, 2026
- * @author Jose Bastidas
+ * @author Jose Bastidas 
  *
  */
 package com.musicApp.backend.map.service;
@@ -16,7 +16,7 @@ import reactor.core.publisher.Flux;
 /**
  * This class provides map-related services for the application.
  * It communicates with the TicketMasterAPI class to retrieve
- * event data based on a search keyword.
+ * event data based on a search keyword and optional map location.
  */
 @Service
 public class MapService {
@@ -32,13 +32,14 @@ public class MapService {
     }
 
     /**
-     * Returns a list of events that match the given keyword.
+     * Returns a list of events that match the given keyword and optional location.
      *
-     * @param keyword the search word used to find matching events
+     * @param keyword the search word used to find events
+     * @param lat the optional latitude used to search for nearby events
+     * @param lng the optional longitude used to search for nearby events
      * @return a {@link Flux} of {@link EventDTO} objects containing event data
      */
-    public Flux<EventDTO> getEventDTOs(String keyword) {
-        return ticketmasterAPI.getAllEvents(keyword);
+    public Flux<EventDTO> getEventDTOs(String keyword, Double lat, Double lng) {
+        return ticketmasterAPI.getAllEvents(keyword, lat, lng);
     }
 }
-

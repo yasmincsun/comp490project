@@ -5,10 +5,13 @@
  */
 package com.musicApp.backend.map.TicketMaster.Location;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * This class represents the geographic location of a venue or event.
  * It stores the longitude and latitude coordinates returned from the API.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Location {
 
     private Double longitude;

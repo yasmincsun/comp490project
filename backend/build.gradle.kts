@@ -1,4 +1,5 @@
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
+import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
     java
@@ -10,9 +11,11 @@ group = "com.musicApp"
 version = "0.0.1-SNAPSHOT"
 description = "Backend for musicApp"
 
+val projectJava = 17 // use 17 if that is what your team uses
+
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(projectJava)
     }
 }
 
@@ -43,7 +46,7 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:1.18.34")
 
     implementation("se.michaelthelin.spotify:spotify-web-api-java:9.2.0")
-   // implementation("org.slf4j:slf4j-simple:2.0.12")
+    // implementation("org.slf4j:slf4j-simple:2.0.12")
 
     // --- Dev & Test ---
     developmentOnly("org.springframework.boot:spring-boot-devtools")
@@ -53,10 +56,8 @@ dependencies {
     //new
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-
     //test
     testImplementation("com.h2database:h2")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
 
     //Amazon / Cloudflare R2
     implementation("software.amazon.awssdk:s3:2.41.13")
@@ -69,8 +70,7 @@ dependencies {
     implementation("com.openai:openai-java:4.26.0")
 
     //OpenAI
-    implementation("com.openai:openai-java:4.26.0")
-
+    // implementation("com.openai:openai-java:4.26.0")
 }
 
 tasks.withType<Test> {
@@ -83,9 +83,16 @@ tasks.withType<Javadoc> {
 }
 
 tasks.javadoc {
-    destinationDir = file("C:/Users/18184/Desktop/aiven")
+    destinationDir = file("C:/Users/16617/Desktop/JavaDoc491")
 }
 
-tasks.withType<JavaCompile> {
+tasks.withType<JavaCompile>().configureEach {
+    options.release.set(projectJava)
     options.compilerArgs.add("-parameters")
+}
+
+tasks.named<BootRun>("bootRun") {
+    javaLauncher.set(javaToolchains.launcherFor {
+        languageVersion.set(JavaLanguageVersion.of(projectJava))
+    })
 }

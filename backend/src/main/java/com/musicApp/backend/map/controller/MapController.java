@@ -19,10 +19,14 @@ import reactor.core.publisher.Flux;
  * Handles map-related API requests for searching events.
  *
  * <p>This controller exposes an endpoint that allows clients to search for
- * events by keyword. The request is delegated to the {@link MapService},
- * which returns matching {@link EventDTO} objects as a reactive stream.
+ * events by keyword and optional location. The request is delegated to the
+ * {@link MapService}, which returns matching {@link EventDTO} objects as a
+ * reactive stream.
  */
-@CrossOrigin(origins = "http://127.0.0.1:5173")
+@CrossOrigin(origins = {
+    "http://127.0.0.1:5173",
+    "http://localhost:5173"
+})
 @RestController
 @RequestMapping("/api/v1/map")
 public class MapController {
@@ -40,13 +44,18 @@ public class MapController {
     }
 
     /**
-     * Searches for events that match the provided keyword.
+     * Searches for events that match the provided keyword and optional location.
      *
-     * @param keyword the search term used to find matching events
+     * @param lat the optional latitude used to search for nearby events
+     * @param lng the optional longitude used to search for nearby events
+     * @param keyword the optional search term used to filter matching events
      * @return a {@link Flux} stream containing matching {@link EventDTO} objects
      */
     @GetMapping("/search")
-    public Flux<EventDTO> listOfEvents(@RequestParam String keyword) {
-        return mapService.getEventDTOs(keyword);
+    public Flux<EventDTO> listOfEvents(
+            @RequestParam(required = false) Double lat,
+            @RequestParam(required = false) Double lng,
+            @RequestParam(required = false, defaultValue = "") String keyword) {
+        return mapService.getEventDTOs(keyword, lat, lng);
     }
 }

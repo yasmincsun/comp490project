@@ -1,5 +1,4 @@
-import React, { useRef, useEffect, useState } from "react"; 
-import { useNavigate } from "react-router-dom";
+import React, { useRef, useEffect, useState } from "react";
 import * as maptilersdk from "@maptiler/sdk";
 import { GeocodingControl } from "@maptiler/geocoding-control/maptilersdk";
 import Box from "@mui/material/Box";
@@ -9,6 +8,8 @@ import "./mapPage.css";
 
 import Navbar from "./Navbar";
 import configData from "./mapConfig";
+
+const API_BASE_URL = "http://127.0.0.1:8080";
 
 // Styles list
 const baseMaps = {
@@ -82,16 +83,14 @@ class LayerSwitcherControl {
   }
 }
 
-export default function MapPage() {`n  const navigate = useNavigate();
+export default function MapPage() {
   const mapContainer = useRef(null);
   const map = useRef(null);
-  const handlersRef = useRef({ click: null, enter: null, leave: null });
   const eventMarkersRef = useRef([]);
-  const lastSearchCenterRef = useRef({ lat: 34.1021, lng: -118.374107 });
   const keywordRef = useRef("");
 
   const center = { lng: -118.374107, lat: 34.1021 };
-  const [zoom] = useState(8.45);
+  const [zoom] = useState(4.2);
   const [keyword, setKeyword] = useState("");
   const [statusMsg, setStatusMsg] = useState("");
 
@@ -103,12 +102,13 @@ export default function MapPage() {`n  const navigate = useNavigate();
     eventMarkersRef.current = [];
   }
 
-  function addEventsToMap(json) {
+  function addEventsToMap(events) {
     if (!map.current) return;
 
     clearEventMarkers();
 
-    const events = json?._embedded?.events ?? [];
+    const bounds = new maptilersdk.LngLatBounds();
+    let markerCount = 0;
 
     for (const ev of events) {
       const venue = ev?._embedded?.venues?.[0];
@@ -117,56 +117,113 @@ export default function MapPage() {`n  const navigate = useNavigate();
 
       if (!Number.isFinite(lat) || !Number.isFinite(lng)) continue;
 
+      const venueName = venue?.name || "Venue unavailable";
+      const url = ev?.url || "#";
+
+      const popupHtml = `
+        <div style="max-width:220px;">
+          <strong>${ev?.name || "Event"}</strong><br/>
+          <span>${venueName}</span><br/>
+          <a href="${url}" target="_blank" rel="noopener noreferrer">View event</a>
+        </div>
+      `;
+
       const marker = new maptilersdk.Marker()
         .setLngLat([lng, lat])
-        .setPopup(new maptilersdk.Popup({ offset: 25 }).setText(ev.name))
+        .setPopup(new maptilersdk.Popup({ offset: 25 }).setHTML(popupHtml))
         .addTo(map.current);
 
       eventMarkersRef.current.push(marker);
+      bounds.extend([lng, lat]);
+      markerCount += 1;
+    }
+
+    if (markerCount === 1) {
+      const marker = eventMarkersRef.current[0];
+      const lngLat = marker.getLngLat();
+      map.current.flyTo({
+        center: [lngLat.lng, lngLat.lat],
+        zoom: 10,
+      });
+    } else if (markerCount > 1) {
+      map.current.fitBounds(bounds, {
+        padding: 60,
+        maxZoom: 10,
+      });
     }
   }
 
-  async function searchTicketmaster({ lat, lng, keyword: kw = "" }) {
+  async function searchEventsFromBackend({ keyword: kw = "", lat = null, lng = null }) {
     setStatusMsg("Searching events...");
 
     try {
-      const params = new URLSearchParams({
-        apikey: configData.TICKETMASTER_API_KEY,
-        latlong: `${lat},${lng}`,
-      });
+      const token = localStorage.getItem("authToken");
+
+      if (!token) {
+        throw new Error("You are not logged in.");
+      }
+
+      const params = new URLSearchParams();
 
       if (kw.trim()) {
         params.set("keyword", kw.trim());
       }
 
-      const url = `https://app.ticketmaster.com/discovery/v2/events.json?${params.toString()}`;
-      const res = await fetch(url);
-      const json = await res.json();
+      if (lat !== null && lng !== null) {
+        params.set("lat", String(lat));
+        params.set("lng", String(lng));
+      }
 
-      const events = json?._embedded?.events ?? [];
+      const res = await fetch(`${API_BASE_URL}/api/v1/map/search?${params.toString()}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const rawText = await res.text();
+
+      if (!res.ok) {
+        throw new Error(`Backend returned ${res.status}: ${rawText}`);
+      }
+
+      const events = rawText ? JSON.parse(rawText) : [];
+      const safeEvents = Array.isArray(events) ? events : [];
+
       setStatusMsg(
-        `${events.length} events found${kw.trim() ? ` for "${kw.trim()}"` : ""}.`
+        `${safeEvents.length} events found${kw.trim() ? ` for "${kw.trim()}"` : ""}.`
       );
 
-      addEventsToMap(json);
-      return json;
+      addEventsToMap(safeEvents);
+      return safeEvents;
     } catch (error) {
-      console.error("Ticketmaster search failed:", error);
-      setStatusMsg("Could not load events.");
+      console.error("Backend map search failed:", error);
+      setStatusMsg(error.message || "Could not load events.");
+      clearEventMarkers();
+      return [];
     }
   }
 
   function runKeywordSearch(useMapCenter = false) {
+    if (!keyword.trim()) {
+      setStatusMsg("Enter a keyword to search.");
+      return;
+    }
+
+    if (!useMapCenter) {
+      searchEventsFromBackend({ keyword });
+      return;
+    }
+
     if (!map.current) return;
 
-    const { lat, lng } = useMapCenter
-      ? {
-          lat: map.current.getCenter().lat,
-          lng: map.current.getCenter().lng,
-        }
-      : lastSearchCenterRef.current;
+    const center = map.current.getCenter();
 
-    searchTicketmaster({ lat, lng, keyword });
+    searchEventsFromBackend({
+      keyword,
+      lat: center.lat,
+      lng: center.lng,
+    });
   }
 
   function getLocationAndEvents() {
@@ -180,13 +237,9 @@ export default function MapPage() {`n  const navigate = useNavigate();
         const lat = pos.coords.latitude;
         const lng = pos.coords.longitude;
 
-        lastSearchCenterRef.current = { lat, lng };
-
         if (map.current) {
-          map.current.flyTo({ center: [lng, lat], zoom: 10 });
+          map.current.flyTo({ center: [lng, lat], zoom: 8 });
         }
-
-        await searchTicketmaster({ lat, lng, keyword: "" });
       },
       (err) => {
         console.error(err);
@@ -214,14 +267,15 @@ export default function MapPage() {`n  const navigate = useNavigate();
     geocoder.on("result", async (e) => {
       const [lng, lat] = e.result.center;
 
-      lastSearchCenterRef.current = { lat, lng };
-      map.current.flyTo({ center: [lng, lat], zoom: 10 });
+      map.current.flyTo({ center: [lng, lat], zoom: 8 });
 
-      await searchTicketmaster({
-        lat,
-        lng,
-        keyword: keywordRef.current,
-      });
+      if (keywordRef.current.trim()) {
+        await searchEventsFromBackend({
+          keyword: keywordRef.current,
+          lat,
+          lng,
+        });
+      }
     });
 
     map.current.addControl(
@@ -233,88 +287,9 @@ export default function MapPage() {`n  const navigate = useNavigate();
       "bottom-left"
     );
 
-    const ensurePlacesLayerAndEvents = () => {
-      if (!map.current) return;
-
-      if (!map.current.getSource("places")) {
-        map.current.addSource("places", {
-          type: "geojson",
-          data: {
-            type: "FeatureCollection",
-            features: [
-              {
-                type: "Feature",
-                properties: {
-                  description:
-                    "<strong>Example place</strong><p>This is a popup.</p>",
-                },
-                geometry: {
-                  type: "Point",
-                  coordinates: [-118.374107, 34.1021],
-                },
-              },
-            ],
-          },
-        });
-      }
-
-      if (!map.current.getLayer("places")) {
-        map.current.addLayer({
-          id: "places",
-          type: "circle",
-          source: "places",
-          paint: {
-            "circle-radius": 7,
-            "circle-stroke-width": 2,
-          },
-        });
-      }
-
-      const prev = handlersRef.current;
-
-      if (prev.click) map.current.off("click", "places", prev.click);
-      if (prev.enter) map.current.off("mouseenter", "places", prev.enter);
-      if (prev.leave) map.current.off("mouseleave", "places", prev.leave);
-
-      const onClick = (e) => {
-        const coordinates = e.features[0].geometry.coordinates.slice();
-        const description = e.features[0].properties.description;
-
-        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-          coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-        }
-
-        new maptilersdk.Popup()
-          .setLngLat(coordinates)
-          .setHTML(description)
-          .addTo(map.current);
-      };
-
-      const onEnter = () => {
-        map.current.getCanvas().style.cursor = "pointer";
-      };
-
-      const onLeave = () => {
-        map.current.getCanvas().style.cursor = "";
-      };
-
-      map.current.on("click", "places", onClick);
-      map.current.on("mouseenter", "places", onEnter);
-      map.current.on("mouseleave", "places", onLeave);
-
-      handlersRef.current = {
-        click: onClick,
-        enter: onEnter,
-        leave: onLeave,
-      };
-    };
-
     map.current.on("load", () => {
-      ensurePlacesLayerAndEvents();
       getLocationAndEvents();
     });
-
-    map.current.on("style.load", ensurePlacesLayerAndEvents);
 
     return () => {
       clearEventMarkers();
@@ -350,7 +325,7 @@ export default function MapPage() {`n  const navigate = useNavigate();
             onKeyDown={(e) => {
               if (e.key === "Enter") runKeywordSearch(false);
             }}
-            placeholder='Keyword (e.g., "jazz", "lakers")'
+            placeholder='Keyword (e.g., "jazz", "drake")'
             style={{
               width: 240,
               padding: "8px 10px",
@@ -388,6 +363,7 @@ export default function MapPage() {`n  const navigate = useNavigate();
               borderRadius: 10,
               maxWidth: 420,
               fontSize: 13,
+              whiteSpace: "pre-wrap",
             }}
           >
             {statusMsg}
@@ -399,5 +375,3 @@ export default function MapPage() {`n  const navigate = useNavigate();
     </Box>
   );
 }
-
-*/

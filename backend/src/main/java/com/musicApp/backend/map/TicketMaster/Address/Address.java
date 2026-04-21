@@ -3,9 +3,9 @@
  * Date: February 13, 2026
  * @author Jose Bastidas
  *
- */
-package com.musicApp.backend.map.TicketMaster.Address;
+ */package com.musicApp.backend.map.TicketMaster.Address;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
@@ -13,10 +13,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * It stores up to three address lines returned from the API.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Address {
-    String line1;
-    String line2;
-    String line3;
+    private String line1;
+    private String line2;
+    private String line3;
 
     /**
      * Returns the first line of the address.

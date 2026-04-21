@@ -8,7 +8,7 @@ import ConnectSpotify from "./components/spotify/ConnectSpotify";
 import FriendPage from "./components/friendPage/friendPage";
 import PostPage from "./components/postPage/postPage";
 import ReviewPage from "./components/reviewPage/reviewPage";
-//import MapPage from "./components/mapPage/mapPage";
+import MapPage from "./components/mapPage/mapPage";
 import FeedPage from "./components/feedPage/feedPage";
 
 /**
@@ -30,7 +30,7 @@ function App() {
           <Route path="/reviews" element={<ReviewPage />} />
           <Route path="/post" element={<PostPage />} />
           <Route path="/feed" element={<FeedPage />} />
-          {/* <Route path="/map" element={<MapPage />} /> */}
+          <Route path="/map" element={<MapPage />} />
           
         </Routes>
       </BrowserRouter>
