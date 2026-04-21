@@ -25,7 +25,6 @@ import com.musicApp.backend.features.feed.service.FeedService;
 import com.musicApp.backend.features.authentication.model.AuthenticationUser;
 import com.musicApp.backend.features.feed.dto.CommentDto;
 import com.musicApp.backend.features.feed.dto.PostDto;
-import com.musicApp.backend.features.feed.repository.PostRepository;
 
 /**
  * This class handles feed-related requests in the application.
@@ -45,7 +44,6 @@ public class FeedController {
      */
     public FeedController(FeedService feedService) {
         this.feedService = feedService;
-        //this.postRepository = postRepository;
     }
 
     /**
@@ -54,12 +52,11 @@ public class FeedController {
      * @param user the authenticated user taken from the request
      * @return a ResponseEntity containing a list of posts in the user's feed
      */
-        @GetMapping
+    @GetMapping
     public ResponseEntity<List<Post>> getFeedPosts(@RequestAttribute("authenticatedUser") AuthenticationUser user) {
-        List<Post> posts = feedService.getFeedPosts(user.getId());
+        List<Post> posts = feedService.getAllPosts();
         return ResponseEntity.ok(posts);
     }
-
 
     /**
      * Creates a new post for the authenticated user.

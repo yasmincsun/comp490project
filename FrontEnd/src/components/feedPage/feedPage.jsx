@@ -33,7 +33,7 @@ const FeedPage = () => {
     // Fetch posts
     const fetchPosts = async (token) => {
         try {
-            const res = await fetch("http://127.0.0.1:8080/api/v1/feed", {
+            const res = await fetch("http://127.0.0.1:8080/api/posts", {
                 headers: { Authorization: `Bearer ${token}` },
             });
 

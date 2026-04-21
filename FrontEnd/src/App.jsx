@@ -29,6 +29,7 @@ function App() {
           <Route path="/friends" element={<FriendPage />} />
           <Route path="/reviews" element={<ReviewPage />} />
           <Route path="/post" element={<PostPage />} />
+          <Route path="/feed" element={<FeedPage />} />
           {/* <Route path="/map" element={<MapPage />} /> */}
           
         </Routes>
