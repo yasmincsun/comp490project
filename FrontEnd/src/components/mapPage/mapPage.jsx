@@ -248,6 +248,52 @@ export default function MapPage() {
     );
   }
 
+  async function runAISearch() {
+  setStatusMsg("AI searching concerts...");
+
+  try {
+    const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      throw new Error("You are not logged in.");
+    }
+
+    if (!keyword.trim()) {
+      throw new Error("Enter something to search.");
+    }
+
+    const params = new URLSearchParams({
+      prompt: keyword.trim(),
+    });
+
+    const res = await fetch(`${API_BASE_URL}/api/v1/map/ai-search?${params.toString()}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const rawText = await res.text();
+
+    if (!res.ok) {
+      throw new Error(`Backend returned ${res.status}: ${rawText}`);
+    }
+
+    const events = rawText ? JSON.parse(rawText) : [];
+    const safeEvents = Array.isArray(events) ? events : [];
+
+    setStatusMsg(`${safeEvents.length} AI events found for "${keyword.trim()}".`);
+
+    addEventsToMap(safeEvents);
+    return safeEvents;
+  } catch (error) {
+    console.error("AI map search failed:", error);
+    setStatusMsg(error.message || "Could not run AI search.");
+    clearEventMarkers();
+    return [];
+  }
+}
+
   useEffect(() => {
     if (map.current) return;
 
@@ -322,9 +368,6 @@ export default function MapPage() {
           <input
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") runKeywordSearch(false);
-            }}
             placeholder='Keyword (e.g., "jazz", "drake")'
             style={{
               width: 240,
@@ -340,6 +383,13 @@ export default function MapPage() {
             style={{ padding: "8px 10px", borderRadius: 8, cursor: "pointer" }}
           >
             Search
+          </button>
+
+          <button
+            onClick={runAISearch}
+            style={{ padding: "8px 10px", borderRadius: 8, cursor: "pointer" }}
+          >
+            AI Search
           </button>
 
           <button

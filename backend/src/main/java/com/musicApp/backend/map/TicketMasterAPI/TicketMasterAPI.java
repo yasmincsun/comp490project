@@ -3,13 +3,13 @@
  * Date: February 13, 2026
  * @author Jose Bastidas 
  *
- */package com.musicApp.backend.map.TicketMasterAPI;
+ */
+package com.musicApp.backend.map.TicketMasterAPI;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.musicApp.backend.map.TicketMaster.Dates.Status;
 import com.musicApp.backend.map.dto.EventDTO;
 import com.musicApp.backend.map.dto.TicketmasterResponse;
 
@@ -27,9 +27,9 @@ import reactor.core.publisher.Mono;
  * Algorithm:
  * This class first retrieves the first page of results to determine the total
  * number of pages available. It then loops through each page, retrieves the
- * events, and filters them so only events that are on sale and contain a valid
- * URL are returned. A delay is added between page requests to avoid sending too
- * many requests too quickly.
+ * events, and filters them so only events with valid URLs and usable venue
+ * location data are returned. A delay is added between page requests to avoid
+ * sending too many requests too quickly.
  */
 @Component
 public class TicketMasterAPI {
@@ -71,9 +71,15 @@ public class TicketMasterAPI {
                         return Flux.empty();
                     }
 
-                    return Flux.range(0, totalPages)
+                    int maxPages = 20;
+                    int pagesToFetch = Math.min(totalPages, maxPages);
+
+                    return Flux.range(0, pagesToFetch)
                             .delayElements(java.time.Duration.ofMillis(600))
-                            .concatMap(page -> getEvents(keyword, null, null, page));
+                            .concatMap(page ->
+                                getEvents(keyword, null, null, page)
+                                    .onErrorResume(error -> Flux.empty())
+                            );
                 });
     }
 
@@ -98,9 +104,15 @@ public class TicketMasterAPI {
                         return Flux.empty();
                     }
 
-                    return Flux.range(0, totalPages)
+                    int maxPages = 20;
+                    int pagesToFetch = Math.min(totalPages, maxPages);
+
+                    return Flux.range(0, pagesToFetch)
                             .delayElements(java.time.Duration.ofMillis(600))
-                            .concatMap(page -> getEvents(keyword, lat, lng, page));
+                            .concatMap(page ->
+                                getEvents(keyword, lat, lng, page)
+                                    .onErrorResume(error -> Flux.empty())
+                            );
                 });
     }
 
@@ -114,30 +126,30 @@ public class TicketMasterAPI {
      * @return a {@link Mono} containing the {@link TicketmasterResponse} for the requested page
      */
     private Mono<TicketmasterResponse> fetchPage(String keyword, Double lat, Double lng, int page) {
-    return webclient.get()
-            .uri(uriBuilder -> {
-                var builder = uriBuilder
-                        .path("/events.json")
-                        .queryParam("apikey", apiKey)
-                        .queryParam("locale", "*")
-                        .queryParam("page", page)
-                        .queryParam("size", 50);
+        return webclient.get()
+                .uri(uriBuilder -> {
+                    var builder = uriBuilder
+                            .path("/events.json")
+                            .queryParam("apikey", apiKey)
+                            .queryParam("locale", "*")
+                            .queryParam("page", page)
+                            .queryParam("size", 50);
 
-                if (keyword != null && !keyword.isBlank()) {
-                    builder.queryParam("keyword", keyword.trim());
-                }
+                    if (keyword != null && !keyword.isBlank()) {
+                        builder.queryParam("keyword", keyword.trim());
+                    }
 
-                if (lat != null && lng != null) {
-                    builder.queryParam("latlong", lat + "," + lng)
-                            .queryParam("radius", 200)
-                            .queryParam("unit", "miles");
-                }
+                    if (lat != null && lng != null) {
+                        builder.queryParam("latlong", lat + "," + lng)
+                                .queryParam("radius", 200)
+                                .queryParam("unit", "miles");
+                    }
 
-                return builder.build();
-            })
-            .retrieve()
-            .bodyToMono(TicketmasterResponse.class);
-}
+                    return builder.build();
+                })
+                .retrieve()
+                .bodyToMono(TicketmasterResponse.class);
+    }
 
     /**
      * Retrieves and filters events from a specific page.
@@ -146,7 +158,7 @@ public class TicketMasterAPI {
      * @param lat the latitude used to search for nearby events
      * @param lng the longitude used to search for nearby events
      * @param page the page number to retrieve
-     * @return a {@link Flux} of {@link EventDTO} objects that are on sale and contain valid URLs
+     * @return a {@link Flux} of {@link EventDTO} objects that contain valid URLs and venue coordinates
      */
     public Flux<EventDTO> getEvents(String keyword, Double lat, Double lng, int page) {
         return fetchPage(keyword, lat, lng, page)

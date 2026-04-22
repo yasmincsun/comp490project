@@ -18,10 +18,10 @@ import reactor.core.publisher.Flux;
 /**
  * Handles map-related API requests for searching events.
  *
- * <p>This controller exposes an endpoint that allows clients to search for
- * events by keyword and optional location. The request is delegated to the
- * {@link MapService}, which returns matching {@link EventDTO} objects as a
- * reactive stream.
+ * <p>This controller exposes endpoints that allow clients to search for
+ * events by keyword and optional location, or by using AI-assisted search.
+ * The request is delegated to the {@link MapService}, which returns
+ * matching {@link EventDTO} objects as a reactive stream.
  */
 @CrossOrigin(origins = {
     "http://127.0.0.1:5173",
@@ -57,5 +57,17 @@ public class MapController {
             @RequestParam(required = false) Double lng,
             @RequestParam(required = false, defaultValue = "") String keyword) {
         return mapService.getEventDTOs(keyword, lat, lng);
+    }
+
+    /**
+     * Searches for events using AI-assisted prompt interpretation.
+     *
+     * @param prompt the user's natural-language concert request
+     * @return a {@link Flux} stream containing matching {@link EventDTO} objects
+     * @throws Exception throws an exception if the AI response cannot be parsed
+     */
+    @GetMapping("/ai-search")
+    public Flux<EventDTO> aiSearch(@RequestParam String prompt) throws Exception {
+        return mapService.getAIEventDTOs(prompt);
     }
 }
