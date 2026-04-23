@@ -6,6 +6,8 @@
  */
 package com.musicApp.backend.map.dto;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.musicApp.backend.map.EmbeddedData.Embedded;
@@ -34,6 +36,7 @@ public class EventDTO {
     private Age ageRestrictions;
     private Ticketing ticketing;
     private String nameOrigin;
+    private List<EventImageDTO> images;
 
     @JsonProperty("_embedded")
     private Embedded embedded;

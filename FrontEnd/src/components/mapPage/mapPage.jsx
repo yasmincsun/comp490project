@@ -93,6 +93,7 @@ export default function MapPage() {
   const [zoom] = useState(4.2);
   const [keyword, setKeyword] = useState("");
   const [statusMsg, setStatusMsg] = useState("");
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
   keywordRef.current = keyword;
   maptilersdk.config.apiKey = configData.MAPTILER_API_KEY;
@@ -102,10 +103,52 @@ export default function MapPage() {
     eventMarkersRef.current = [];
   }
 
+  function getEventImage(ev) {
+    const images = Array.isArray(ev?.images) ? ev.images : [];
+    if (!images.length) return "";
+
+    const sixteenByNine = images.filter((img) => img?.ratio === "16_9" && img?.url);
+    const candidates = sixteenByNine.length ? sixteenByNine : images.filter((img) => img?.url);
+
+    candidates.sort((a, b) => (b?.width || 0) - (a?.width || 0));
+
+    return candidates[0]?.url || "";
+}
+
+  function formatEventDateTime(ev) {
+    const start = ev?.dates?.start;
+    if (!start) return "Time unavailable";
+
+    const localDate = start?.localDate || "";
+    const localTime = start?.localTime || "";
+
+    if (localDate && localTime) return `${localDate} ${localTime}`;
+    if (localDate) return localDate;
+    if (localTime) return localTime;
+
+    return "Time unavailable";
+  }
+
+  function formatVenueAddress(ev) {
+    const venue = ev?._embedded?.venues?.[0];
+    if (!venue) return "Address unavailable";
+
+    const parts = [
+      venue?.address?.line1,
+      venue?.city?.name,
+      venue?.state?.stateCode || venue?.state?.name,
+      venue?.postalCode,
+      venue?.country?.name,
+    ].filter(Boolean);
+
+    return parts.length ? parts.join(", ") : "Address unavailable";
+  }
+
   function addEventsToMap(events) {
     if (!map.current) return;
 
     clearEventMarkers();
+    setSelectedEvent(null);
 
     const bounds = new maptilersdk.LngLatBounds();
     let markerCount = 0;
@@ -117,21 +160,18 @@ export default function MapPage() {
 
       if (!Number.isFinite(lat) || !Number.isFinite(lng)) continue;
 
-      const venueName = venue?.name || "Venue unavailable";
-      const url = ev?.url || "#";
-
-      const popupHtml = `
-        <div style="max-width:220px;">
-          <strong>${ev?.name || "Event"}</strong><br/>
-          <span>${venueName}</span><br/>
-          <a href="${url}" target="_blank" rel="noopener noreferrer">View event</a>
-        </div>
-      `;
-
       const marker = new maptilersdk.Marker()
         .setLngLat([lng, lat])
-        .setPopup(new maptilersdk.Popup({ offset: 25 }).setHTML(popupHtml))
         .addTo(map.current);
+
+      marker.getElement().addEventListener("click", () => {
+        setSelectedEvent(ev);
+
+        map.current.flyTo({
+          center: [lng, lat],
+          zoom: Math.max(map.current.getZoom(), 10),
+        });
+      });
 
       eventMarkersRef.current.push(marker);
       bounds.extend([lng, lat]);
@@ -200,6 +240,7 @@ export default function MapPage() {
       console.error("Backend map search failed:", error);
       setStatusMsg(error.message || "Could not load events.");
       clearEventMarkers();
+      setSelectedEvent(null);
       return [];
     }
   }
@@ -217,12 +258,12 @@ export default function MapPage() {
 
     if (!map.current) return;
 
-    const center = map.current.getCenter();
+    const currentCenter = map.current.getCenter();
 
     searchEventsFromBackend({
       keyword,
-      lat: center.lat,
-      lng: center.lng,
+      lat: currentCenter.lat,
+      lng: currentCenter.lng,
     });
   }
 
@@ -233,7 +274,7 @@ export default function MapPage() {
     }
 
     navigator.geolocation.getCurrentPosition(
-      async (pos) => {
+      (pos) => {
         const lat = pos.coords.latitude;
         const lng = pos.coords.longitude;
 
@@ -249,50 +290,51 @@ export default function MapPage() {
   }
 
   async function runAISearch() {
-  setStatusMsg("AI searching concerts...");
+    setStatusMsg("AI searching concerts...");
 
-  try {
-    const token = localStorage.getItem("authToken");
+    try {
+      const token = localStorage.getItem("authToken");
 
-    if (!token) {
-      throw new Error("You are not logged in.");
+      if (!token) {
+        throw new Error("You are not logged in.");
+      }
+
+      if (!keyword.trim()) {
+        throw new Error("Enter something to search.");
+      }
+
+      const params = new URLSearchParams({
+        prompt: keyword.trim(),
+      });
+
+      const res = await fetch(`${API_BASE_URL}/api/v1/map/ai-search?${params.toString()}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const rawText = await res.text();
+
+      if (!res.ok) {
+        throw new Error(`Backend returned ${res.status}: ${rawText}`);
+      }
+
+      const events = rawText ? JSON.parse(rawText) : [];
+      const safeEvents = Array.isArray(events) ? events : [];
+
+      setStatusMsg(`${safeEvents.length} AI events found for "${keyword.trim()}".`);
+
+      addEventsToMap(safeEvents);
+      return safeEvents;
+    } catch (error) {
+      console.error("AI map search failed:", error);
+      setStatusMsg(error.message || "Could not run AI search.");
+      clearEventMarkers();
+      setSelectedEvent(null);
+      return [];
     }
-
-    if (!keyword.trim()) {
-      throw new Error("Enter something to search.");
-    }
-
-    const params = new URLSearchParams({
-      prompt: keyword.trim(),
-    });
-
-    const res = await fetch(`${API_BASE_URL}/api/v1/map/ai-search?${params.toString()}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    const rawText = await res.text();
-
-    if (!res.ok) {
-      throw new Error(`Backend returned ${res.status}: ${rawText}`);
-    }
-
-    const events = rawText ? JSON.parse(rawText) : [];
-    const safeEvents = Array.isArray(events) ? events : [];
-
-    setStatusMsg(`${safeEvents.length} AI events found for "${keyword.trim()}".`);
-
-    addEventsToMap(safeEvents);
-    return safeEvents;
-  } catch (error) {
-    console.error("AI map search failed:", error);
-    setStatusMsg(error.message || "Could not run AI search.");
-    clearEventMarkers();
-    return [];
   }
-}
 
   useEffect(() => {
     if (map.current) return;
@@ -349,8 +391,69 @@ export default function MapPage() {
 
   return (
     <Box sx={{ display: "flex" }}>
-      <Navbar />
+      {/* <Navbar /> */}
+
       <div className="container" style={{ position: "relative" }}>
+        <div className={`event-drawer ${selectedEvent ? "open" : ""}`}>
+          {selectedEvent && (
+            <>
+              <button
+                className="event-drawer-close"
+                onClick={() => setSelectedEvent(null)}
+                aria-label="Close event details"
+              >
+                ×
+              </button>
+
+              {getEventImage(selectedEvent) ? (
+                <img
+                  src={getEventImage(selectedEvent)}
+                  alt={selectedEvent?.name || "Event"}
+                  className="event-drawer-image"
+                />
+              ) : (
+                <div className="event-drawer-image placeholder">
+                  No image available
+                </div>
+              )}
+
+              <div className="event-drawer-content">
+                <h2>{selectedEvent?.name || "Event"}</h2>
+
+                <p>
+                  <strong>When:</strong> {formatEventDateTime(selectedEvent)}
+                </p>
+
+                <p>
+                  <strong>Venue:</strong>{" "}
+                  {selectedEvent?._embedded?.venues?.[0]?.name || "Venue unavailable"}
+                </p>
+
+                <p>
+                  <strong>Address:</strong> {formatVenueAddress(selectedEvent)}
+                </p>
+
+                {selectedEvent?.info && (
+                  <p>
+                    <strong>Info:</strong> {selectedEvent.info}
+                  </p>
+                )}
+
+                {selectedEvent?.url && (
+                  <a
+                    href={selectedEvent.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="event-link"
+                  >
+                    View event on Ticketmaster
+                  </a>
+                )}
+              </div>
+            </>
+          )}
+        </div>
+
         <div
           style={{
             position: "absolute",

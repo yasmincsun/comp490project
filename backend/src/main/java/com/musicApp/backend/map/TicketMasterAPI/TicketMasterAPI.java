@@ -26,14 +26,13 @@ import reactor.core.publisher.Mono;
  *
  * Algorithm:
  * This class first retrieves the first page of results to determine the total
- * number of pages available. It then loops through each page, retrieves the
- * events, and filters them so only events with valid URLs and usable venue
- * location data are returned. A delay is added between page requests to avoid
- * sending too many requests too quickly.
+ * number of pages available. It then retrieves the events from the first page,
+ * followed by the remaining pages. Events are filtered so only those with valid
+ * URLs and usable venue location data are returned.
  */
 @Component
 public class TicketMasterAPI {
-    private final WebClient webclient;
+    private final WebClient webClient;
     private final String apiKey;
 
     /**
@@ -44,7 +43,7 @@ public class TicketMasterAPI {
      */
     public TicketMasterAPI(WebClient.Builder builder, @Value("${ticketmaster.apiKey}") String apiKey) {
         this.apiKey = apiKey;
-        this.webclient = builder.baseUrl("https://app.ticketmaster.com/discovery/v2")
+        this.webClient = builder.baseUrl("https://app.ticketmaster.com/discovery/v2")
                 .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(2 * 1024 * 1024))
                 .build();
     }
@@ -59,28 +58,7 @@ public class TicketMasterAPI {
      * @return a {@link Flux} of {@link EventDTO} objects containing matching event data
      */
     public Flux<EventDTO> getAllEvents(String keyword) {
-        return fetchPage(keyword, null, null, 0)
-                .flatMapMany(firstResponse -> {
-                    if (firstResponse == null || firstResponse.getPages() == null) {
-                        return Flux.empty();
-                    }
-
-                    int totalPages = firstResponse.getPages().getTotalPages();
-
-                    if (totalPages <= 0) {
-                        return Flux.empty();
-                    }
-
-                    int maxPages = 20;
-                    int pagesToFetch = Math.min(totalPages, maxPages);
-
-                    return Flux.range(0, pagesToFetch)
-                            .delayElements(java.time.Duration.ofMillis(600))
-                            .concatMap(page ->
-                                getEvents(keyword, null, null, page)
-                                    .onErrorResume(error -> Flux.empty())
-                            );
-                });
+        return getAllEvents(keyword, null, null);
     }
 
     /**
@@ -107,12 +85,24 @@ public class TicketMasterAPI {
                     int maxPages = 20;
                     int pagesToFetch = Math.min(totalPages, maxPages);
 
-                    return Flux.range(0, pagesToFetch)
-                            .delayElements(java.time.Duration.ofMillis(600))
-                            .concatMap(page ->
-                                getEvents(keyword, lat, lng, page)
-                                    .onErrorResume(error -> Flux.empty())
-                            );
+                    Flux<EventDTO> firstPageEvents = extractEvents(firstResponse);
+
+                    Flux<EventDTO> remainingPages =
+                            pagesToFetch <= 1
+                                    ? Flux.empty()
+                                    : Flux.range(1, pagesToFetch - 1)
+                                            .delayElements(java.time.Duration.ofMillis(600))
+                                            .concatMap(page ->
+                                                    getEvents(keyword, lat, lng, page)
+                                                            .onErrorResume(error -> {
+                                                                System.err.println("Failed to fetch page " + page + ": " + error.getMessage());
+                                                                return Flux.empty();
+                                                            })
+                                            );
+
+                    return firstPageEvents
+                            .concatWith(remainingPages)
+                            .distinct(EventDTO::getId);
                 });
     }
 
@@ -126,7 +116,7 @@ public class TicketMasterAPI {
      * @return a {@link Mono} containing the {@link TicketmasterResponse} for the requested page
      */
     private Mono<TicketmasterResponse> fetchPage(String keyword, Double lat, Double lng, int page) {
-        return webclient.get()
+        return webClient.get()
                 .uri(uriBuilder -> {
                     var builder = uriBuilder
                             .path("/events.json")
@@ -162,24 +152,33 @@ public class TicketMasterAPI {
      */
     public Flux<EventDTO> getEvents(String keyword, Double lat, Double lng, int page) {
         return fetchPage(keyword, lat, lng, page)
-                .flatMapMany(response -> {
-                    if (response == null ||
-                            response.getEmbedded() == null ||
-                            response.getEmbedded().getEvents() == null) {
-                        return Flux.empty();
-                    }
+                .flatMapMany(this::extractEvents);
+    }
 
-                    return Flux.fromIterable(response.getEmbedded().getEvents())
-                            .filter(event -> event.getUrl() != null)
-                            .filter(event ->
-                                    event.getEmbedded() != null &&
-                                    event.getEmbedded().getVenues() != null &&
-                                    event.getEmbedded().getVenues().length > 0 &&
-                                    event.getEmbedded().getVenues()[0] != null &&
-                                    event.getEmbedded().getVenues()[0].getLocation() != null &&
-                                    event.getEmbedded().getVenues()[0].getLocation().getLatitude() != null &&
-                                    event.getEmbedded().getVenues()[0].getLocation().getLongitude() != null
-                            );
-                });
+    /**
+     * Extracts and filters events from a Ticketmaster response.
+     *
+     * @param response the Ticketmaster API response containing event data
+     * @return a {@link Flux} of {@link EventDTO} objects that contain valid URLs
+     *         and venue coordinates
+     */
+    private Flux<EventDTO> extractEvents(TicketmasterResponse response) {
+        if (response == null ||
+                response.getEmbedded() == null ||
+                response.getEmbedded().getEvents() == null) {
+            return Flux.empty();
+        }
+
+        return Flux.fromIterable(response.getEmbedded().getEvents())
+                .filter(event -> event.getUrl() != null && !event.getUrl().isBlank())
+                .filter(event ->
+                        event.getEmbedded() != null &&
+                        event.getEmbedded().getVenues() != null &&
+                        event.getEmbedded().getVenues().length > 0 &&
+                        event.getEmbedded().getVenues()[0] != null &&
+                        event.getEmbedded().getVenues()[0].getLocation() != null &&
+                        event.getEmbedded().getVenues()[0].getLocation().getLatitude() != null &&
+                        event.getEmbedded().getVenues()[0].getLocation().getLongitude() != null
+                );
     }
 }
