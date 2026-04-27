@@ -6,7 +6,6 @@ import Box from "@mui/material/Box";
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import "./mapPage.css";
 
-import Navbar from "./Navbar";
 import configData from "./mapConfig";
 
 const API_BASE_URL = "http://127.0.0.1:8080";
@@ -88,8 +87,10 @@ export default function MapPage() {
   const map = useRef(null);
   const eventMarkersRef = useRef([]);
   const keywordRef = useRef("");
+  const geocodeCacheRef = useRef(new Map());
 
   const center = { lng: -118.374107, lat: 34.1021 };
+
   const [zoom] = useState(4.2);
   const [keyword, setKeyword] = useState("");
   const [statusMsg, setStatusMsg] = useState("");
@@ -108,12 +109,14 @@ export default function MapPage() {
     if (!images.length) return "";
 
     const sixteenByNine = images.filter((img) => img?.ratio === "16_9" && img?.url);
-    const candidates = sixteenByNine.length ? sixteenByNine : images.filter((img) => img?.url);
+    const candidates = sixteenByNine.length
+      ? sixteenByNine
+      : images.filter((img) => img?.url);
 
     candidates.sort((a, b) => (b?.width || 0) - (a?.width || 0));
 
     return candidates[0]?.url || "";
-}
+  }
 
   function formatEventDateTime(ev) {
     const start = ev?.dates?.start;
@@ -144,7 +147,66 @@ export default function MapPage() {
     return parts.length ? parts.join(", ") : "Address unavailable";
   }
 
-  function addEventsToMap(events) {
+  function buildVenueAddress(venue) {
+    return [
+      venue?.address?.line1,
+      venue?.city?.name,
+      venue?.state?.stateCode || venue?.state?.name,
+      venue?.postalCode,
+      venue?.country?.name,
+    ]
+      .filter(Boolean)
+      .join(", ");
+  }
+
+  async function geocodeVenueAddress(venue) {
+    const address = buildVenueAddress(venue);
+    if (!address) return null;
+
+    const cached = geocodeCacheRef.current.get(address);
+    if (cached) return cached;
+
+    try {
+      const query = encodeURIComponent(address);
+      const url = `https://api.maptiler.com/geocoding/${query}.json?key=${configData.MAPTILER_API_KEY}&limit=1`;
+
+      const res = await fetch(url);
+      if (!res.ok) return null;
+
+      const data = await res.json();
+      const centerCoords = data?.features?.[0]?.center;
+
+      if (!Array.isArray(centerCoords) || centerCoords.length < 2) return null;
+
+      const [lng, lat] = centerCoords;
+
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+
+      const coords = { lat, lng };
+      geocodeCacheRef.current.set(address, coords);
+      return coords;
+    } catch (error) {
+      console.error("Address geocoding failed:", error);
+      return null;
+    }
+  }
+
+  async function resolveEventCoordinates(ev) {
+    const venue = ev?._embedded?.venues?.[0];
+    if (!venue) return null;
+
+    const geocodedCoords = await geocodeVenueAddress(venue);
+    if (geocodedCoords) return geocodedCoords;
+
+    const lat = Number(venue?.location?.latitude);
+    const lng = Number(venue?.location?.longitude);
+
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+
+    return { lat, lng };
+  }
+
+  async function addEventsToMap(events) {
     if (!map.current) return;
 
     clearEventMarkers();
@@ -153,12 +215,17 @@ export default function MapPage() {
     const bounds = new maptilersdk.LngLatBounds();
     let markerCount = 0;
 
-    for (const ev of events) {
-      const venue = ev?._embedded?.venues?.[0];
-      const lat = Number(venue?.location?.latitude);
-      const lng = Number(venue?.location?.longitude);
+    const resolvedEvents = await Promise.all(
+      events.map(async (ev) => {
+        const coords = await resolveEventCoordinates(ev);
+        return { ev, coords };
+      })
+    );
 
-      if (!Number.isFinite(lat) || !Number.isFinite(lng)) continue;
+    for (const { ev, coords } of resolvedEvents) {
+      if (!coords) continue;
+
+      const { lat, lng } = coords;
 
       const marker = new maptilersdk.Marker()
         .setLngLat([lng, lat])
@@ -181,6 +248,7 @@ export default function MapPage() {
     if (markerCount === 1) {
       const marker = eventMarkersRef.current[0];
       const lngLat = marker.getLngLat();
+
       map.current.flyTo({
         center: [lngLat.lng, lngLat.lat],
         zoom: 10,
@@ -234,7 +302,7 @@ export default function MapPage() {
         `${safeEvents.length} events found${kw.trim() ? ` for "${kw.trim()}"` : ""}.`
       );
 
-      addEventsToMap(safeEvents);
+      await addEventsToMap(safeEvents);
       return safeEvents;
     } catch (error) {
       console.error("Backend map search failed:", error);
@@ -325,7 +393,7 @@ export default function MapPage() {
 
       setStatusMsg(`${safeEvents.length} AI events found for "${keyword.trim()}".`);
 
-      addEventsToMap(safeEvents);
+      await addEventsToMap(safeEvents);
       return safeEvents;
     } catch (error) {
       console.error("AI map search failed:", error);
@@ -391,8 +459,6 @@ export default function MapPage() {
 
   return (
     <Box sx={{ display: "flex" }}>
-      {/* <Navbar /> */}
-
       <div className="container" style={{ position: "relative" }}>
         <div className={`event-drawer ${selectedEvent ? "open" : ""}`}>
           {selectedEvent && (

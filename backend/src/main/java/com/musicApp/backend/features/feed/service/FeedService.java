@@ -72,18 +72,34 @@ public class FeedService {
      * @return the updated {@link Post} object
      */
     public Post editPost(Long postId, Long userId, PostDto postDto) {
+        // (1) Start
+
+        // (2) Find post by postId
+        // (3) Post found?
+        // (5) If no, throw "Post not found"
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
+
+        // (4) Find user by userId
+        // (6) User found?
+        // (7) If no, throw "User not found"
         AuthenticationUser user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
+        // (8) Is user the author of the post?
         if (!post.getAuthor().equals(user)) {
+            // (9) If no, throw "User is not the author of the post"
             throw new IllegalArgumentException("User is not the author of the post");
         }
 
+        // (10) Update post content and picture
         post.setContent(postDto.getContent());
         post.setPicture(postDto.getPicture());
+
+        // (11) Save updated post
         return postRepository.save(post);
+
+        // (12) End
     }
 
     /**
@@ -153,18 +169,33 @@ public class FeedService {
      * @return the updated {@link Post} object
      */
     public Post likePost(Long postId, Long userId) {
+        // (1) Start
+
+        // (2) Find post by postId
+        // (3) Post found?
+        // (5) If no, throw "Post not found"
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
+
+        // (4) Find user by userId
+        // (6) User found?
+        // (7) If no, throw "User not found"
         AuthenticationUser user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
+        // (8) Has user already liked the post?
         if (post.getLikes().contains(user)) {
+            // (9) Yes -> remove like
             post.getLikes().remove(user);
         } else {
+            // (10) No -> add like
             post.getLikes().add(user);
         }
 
+        // (11) Save updated post
         return postRepository.save(post);
+
+        // (12) End
     }
 
     /**
