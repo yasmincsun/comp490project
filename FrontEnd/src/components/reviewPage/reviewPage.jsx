@@ -67,15 +67,21 @@ export default function ReviewPage() {
      * Populates search results with tracks, artists, or albums.
      */
     const handleSearch = async () => {
+        // Node 1: Check if search query is empty
         if (!searchQuery.trim()) {
+            // Node 2: Clear search results
             setSearchResults([]);
             return;
         }
 
+        // Node 3: Set loading state
         setLoading(true);
+        // Node 4: Clear error
         setError("");
         try {
+            // Node 5: Get auth token
             const token = localStorage.getItem("authToken");
+            // Node 6: Make fetch request
             const response = await fetch(
                 `http://127.0.0.1:8080/api/v1/spotify/search?q=${encodeURIComponent(searchQuery)}&type=${encodeURIComponent(searchType)}&limit=12`,
                 {
@@ -85,15 +91,19 @@ export default function ReviewPage() {
                 }
             );
 
+            // Node 7: Check if response is not ok
             if (!response.ok) {
+                // Node 8: Clear results and set error
                 setSearchResults([]);
                 setError("Spotify search failed. Please try again.");
                 return;
             }
 
+            // Node 9: Parse JSON data
             const data = await response.json();
             let results = [];
 
+            // Node 10: Process tracks
             if (searchType === "track") {
                 results = data.tracks?.items?.map((track) => ({
                     id: track.id,
@@ -104,6 +114,7 @@ export default function ReviewPage() {
                     image: track.album?.images?.[0]?.url || null,
                 })) || [];
             } else if (searchType === "artist") {
+                // Node 11: Process artists
                 results = data.artists?.items?.map((artist) => ({
                     id: artist.id,
                     type: "artist",
@@ -113,6 +124,7 @@ export default function ReviewPage() {
                     image: artist.images?.[0]?.url || null,
                 })) || [];
             } else if (searchType === "album") {
+                // Node 12: Process albums
                 results = data.albums?.items?.map((album) => ({
                     id: album.id,
                     type: "album",
@@ -123,12 +135,15 @@ export default function ReviewPage() {
                 })) || [];
             }
 
+            // Node 13: Set search results
             setSearchResults(results);
         } catch (error) {
+            // Node 14: Handle error
             console.error("Search error:", error);
             setSearchResults([]);
             setError("Spotify search failed. Please try again.");
         } finally {
+            // Node 15: Clear loading
             setLoading(false);
         }
     };
@@ -137,43 +152,56 @@ export default function ReviewPage() {
      * Search existing reviews in the backend by text and optional rating filter.
      */
     const handleReviewSearch = async () => {
+        // Node 1: Check if review search query is empty
         if (!reviewSearchQuery.trim()) {
+            // Node 2: Clear results and no results flag
             setReviewSearchResults([]);
             setNoReviewResults(false);
             return;
         }
 
+        // Node 3: Set loading state
         setReviewSearchLoading(true);
+        // Node 4: Clear error and no results
         setError("");
         setNoReviewResults(false);
 
         try {
+            // Node 5: Get auth token
             const token = localStorage.getItem("authToken");
+            // Node 6: Build URL
             let url = `http://127.0.0.1:8080/api/v1/reviews/search?query=${encodeURIComponent(reviewSearchQuery)}`;
             if (ratingFilter > 0) {
                 url += `&minRating=${ratingFilter}`;
             }
 
+            // Node 7: Make fetch request
             const response = await fetch(url, {
                 headers: {
                     Authorization: `Bearer ${token || ""}`,
                 },
             });
 
+            // Node 8: Check if response is not ok
             if (!response.ok) {
+                // Node 9: Clear results and set no results
                 setReviewSearchResults([]);
                 setNoReviewResults(true);
             } else {
+                // Node 10: Parse results
                 const results = await response.json();
                 const list = Array.isArray(results) ? results : [];
+                // Node 11: Set results and check if empty
                 setReviewSearchResults(list);
                 setNoReviewResults(list.length === 0);
             }
         } catch (error) {
+            // Node 12: Handle error
             console.error("Review search error:", error);
             setReviewSearchResults([]);
             setNoReviewResults(true);
         } finally {
+            // Node 13: Clear loading
             setReviewSearchLoading(false);
         }
     };

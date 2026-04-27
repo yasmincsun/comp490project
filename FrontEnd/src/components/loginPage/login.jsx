@@ -62,31 +62,39 @@ const FormWithValidation = () => {
    * @param event input change event
    */
   const handleInputChange = (event) => {
+    // Node 1: Extract name and value from event
     const { name, value } = event.target;
+    // Node 2: Update form data
     setFormData({ ...formData, [name]: value });
 
-    // Validation rules
+    // Node 3: Check validation rules
     if (name === "name" && mode === "signup" && value.trim() === "") {
+      // Node 4: Set name error
       setFormErrors({ ...formErrors, name: "First Name is Required." });
     } 
     else if (name === "lastname" && mode === "signup" && value.trim() === "") {
+      // Node 5: Set lastname error
       setFormErrors({ ...formErrors, lastname: "Last Name is Required." });
     } 
     else if (name === "username" && mode === "signup" && value.trim() === "") {
+      // Node 6: Set username error
       setFormErrors({ ...formErrors, username: "Username is Required." });
     } 
     else if (name === "email" && !/^\S+@\S+\.\S+$/.test(value)) {
+      // Node 7: Set email error
       setFormErrors({ ...formErrors, email: "Invalid email address." });
     } 
     else if (name === "password" && value.trim() === "") {
+      // Node 8: Set password error
       setFormErrors({ ...formErrors, password: "Password is Required." });
     } 
     else {
+      // Node 9: Clear error for the field
       setFormErrors({ ...formErrors, [name]: "" });
     }
   };
 
-  /**
+/* 
  * Processes the login information 
  * <p>
  * This function processes the login information after ensuring the inputs are valid, and sends the information through to the backend. The information is then stored in the database and now gives the user the option to login using their information. 
@@ -97,38 +105,38 @@ const FormWithValidation = () => {
  * @param event form submit event
  */
 const handleSubmit = async (event) => {
+  // Node 1: Prevent default form submission
   event.preventDefault();
 
-  // 1.) Validate fields
+  // Node 2: Initialize validation errors
   const validationErrors = {};
+  // Node 3: Check signup mode validations
   if (mode === "signup") {
     if (!formData.name.trim()) validationErrors.name = "Name is Required.";
     if (!formData.lastname.trim()) validationErrors.lastname = "Last Name is Required.";
     if (!formData.username.trim()) validationErrors.username = "Username is Required.";
   }
+  // Node 4: Check email validation
   if (!/^\S+@\S+\.\S+$/.test(formData.email)) validationErrors.email = "Invalid email address.";
+  // Node 5: Check password validation
   if (!formData.password.trim()) validationErrors.password = "Password is Required.";
 
+  // Node 6: Set errors and check if any exist
   setFormErrors(validationErrors);
   if (Object.keys(validationErrors).length > 0) return; // Stop if errors
 
   try {
-    // const endpoint =
-      // mode === "signup"
-      //   ? "http://localhost:8080/api/v1/authentication/register"
-      //   : "http://localhost:8080/api/v1/authentication/login";
-      const endpoint =
-          mode === "signup"
-            ? "http://127.0.0.1:8080/api/v1/authentication/register"
-            : "http://127.0.0.1:8080/api/v1/authentication/login";
+    // Node 7: Determine endpoint based on mode
+    const endpoint =
+        mode === "signup"
+          ? "http://127.0.0.1:8080/api/v1/authentication/register"
+          : "http://127.0.0.1:8080/api/v1/authentication/login";
 
-
- 
-    // 2.) Map frontend field to backend field
+    // Node 8: Prepare payload
     const payload = mode === "signup"
       ? {
           name: formData.name,
-          lastName: formData.lastname, // <-- backend expects camelCase
+          lastName: formData.lastname,
           username: formData.username,
           email: formData.email,
           password: formData.password
@@ -138,32 +146,37 @@ const handleSubmit = async (event) => {
           password: formData.password
         };
 
-
-  
-    // 3.) Send POST request
+    // Node 9: Send POST request
     const response = await fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
 
+    // Node 10: Parse response
     const data = await response.json();
     console.log("Server response:", data);
 
+    // Node 11: Check if response is ok
     if (response.ok) {
+      // Node 12: Store token
       localStorage.setItem("authToken", data.token);
 
+      // Node 13: Handle signup success
       if (mode === "signup") {
         alert("Registration successful! Please check your email for the verification code.");
         setVerificationMode(true);
       } else {
+        // Node 14: Handle login success
         alert("Login successful!");
         navigate("/home");
       }
     } else {
+      // Node 15: Handle backend error
       setErrorMsg(data.message || "Something went wrong.");
     }
   } catch (error) {
+    // Node 16: Handle fetch error
     console.error("Fetch error:", error);
     setErrorMsg("Could not connect to backend.");
   }
