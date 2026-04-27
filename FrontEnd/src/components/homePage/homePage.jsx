@@ -183,6 +183,29 @@ const HomePage = () => {
     };
 
     /**
+     * Clear all notifications for the current user by deleting each one.
+     */
+    const clearAllNotifications = async () => {
+        if (!notifications.length) return;
+        try {
+            const token = localStorage.getItem("authToken");
+            if (!token) return;
+            // Delete each notification individually
+            for (const notif of notifications) {
+                await fetch(`http://127.0.0.1:8080/api/v1/notifications/${notif.id}`, {
+                    method: "DELETE",
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+            }
+            // Refresh the list and unread count
+            await fetchNotifications();
+            await fetchUnreadCount();
+        } catch (e) {
+            console.error("Error clearing notifications:", e);
+        }
+    };
+
+    /**
      * Handle accepting or declining a friend request notification.
      * @param notif notification object from the list
      * @param action action string, either "accept" or "decline"
@@ -534,6 +557,13 @@ const handleLogout = async () => {
                                             <p>No Notifications</p>
                                         </div>
                                     ) : (
+                                        <>
+                                            <button
+                                                className="homepage-clear-notifications-btn"
+                                                onClick={clearAllNotifications}
+                                            >
+                                                Clear All
+                                            </button>
                                         <div className="homepage-notifications-list">
                                             {notifications.map((notif, idx) => (
                                                 <div key={idx} className="homepage-notification-item">
@@ -559,6 +589,7 @@ const handleLogout = async () => {
                                                 </div>
                                             ))}
                                         </div>
+                                        </>
                                     )}
                                 </div>
                             )}

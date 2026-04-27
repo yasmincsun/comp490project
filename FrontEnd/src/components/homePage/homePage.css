@@ -679,6 +679,29 @@
     padding: 8px;
 }
 
+.homepage-clear-notifications-btn {
+    width: calc(100% - 16px);
+    margin: 8px;
+    padding: 10px 16px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Montserrat', sans-serif;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.homepage-clear-notifications-btn:hover {
+    background: #c82333;
+}
+
+.homepage-clear-notifications-btn:active {
+    background: #bd2130;
+}
+
 .homepage-notification-item {
     padding: 12px 16px;
     border-bottom: 1px solid #eee;
