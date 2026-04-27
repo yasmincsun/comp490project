@@ -471,9 +471,9 @@ const handleLogout = async () => {
 
     // determine gradient colors (defaults if no profile color)
     const defaultPrimary = '#c4dbef';
-    const defaultSecondary = '#8ab4f8'; // changed to a notably different blue to create visible gradient movement
+    const defaultSecondary = '#8ab4f8'; 
     const primary = bgColor || defaultPrimary;
-    const brightSecondary = brightenHex(primary); // always brighten the primary for gradient contrast
+    const brightSecondary = brightenHex(primary); 
     const secondary = bgColor ? brightSecondary : defaultSecondary;
     const btnPrimary = complementaryHex(primary);
     const btnSecondary = complementaryHex(secondary);
