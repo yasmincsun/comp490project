@@ -33,7 +33,7 @@ const FeedPage = () => {
     // Fetch posts
     const fetchPosts = async (token) => {
         try {
-            const res = await fetch("http://127.0.0.1:8080/api/posts", {
+            const res = await fetch("http://127.0.0.1:8080/api/v1/feed", {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
@@ -49,6 +49,7 @@ const FeedPage = () => {
         }
     };
 
+    
     // Load everything on mount
     useEffect(() => {
         const loadData = async () => {
@@ -67,6 +68,7 @@ const FeedPage = () => {
             }
 
             const postsData = await fetchPosts(token);
+            console.log("POSTS DATA:", postsData);
             setPosts(postsData);
 
             setLoading(false);
@@ -110,24 +112,21 @@ const FeedPage = () => {
                 )}
 
                 <div className="feedpage-posts">
-                    {posts.map((post) => (
-                        <div key={post.id} className="post">
-                            <p className="post-content">{post.content}</p>
+    {Array.isArray(posts) && posts.map((post) => (
+        <div key={post.id} className="post">
 
-                            {post.image && (
-                                <img
-                                    src={post.image}
-                                    alt="post"
-                                    className="post-image"
-                                />
-                            )}
+            <p className="post-content">
+                {post.content || "No content"}
+            </p>
 
-                            <div className="post-meta">
-                                <span>{post.author || "Unknown user"}</span>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+            {/* If you mistakenly have nested objects, guard them */}
+            <p className="post-user">
+                {post.user?.username || post.authenticationUser?.username || "Unknown user"}
+            </p>
+
+        </div>
+    ))}
+</div>
             </div>
         </div>
     );

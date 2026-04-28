@@ -117,8 +117,18 @@ public class FeedService {
      *
      * @return a list of all {@link Post} objects
      */
-    public List<Post> getAllPosts() {
-        return postRepository.findAllByOrderByCreationDateDesc();
+    public List<PostDto> getAllPosts() {
+    return postRepository.findAllByOrderByCreationDateDesc()
+            .stream()
+            .map(post -> {
+                PostDto dto = new PostDto();
+                dto.setId(post.getId());
+                dto.setContent(post.getContent());
+                dto.setPicture(post.getPicture());
+                dto.setUsername(post.getAuthor().getUsername());
+                return dto;
+            })
+            .toList();
     }
 
     /**

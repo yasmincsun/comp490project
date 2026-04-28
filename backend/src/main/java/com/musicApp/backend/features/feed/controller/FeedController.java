@@ -53,11 +53,11 @@ public class FeedController {
      * @return a ResponseEntity containing a list of posts in the user's feed
      */
     @GetMapping
-    public ResponseEntity<List<Post>> getFeedPosts(@RequestAttribute("authenticatedUser") AuthenticationUser user) {
-        List<Post> posts = feedService.getAllPosts();
-        return ResponseEntity.ok(posts);
+    public ResponseEntity<List<PostDto>> getFeedPosts(
+        @RequestAttribute("authenticatedUser") AuthenticationUser user
+    ) {
+        return ResponseEntity.ok(feedService.getAllPosts());
     }
-
     /**
      * Creates a new post for the authenticated user.
      *
