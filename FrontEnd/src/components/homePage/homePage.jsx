@@ -500,7 +500,7 @@ const handleLogout = async () => {
                     <button
                         className="homepage-login-btn"
                         style={{ marginLeft: 12 }}
-                        onClick={() => navigate("/feed")}
+                        onClick={() => navigate("/post")}
                     >
                         SOCIAL
                     </button>
